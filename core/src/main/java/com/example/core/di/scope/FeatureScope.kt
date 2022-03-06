@@ -1,7 +1,7 @@
-package com.example.module1.di
+package com.example.core.di.scope
 
 import javax.inject.Scope
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Module1Scope
+annotation class FeatureScope

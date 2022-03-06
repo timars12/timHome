@@ -1,12 +1,11 @@
 package com.example.module1.di
 
-import android.app.Activity
-import com.example.core.coreComponent
 import com.example.core.di.CoreComponent
+import com.example.core.di.scope.FeatureScope
 import com.example.module1.MainActivity
 import dagger.Component
 
-@Module1Scope
+@FeatureScope
 @Component(dependencies = [CoreComponent::class], modules = [ModuleNeedRetrofit::class])
 internal interface Module1Component {
 

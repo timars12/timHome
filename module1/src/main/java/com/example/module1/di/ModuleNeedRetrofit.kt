@@ -1,5 +1,6 @@
 package com.example.module1.di
 
+import com.example.core.di.scope.FeatureScope
 import dagger.Module
 import dagger.Provides
 import retrofit2.Response
@@ -10,7 +11,7 @@ import retrofit2.http.Path
 @Module
 internal class ModuleNeedRetrofit {
 
-    @Module1Scope
+    @FeatureScope
     @Provides
     fun needRetrofit(retrofit: Retrofit): SomeApi{
         return retrofit.create(SomeApi::class.java)
