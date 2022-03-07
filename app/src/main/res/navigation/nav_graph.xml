@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph.xml">
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/signInFragment">
 
 
-<!--    <fragment-->
-<!--        app:moduleName="@string/title_authdynamic"-->
-<!--        android:id="@+id/featureFragment"-->
-<!--        android:name="com.example.authdynamic"-->
-<!--     />-->
+    <fragment
+        app:moduleName="@string/title_authdynamic"
+        android:id="@+id/signInFragment"
+        android:name="com.example.authdynamic.presentation.signin.SignInFragment"
+     />
+
+<!--    https://medium.com/google-developer-experts/exploring-dynamic-feature-navigation-on-android-c803bdbbca9b-->
+<!--    <include-dynamic-->
+<!--        android:id="@+id/featureNav"-->
+<!--        app:moduleName="secondFeature"-->
+<!--        app:graphResName="second_feature_nav"-->
+<!--        app:graphPackage="co.joebirch.navigationsample.feature_two" />-->
+
 </navigation>

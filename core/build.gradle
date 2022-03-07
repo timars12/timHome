@@ -47,4 +47,18 @@ dependencies {
     api "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
 
     api 'com.google.android.play:core:1.10.3'
+
+    api 'androidx.compose.ui:ui:1.1.1'
+    // Tooling support (Previews, etc.)
+    api 'androidx.compose.ui:ui-tooling:1.1.1'
+    // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
+    api 'androidx.compose.foundation:foundation:1.1.1'
+    // Material Design
+    api 'androidx.compose.material:material:1.1.1'
+    // Integration with activities
+    api 'androidx.activity:activity-compose:1.4.0'
+    // Integration with ViewModels
+    api 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
+    // Integration with observables
+    api 'androidx.compose.runtime:runtime-livedata:1.1.1'
 }
