@@ -6,7 +6,7 @@
 
 
     <fragment
-        app:moduleName="@string/title_authdynamic"
+        app:moduleName="authDynamic"
         android:id="@+id/signInFragment"
         android:name="com.example.authdynamic.presentation.signin.SignInFragment"
      />

@@ -13,7 +13,6 @@ class ModularizationApplication: Application() {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        SplitCompat.install(this)
     }
 
     companion object {
