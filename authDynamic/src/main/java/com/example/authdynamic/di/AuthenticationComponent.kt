@@ -1,6 +1,5 @@
 package com.example.authdynamic.di
 
-import com.example.authdynamic.LoginActivity
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
 import dagger.Component
@@ -12,6 +11,4 @@ internal interface AuthenticationComponent {
     interface Factory {
         fun create(coreComponent: CoreComponent): AuthenticationComponent
     }
-
-    fun inject(activity: LoginActivity)
 }

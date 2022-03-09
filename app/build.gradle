@@ -4,29 +4,39 @@ plugins {
 }
 
 android {
+
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\user\\Desktop\\AndroidTim\\adminTimApp.jks')
+            storePassword ''
+            keyPassword ''
+            keyAlias 'key0admin'
+        }
+    }
+
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.modularizationtest"
+        applicationId "com.timhome.modularizationtest"
         minSdk 23
         targetSdk 31
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
-    dynamicFeatures = [':dynamicfeature', ':authDynamic']
+    dynamicFeatures = [':authDynamic']
 }
 
 dependencies {
     implementation project(":core")
-    implementation project(":module1")
 }

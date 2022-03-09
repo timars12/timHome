@@ -15,6 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "ModularizationTest"
 include ':app'
 include ':core'
-include ':dynamicfeature'
-include ':module1'
 include ':authDynamic'
