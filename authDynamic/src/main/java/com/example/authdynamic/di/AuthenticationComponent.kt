@@ -11,4 +11,5 @@ internal interface AuthenticationComponent {
     interface Factory {
         fun create(coreComponent: CoreComponent): AuthenticationComponent
     }
+
 }
