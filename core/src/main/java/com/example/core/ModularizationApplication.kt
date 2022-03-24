@@ -6,7 +6,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import com.example.core.di.CoreComponent
 import com.example.core.di.DaggerCoreComponent
-import com.google.android.play.core.splitcompat.SplitCompat
+import com.github.venom.Venom
 
 class ModularizationApplication: Application() {
 
@@ -15,6 +15,17 @@ class ModularizationApplication: Application() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         context = base
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        if (BuildConfig.DEBUG) {
+            Venom.createInstance(this).apply {
+                initialize()
+                start()
+            }
+        }
     }
 
     companion object {

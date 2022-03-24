@@ -39,6 +39,13 @@ dependencies {
     api 'androidx.core:core-ktx:1.7.0'
     api 'androidx.appcompat:appcompat:1.4.1'
 
+    api "androidx.activity:activity-ktx:1.4.0"
+    api "androidx.fragment:fragment-ktx:1.4.1"
+
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_version"
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$viewmodel_version"
+    api "androidx.lifecycle:lifecycle-viewmodel-savedstate:$viewmodel_version"
+
     api "com.squareup.retrofit2:retrofit:$retrofit_version"
     api 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
     api 'com.squareup.retrofit2:converter-gson:2.9.0'
@@ -72,4 +79,8 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
     // Integration with observables
     api "androidx.compose.runtime:runtime-livedata:$compose_version"
+
+    //for testing process death
+    debugImplementation "com.github.YarikSOffice.Venom:venom:0.5.0"
+    releaseImplementation "com.github.YarikSOffice.Venom:venom-no-op:0.3.1"
 }

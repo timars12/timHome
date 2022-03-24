@@ -1,6 +1,7 @@
 package com.example.authdynamic.data
 
 import com.example.authdynamic.data.api.AuthApi
+import com.example.authdynamic.data.api.request.UserLoginRequest
 import com.example.authdynamic.data.mapper.User
 import com.example.authdynamic.domain.IAuthorizationRepository
 import com.example.core.data.AppDatabase
@@ -12,8 +13,9 @@ class AuthorizationRepositoryImpl @Inject constructor(
     private val database: AppDatabase
 ) : IAuthorizationRepository {
 
-    override fun loginByEmail(email: String, password: String): User {
-        apiService.loginByEmail(email, password).convertToUserEntity()
+     override suspend fun loginByEmail(email: String, password: String): User {
+         val body = UserLoginRequest(email, password)
+        apiService.loginByEmail(body).user.convertToUserEntity()
             .also {
                 database.userDao().saveUserToDB(it)
             }.also {

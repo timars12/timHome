@@ -6,6 +6,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -16,6 +17,10 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        addInterceptor(loggingInterceptor)
         connectTimeout(timeout = 1, TimeUnit.MINUTES)
         readTimeout(timeout = 1, TimeUnit.MINUTES)
         writeTimeout(timeout = 1, TimeUnit.MINUTES)
@@ -29,7 +34,7 @@ class NetworkModule {
     @Provides
     fun provideRetrofitClient(httpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://tim.com/")
+            .baseUrl("https://demo.treblle.com/api/v1/")
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
