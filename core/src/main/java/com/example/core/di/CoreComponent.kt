@@ -1,6 +1,8 @@
 package com.example.core.di
 
+import android.content.Context
 import com.example.core.data.AppDatabase
+import dagger.BindsInstance
 import dagger.Component
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -12,4 +14,9 @@ interface CoreComponent {
     val retrofit: Retrofit
     val okHttpClient: OkHttpClient
     val appDatabase: AppDatabase
+
+    @Component.Factory
+    interface Factory {
+        fun create(@BindsInstance applicationContext: Context): CoreComponent
+    }
 }

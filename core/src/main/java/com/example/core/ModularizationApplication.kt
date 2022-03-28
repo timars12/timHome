@@ -10,12 +10,7 @@ import com.github.venom.Venom
 
 class ModularizationApplication: Application() {
 
-    private val coreComponent = DaggerCoreComponent.create()
-
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        context = base
-    }
+    private val coreComponent = DaggerCoreComponent.factory().create(this)
 
     override fun onCreate() {
         super.onCreate()
@@ -31,8 +26,6 @@ class ModularizationApplication: Application() {
     companion object {
         @JvmStatic fun coreComponent(context: Context): CoreComponent =
             (context.applicationContext as ModularizationApplication).coreComponent
-
-        @JvmStatic lateinit var context: Context
     }
 }
 
