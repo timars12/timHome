@@ -14,25 +14,38 @@ class SignInViewModel @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var emailValue: String? = savedStateHandle.get<String>("email")
+    private var emailValue: String? = savedStateHandle.get<String>("email")
         set(value) {
             field = value
             savedStateHandle.set("email", value)
+            _email.value = value ?: ""
+        }
+
+    private var passwordValue: String? = savedStateHandle.get<String>("password")
+        set(value) {
+            field = value
+            savedStateHandle.set("password", value)
+            _password.value = value ?: ""
         }
 
     private val _email = MutableLiveData<String>(emailValue)
     val email: LiveData<String> = _email
 
+    private val _password = MutableLiveData<String>(passwordValue)
+    val password: LiveData<String> = _password
+
     fun onEnterEmail(email: String) {
         emailValue = email
-        _email.value = email
     }
 
-    fun onSignInByEmail(email: String, password: String) {
+    fun onEnterPassword(email: String) {
+        passwordValue = email
+    }
+
+    fun onSignInByEmail() {
         viewModelScope.launch {
-            repository.loginByEmail(email, password)
+            repository.loginByEmail(emailValue!!, passwordValue!!)
         }
-        Log.e("0707", "some text")
     }
 
     @AssistedFactory

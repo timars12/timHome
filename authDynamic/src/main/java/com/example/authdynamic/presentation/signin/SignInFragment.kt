@@ -2,21 +2,30 @@ package com.example.authdynamic.presentation.signin
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -50,34 +59,68 @@ class SignInFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.e("0707", viewModel.emailValue ?: "0")
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
                     val email by viewModel.email.observeAsState()
+                    val password by viewModel.password.observeAsState()
+                    var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = CenterHorizontally
-                    ) {
-                        TextField(
-                            value = email ?: "",
-                            onValueChange = viewModel::onEnterEmail,
-                            singleLine = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Image(
+                            painter = painterResource(id = com.example.modularizationtest.R.drawable.ic_background_login),
+                            modifier = Modifier.fillMaxSize(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
                         )
-
-                        Button(onClick = {
-                            viewModel.onSignInByEmail(
-                                "timars1294@gmail.com",
-                                "qwerty12"
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = CenterHorizontally
+                        ) {
+                            TextField(
+                                value = email ?: "",
+                                onValueChange = viewModel::onEnterEmail,
+                                singleLine = true,
+                                placeholder = {
+                                    Text(text = "Email")
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
                             )
-                        }) {
-                            Text("Click me")
+
+                            TextField(
+                                value = password ?: "",
+                                onValueChange = viewModel::onEnterPassword,
+                                singleLine = true,
+                                placeholder = {
+                                    Text(text = "Password")
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                                trailingIcon = {
+                                    val image = if (passwordVisible)
+                                        Icons.Filled.ArrowBack
+                                    else Icons.Filled.Warning
+
+                                    // Please provide localized description for accessibility services
+                                    val description =
+                                        if (passwordVisible) "Hide password" else "Show password"
+
+                                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                        Icon(imageVector = image, description)
+                                    }
+                                }
+                            )
+
+                            Button(onClick = viewModel::onSignInByEmail) {
+                                Text("Sign In")
+                            }
                         }
                     }
                 }
