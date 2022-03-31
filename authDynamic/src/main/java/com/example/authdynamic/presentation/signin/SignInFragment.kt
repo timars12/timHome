@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -19,10 +19,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -66,14 +65,14 @@ class SignInFragment : Fragment() {
                     val email by viewModel.email.observeAsState()
                     val password by viewModel.password.observeAsState()
                     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Image(
-                            painter = painterResource(id = com.example.modularizationtest.R.drawable.ic_background_login),
-                            modifier = Modifier.fillMaxSize(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
+                    val brush = Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colors.primaryVariant,
+                            MaterialTheme.colors.primary
                         )
+                    )
+
+                    Box(modifier = Modifier.fillMaxSize().background(brush)) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
