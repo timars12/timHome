@@ -34,7 +34,7 @@ android {
         }
     }
 
-    dynamicFeatures = [':authDynamic']
+    dynamicFeatures = [":authDynamic", ":home"]
 }
 
 dependencies {

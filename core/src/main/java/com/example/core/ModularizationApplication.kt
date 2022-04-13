@@ -7,10 +7,17 @@ import androidx.fragment.app.Fragment
 import com.example.core.di.CoreComponent
 import com.example.core.di.DaggerCoreComponent
 import com.github.venom.Venom
+import com.google.android.play.core.splitcompat.SplitCompat
+import com.google.android.play.core.splitcompat.SplitCompatApplication
 
-class ModularizationApplication: Application() {
+class ModularizationApplication: SplitCompatApplication() {
 
     private val coreComponent = DaggerCoreComponent.factory().create(this)
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        SplitCompat.install(this)
+    }
 
     override fun onCreate() {
         super.onCreate()

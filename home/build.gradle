@@ -1,0 +1,31 @@
+plugins {
+    id 'com.android.dynamic-feature'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+android {
+    compileSdk 32
+
+    defaultConfig {
+        minSdk 23
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    kotlinOptions {
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+        useIR = true
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+    }
+}
+
+dependencies {
+    implementation project(":app")
+    implementation project(path: ':core')
+    implementation 'androidx.core:core-ktx:1.7.0'
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+}

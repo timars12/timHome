@@ -17,3 +17,4 @@ rootProject.name = "ModularizationTest"
 include ':app'
 include ':core'
 include ':authDynamic'
+include ':home'

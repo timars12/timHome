@@ -2,6 +2,7 @@ package com.example.authdynamic.presentation.signin
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,10 +29,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.dynamicfeatures.DynamicExtras
+import androidx.navigation.dynamicfeatures.DynamicInstallMonitor
+import androidx.navigation.fragment.findNavController
 import com.example.authdynamic.di.DaggerAuthenticationComponent
 import com.example.core.coreComponent
 import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
+import com.google.android.play.core.splitinstall.SplitInstallSessionState
+import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import javax.inject.Inject
 
 class SignInFragment : Fragment() {
@@ -72,7 +79,11 @@ class SignInFragment : Fragment() {
                         )
                     )
 
-                    Box(modifier = Modifier.fillMaxSize().background(brush)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(brush)
+                    ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
@@ -117,13 +128,51 @@ class SignInFragment : Fragment() {
                                 }
                             )
 
-                            Button(onClick = viewModel::onSignInByEmail) {
+//                            Button(onClick = viewModel::onSignInByEmail) {
+                            Button(onClick = this@SignInFragment::navigateToHome) {
                                 Text("Sign In")
                             }
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun navigateToHome() {
+        val installMonitor = DynamicInstallMonitor()
+        findNavController().navigate(
+            com.example.modularizationtest.R.id.home_navigation,
+            null,
+            null,
+            DynamicExtras(installMonitor)
+        )
+
+        if (installMonitor.isInstallRequired) {
+            installMonitor.status.observe(
+                this,
+                object : Observer<SplitInstallSessionState> {
+                    override fun onChanged(sessionState: SplitInstallSessionState) {
+                        when (sessionState.status()) {
+                            SplitInstallSessionStatus.INSTALLED -> {
+                                findNavController().navigate(com.example.modularizationtest.R.id.home_navigation)
+                            }
+                            SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
+//                            SplitInstallManager.startConfirmationDialogForResult(...)
+                            }
+                            // Handle all remaining states:
+                            SplitInstallSessionStatus.FAILED -> {
+                                Log.e("0707", sessionState.errorCode().toString())
+                            }
+                            SplitInstallSessionStatus.CANCELED -> {}
+                            else -> {}
+                        }
+
+                        if (sessionState.hasTerminalStatus()) {
+                            installMonitor.status.removeObserver(this)
+                        }
+                    }
+                })
         }
     }
 }

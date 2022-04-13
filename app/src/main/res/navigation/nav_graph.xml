@@ -12,10 +12,10 @@
      />
 
 <!--    https://medium.com/google-developer-experts/exploring-dynamic-feature-navigation-on-android-c803bdbbca9b-->
-<!--    <include-dynamic-->
-<!--        android:id="@+id/featureNav"-->
-<!--        app:moduleName="secondFeature"-->
-<!--        app:graphResName="second_feature_nav"-->
-<!--        app:graphPackage="co.joebirch.navigationsample.feature_two" />-->
+    <include-dynamic
+        android:id="@+id/home_navigation"
+        app:moduleName="home"
+        app:graphResName="home_navigation"
+        app:graphPackage="${applicationId}.home" />
 
 </navigation>
