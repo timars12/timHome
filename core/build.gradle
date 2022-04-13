@@ -42,6 +42,7 @@ dependencies {
     api "androidx.activity:activity-ktx:1.4.0"
     api "androidx.fragment:fragment-ktx:1.4.1"
 
+    api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_version"
     api "androidx.lifecycle:lifecycle-livedata-ktx:$viewmodel_version"
     api "androidx.lifecycle:lifecycle-viewmodel-savedstate:$viewmodel_version"
@@ -79,6 +80,9 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
     // Integration with observables
     api "androidx.compose.runtime:runtime-livedata:$compose_version"
+
+    api "com.google.accompanist:accompanist-insets:$accompanist_version"
+    api "com.google.accompanist:accompanist-permissions:$accompanist_version"
 
     //for testing process death
     debugImplementation "com.github.YarikSOffice.Venom:venom:0.5.0"

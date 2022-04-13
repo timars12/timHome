@@ -13,15 +13,15 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -29,16 +29,20 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.dynamicfeatures.DynamicExtras
 import androidx.navigation.dynamicfeatures.DynamicInstallMonitor
 import androidx.navigation.fragment.findNavController
 import com.example.authdynamic.di.DaggerAuthenticationComponent
 import com.example.core.coreComponent
+import com.example.core.ui.SnackbarMessage
 import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
 import com.google.android.play.core.splitinstall.SplitInstallSessionState
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 class SignInFragment : Fragment() {
@@ -69,6 +73,9 @@ class SignInFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
+
+                    val lifecycleOwner = LocalLifecycleOwner.current
+                    val snackbarHostState = remember { SnackbarHostState() }
                     val email by viewModel.email.observeAsState()
                     val password by viewModel.password.observeAsState()
                     var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -78,6 +85,24 @@ class SignInFragment : Fragment() {
                             MaterialTheme.colors.primary
                         )
                     )
+
+                    val events = remember(viewModel.events, lifecycleOwner) {
+                        viewModel.events.receiveAsFlow().flowWithLifecycle(
+                            lifecycleOwner.lifecycle,
+                            Lifecycle.State.STARTED
+                        )
+                    }
+
+                    LaunchedEffect(Unit) {
+                        events.collect { event ->
+                            when(event){
+                                SignInEvent.GoToHomeScreen -> navigateToHome()
+                                is SignInEvent.ShowErrorMessage -> {
+                                    snackbarHostState.showSnackbar(message = event.error)
+                                }
+                            }
+                        }
+                    }
 
                     Box(
                         modifier = Modifier
@@ -128,11 +153,16 @@ class SignInFragment : Fragment() {
                                 }
                             )
 
-//                            Button(onClick = viewModel::onSignInByEmail) {
-                            Button(onClick = this@SignInFragment::navigateToHome) {
+                            Button(onClick = viewModel::onSignInByEmail) {
                                 Text("Sign In")
                             }
                         }
+                        SnackbarMessage(
+                            snackbarHostState,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .navigationBarsPadding()
+                        )
                     }
                 }
             }

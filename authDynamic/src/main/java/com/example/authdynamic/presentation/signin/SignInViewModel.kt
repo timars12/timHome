@@ -1,19 +1,20 @@
 package com.example.authdynamic.presentation.signin
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.authdynamic.domain.IAuthorizationRepository
+import com.example.core.utils.CallStatus
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class SignInViewModel @AssistedInject constructor(
     private val repository: IAuthorizationRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    val events = Channel<SignInEvent>(Channel.UNLIMITED)
 
     private var emailValue: String? = savedStateHandle.get<String>("email")
         set(value) {
@@ -45,10 +46,9 @@ class SignInViewModel @AssistedInject constructor(
 
     fun onSignInByEmail() {
         viewModelScope.launch {
-            try {
-                repository.loginByEmail(emailValue!!, passwordValue!!)
-            }catch (e: Exception){
-                Log.e("0707", e.localizedMessage ?: "onSignInByEmail")
+            when (val result = repository.loginByEmail(emailValue!!, passwordValue!!)) {
+                is CallStatus.Error -> events.trySend(SignInEvent.ShowErrorMessage(result.error ?: "error"))
+                is CallStatus.Success -> events.trySend(SignInEvent.GoToHomeScreen)
             }
         }
     }
@@ -57,4 +57,5 @@ class SignInViewModel @AssistedInject constructor(
     interface Factory : ViewModelAssistedFactory<SignInViewModel> {
         override fun create(handle: SavedStateHandle): SignInViewModel
     }
+
 }
