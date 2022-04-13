@@ -7,7 +7,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('C:\\Users\\user\\Desktop\\AndroidTim\\adminTimApp.jks')
+//            storeFile file('C:\\Users\\user\\Desktop\\AndroidTim\\adminTimApp.jks')
             storePassword ''
             keyPassword ''
             keyAlias 'key0admin'

@@ -45,6 +45,7 @@ class SignInViewModel @AssistedInject constructor(
     }
 
     fun onSignInByEmail() {
+        if (emailValue == null || passwordValue == null) return
         viewModelScope.launch {
             when (val result = repository.loginByEmail(emailValue!!, passwordValue!!)) {
                 is CallStatus.Error -> events.trySend(SignInEvent.ShowErrorMessage(result.error ?: "error"))

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,10 +20,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -75,14 +77,16 @@ class SignInFragment : Fragment() {
                 MaterialTheme {
 
                     val lifecycleOwner = LocalLifecycleOwner.current
+                    val focusManager = LocalFocusManager.current
                     val snackbarHostState = remember { SnackbarHostState() }
                     val email by viewModel.email.observeAsState()
                     val password by viewModel.password.observeAsState()
+
                     var passwordVisible by rememberSaveable { mutableStateOf(false) }
                     val brush = Brush.verticalGradient(
                         colors = listOf(
                             MaterialTheme.colors.primaryVariant,
-                            MaterialTheme.colors.primary
+                            Color(0xffffc0cb)
                         )
                     )
 
@@ -95,7 +99,7 @@ class SignInFragment : Fragment() {
 
                     LaunchedEffect(Unit) {
                         events.collect { event ->
-                            when(event){
+                            when (event) {
                                 SignInEvent.GoToHomeScreen -> navigateToHome()
                                 is SignInEvent.ShowErrorMessage -> {
                                     snackbarHostState.showSnackbar(message = event.error)
@@ -123,7 +127,14 @@ class SignInFragment : Fragment() {
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
+                                    .padding(horizontal = 16.dp),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Email,
+                                    imeAction = ImeAction.Next
+                                ),
+                                keyboardActions = KeyboardActions(onNext = {
+                                    focusManager.moveFocus(FocusDirection.Down)
+                                })
                             )
 
                             TextField(
@@ -150,7 +161,12 @@ class SignInFragment : Fragment() {
                                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                                         Icon(imageVector = image, description)
                                     }
-                                }
+                                },
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        focusManager.clearFocus()
+                                        viewModel::onSignInByEmail
+                                    })
                             )
 
                             Button(onClick = viewModel::onSignInByEmail) {
@@ -180,7 +196,7 @@ class SignInFragment : Fragment() {
 
         if (installMonitor.isInstallRequired) {
             installMonitor.status.observe(
-                this,
+                viewLifecycleOwner,
                 object : Observer<SplitInstallSessionState> {
                     override fun onChanged(sessionState: SplitInstallSessionState) {
                         when (sessionState.status()) {
@@ -194,8 +210,10 @@ class SignInFragment : Fragment() {
                             SplitInstallSessionStatus.FAILED -> {
                                 Log.e("0707", sessionState.errorCode().toString())
                             }
-                            SplitInstallSessionStatus.CANCELED -> {}
-                            else -> {}
+                            SplitInstallSessionStatus.CANCELED -> {
+                            }
+                            else -> {
+                            }
                         }
 
                         if (sessionState.hasTerminalStatus()) {
