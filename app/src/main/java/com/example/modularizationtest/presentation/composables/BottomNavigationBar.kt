@@ -23,29 +23,31 @@ import com.example.modularizationtest.R
 import com.example.modularizationtest.data.BottomNavigationMenuItem
 import okhttp3.internal.immutableListOf
 
+typealias OnNavigateClick = (destinationId: Int) -> Unit
+
 @Composable
-fun BottomNavigationBar(destinationId: Int) {
+fun BottomNavigationBar(navigateTo: OnNavigateClick) {
     val shape = remember { RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp) }
     val menuItems = remember {
         immutableListOf(
             BottomNavigationMenuItem(
-                id = 0,
+                destinationId = R.id.signInFragment,
                 label = R.string.home,
                 icon = R.drawable.ic_home_bottom_menu
             ),
             BottomNavigationMenuItem(
-                id = 1,
+                destinationId = 1,
                 label = R.string.device,
                 icon = R.drawable.ic_device_bottom_menu
             ),
             BottomNavigationMenuItem(
-                id = 2,
+                destinationId = R.id.settingFragment,
                 label = R.string.setting,
                 icon = R.drawable.ic_setting_bottom_menu
             )
         )
     }
-    val selectedMenu = rememberSaveable { mutableStateOf(menuItems.first().id) }
+    val selectedMenu = rememberSaveable { mutableStateOf(menuItems.first().destinationId) }
 
     BottomNavigation(
         modifier = Modifier
@@ -57,8 +59,11 @@ fun BottomNavigationBar(destinationId: Int) {
     ) {
         menuItems.forEach {
             BottomNavigationItem(
-                selected = selectedMenu.value == it.id,
-                onClick = { selectedMenu.value = it.id },
+                selected = selectedMenu.value == it.destinationId,
+                onClick = {
+                    selectedMenu.value = it.destinationId
+                    navigateTo(it.destinationId)
+                },
                 icon = {
                     Icon(
                         painter = painterResource(it.icon),

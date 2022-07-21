@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 data class BottomNavigationMenuItem(
-    val id: Byte,
+    val destinationId: Int,
     @StringRes val label: Int,
     @DrawableRes val icon: Int
 )

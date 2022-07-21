@@ -34,7 +34,9 @@ class MainActivity : AppCompatActivity() {
                         value = destination.id
                     }
                 }
-                if (destinationId != R.id.signInFragment) BottomNavigationBar(destinationId)
+                if (destinationId != R.id.signInFragment) {
+                    BottomNavigationBar { navController.navigate(it) }
+                }
             }
         }
     }

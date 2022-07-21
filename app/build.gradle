@@ -45,7 +45,7 @@ android {
         kotlinCompilerExtensionVersion compose_version
     }
 
-    dynamicFeatures = [":authDynamic", ":home"]
+    dynamicFeatures = [":authDynamic", ":home", ':settings']
 }
 
 dependencies {

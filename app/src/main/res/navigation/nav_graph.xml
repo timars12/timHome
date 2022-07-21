@@ -18,4 +18,9 @@
         app:graphResName="home_navigation"
         app:graphPackage="${applicationId}.home" />
 
+    <fragment
+        app:moduleName="settings"
+        android:id="@+id/settingFragment"
+        android:name="com.example.settings.presentation.SettingFragment"
+        />
 </navigation>
