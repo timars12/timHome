@@ -1,10 +1,16 @@
-package com.example.modularizationtest
+package com.example.modularizationtest.presentation
 
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.modularizationtest.R
+import com.example.modularizationtest.presentation.composables.BottomNavigationBar
 import com.google.android.play.core.splitcompat.SplitCompat
 
 class MainActivity : AppCompatActivity() {
@@ -19,8 +25,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState == null)
-            initNavigation()
+        if (savedInstanceState == null) initNavigation()
+        findViewById<ComposeView>(R.id.compose_view).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                val destinationId by produceState(initialValue = R.id.signInFragment) {
+                    navController.addOnDestinationChangedListener { _, destination, _ ->
+                        value = destination.id
+                    }
+                }
+                if (destinationId != R.id.signInFragment) BottomNavigationBar(destinationId)
+            }
+        }
     }
 
     private fun initNavigation() {

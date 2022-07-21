@@ -83,12 +83,6 @@ class SignInFragment : Fragment() {
                     val password by viewModel.password.observeAsState()
 
                     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-                    val brush = Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colors.primaryVariant,
-                            Color(0xffffc0cb)
-                        )
-                    )
 
                     val events = remember(viewModel.events, lifecycleOwner) {
                         viewModel.events.receiveAsFlow().flowWithLifecycle(
@@ -109,9 +103,7 @@ class SignInFragment : Fragment() {
                     }
 
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(brush)
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),

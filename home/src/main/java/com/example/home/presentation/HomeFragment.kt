@@ -32,18 +32,8 @@ class HomeFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
-
-                    val brush = Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colors.primaryVariant,
-                            Color(0xffffc0cb)
-                        )
-                    )
-
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(brush)
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         Row(
                             modifier = Modifier

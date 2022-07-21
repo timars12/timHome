@@ -7,7 +7,11 @@
         <entry key="..\:/Users/user/AndroidStudioProjects/ModularizationTest/app/src/main/res/layout/activity_main.xml" value="0.24010416666666667" />
         <entry key="..\:/Users/user/AndroidStudioProjects/ModularizationTest/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1215" />
         <entry key="..\:/Users/user/AndroidStudioProjects/ModularizationTest/module1/src/main/res/layout/activity_main.xml" value="0.11041666666666666" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.22056159420289856" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.128" />
+        <entry key="app/src/main/res/drawable/bg_activity_gradient.xml" value="0.128" />
+        <entry key="app/src/main/res/drawable/ic_device_bottom_menu.xml" value="0.128" />
+        <entry key="app/src/main/res/drawable/ic_setting_bottom_menu.xml" value="0.128" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
       </map>
     </option>
   </component>

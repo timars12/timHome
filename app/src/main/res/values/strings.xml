@@ -3,4 +3,7 @@
     <string name="title_dynamicfeature">Help DFM</string>
     <string name="title_authdynamic">Authenfication</string>
     <string name="title_home">Home</string>
+    <string name="home">Home</string>
+    <string name="device">Device</string>
+    <string name="setting">Setting</string>
 </resources>
