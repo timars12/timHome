@@ -17,7 +17,7 @@ class AuthorizationRepositoryImpl @Inject constructor(
         val body = UserLoginRequest(email, password)
         try {
             val response = apiService.loginByEmail(body)
-            if (response.isSuccessful) {
+            if (response.code() == 200) {
                 response.body()?.user?.convertToUserEntity()
                     .also {
                         database.userDao().saveUserToDB(it!!)

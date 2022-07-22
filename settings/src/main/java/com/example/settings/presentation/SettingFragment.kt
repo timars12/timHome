@@ -116,7 +116,7 @@ class SettingFragment : Fragment() {
                                 )
                                 .height(60.dp),
                             shape = remember { RoundedCornerShape(20) },
-                            onClick = { viewModel::onSaveChangClick }) {
+                            onClick = viewModel::onSaveChangClick) {
                             Text(text = stringResource(R.string.save), fontSize = 20.sp)
                         }
                     }

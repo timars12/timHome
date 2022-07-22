@@ -82,6 +82,7 @@ dependencies {
     api "androidx.compose.runtime:runtime-livedata:$compose_version"
 
     api "com.google.accompanist:accompanist-insets:$accompanist_version"
+    api "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     api "com.google.accompanist:accompanist-permissions:$accompanist_version"
 
     api "androidx.datastore:datastore-preferences:$datastore_version"

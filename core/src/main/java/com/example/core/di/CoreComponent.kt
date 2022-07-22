@@ -3,6 +3,7 @@ package com.example.core.di
 import android.content.Context
 import com.example.core.data.AppDatabase
 import com.example.core.data.DataStoreManager
+import com.example.core.data.api.ArduinoApi
 import dagger.BindsInstance
 import dagger.Component
 import okhttp3.OkHttpClient
@@ -16,6 +17,7 @@ interface CoreComponent {
     val okHttpClient: OkHttpClient
     val appDatabase: AppDatabase
     val dataStore: DataStoreManager
+    val arduinoApi: ArduinoApi
 
     @Component.Factory
     interface Factory {
