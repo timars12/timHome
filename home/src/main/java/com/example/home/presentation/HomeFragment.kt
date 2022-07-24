@@ -59,12 +59,13 @@ class HomeFragment : Fragment() {
                 MaterialTheme {
                     val isRefreshing by viewModel.isRefreshing.collectAsState()
                     val temperatureInside by viewModel.temperatureInside.collectAsState()
+                    val temperatureOutside by viewModel.temperatureOutside.collectAsState()
                     val co2 by viewModel.co2.collectAsState()
 
                     SwipeRefresh(
                         modifier = Modifier.fillMaxSize(),
                         state = rememberSwipeRefreshState(isRefreshing),
-                        onRefresh = viewModel::getCO2AndTemperature,
+                        onRefresh = viewModel::getDate,
                     ) {
                         Column(Modifier.verticalScroll(rememberScrollState())) {
                             Row(
@@ -78,7 +79,7 @@ class HomeFragment : Fragment() {
                             ) {
                                 TemperatureBar(
                                     modifier = Modifier.fillMaxSize(.5f),
-                                    28,
+                                    temperatureOutside,
                                     temperatureInside
                                 )
                                 Co2Indicator(modifier = Modifier.fillMaxSize(.5f), co2 = co2)
