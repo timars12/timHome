@@ -14,12 +14,12 @@ android {
         }
     }
 
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.timhome.modularizationtest"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 2
         versionName "1.1"
 
@@ -36,7 +36,6 @@ android {
 
     kotlinOptions {
         freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
-        useIR = true
     }
     buildFeatures {
         compose true

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         minSdk 23
-        targetSdk 32
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -23,7 +23,6 @@ android {
 
     kotlinOptions {
         freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
-        useIR = true
     }
     buildFeatures {
         compose true
@@ -34,13 +33,14 @@ android {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.6"
 
-    api 'androidx.core:core-ktx:1.8.0'
-    api 'androidx.appcompat:appcompat:1.4.2'
+    api 'androidx.core:core-ktx:1.9.0'
+    api 'androidx.appcompat:appcompat:1.5.1'
 
-    api "androidx.activity:activity-ktx:1.5.0"
-    api "androidx.fragment:fragment-ktx:1.5.0"
+    api "androidx.activity:activity-ktx:1.5.1"
+    api "androidx.fragment:fragment-ktx:1.5.2"
 
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_version"
@@ -75,9 +75,9 @@ dependencies {
     // Material Design
     api "androidx.compose.material:material:$compose_version"
     // Integration with activities
-    api 'androidx.activity:activity-compose:1.5.0'
+    api 'androidx.activity:activity-compose:1.5.1'
     // Integration with ViewModels
-    api 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0'
+    api 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
     // Integration with observables
     api "androidx.compose.runtime:runtime-livedata:$compose_version"
 
