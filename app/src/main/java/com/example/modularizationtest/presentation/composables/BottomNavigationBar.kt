@@ -31,7 +31,7 @@ fun BottomNavigationBar(navigateTo: OnNavigateClick) {
     val menuItems = remember {
         immutableListOf(
             BottomNavigationMenuItem(
-                destinationId = R.id.signInFragment,
+                destinationId = R.id.home_navigation,
                 label = R.string.home,
                 icon = R.drawable.ic_home_bottom_menu
             ),

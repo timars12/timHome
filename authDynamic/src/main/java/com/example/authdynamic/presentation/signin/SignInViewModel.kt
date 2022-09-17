@@ -45,14 +45,14 @@ class SignInViewModel @AssistedInject constructor(
     }
 
     fun onSignInByEmail() {
-        events.trySend(SignInEvent.GoToHomeScreen)
-//        if (emailValue == null || passwordValue == null) return
-//        viewModelScope.launch {
-//            when (val result = repository.loginByEmail(emailValue!!, passwordValue!!)) {
-//                is CallStatus.Error -> events.trySend(SignInEvent.ShowErrorMessage(result.error ?: "error"))
-//                is CallStatus.Success -> events.trySend(SignInEvent.GoToHomeScreen)
-//            }
-//        }
+//        events.trySend(SignInEvent.GoToHomeScreen)
+        if (emailValue == null || passwordValue == null) return
+        viewModelScope.launch {
+            when (val result = repository.loginByEmail(emailValue!!, passwordValue!!)) {
+                is CallStatus.Error -> events.trySend(SignInEvent.ShowErrorMessage(result.error ?: "error"))
+                is CallStatus.Success -> events.trySend(SignInEvent.GoToHomeScreen)
+            }
+        }
     }
 
     @AssistedFactory
