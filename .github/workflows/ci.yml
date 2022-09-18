@@ -56,10 +56,10 @@ jobs:
 
       - name: run detekt check
         run: ./gradlew detektDebug
-  unit_test_job:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v2
-      - name: Unit Test
-        run: ./gradlew testDebugUnitTest
+#   unit_test_job:
+#     runs-on: ubuntu-latest
+#     continue-on-error: true
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Unit Test
+#         run: ./gradlew testDebugUnitTest
