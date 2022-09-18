@@ -8,9 +8,7 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,7 +45,7 @@ fun BottomNavigationBar(navigateTo: OnNavigateClick) {
             )
         )
     }
-    val selectedMenu = rememberSaveable { mutableStateOf(menuItems.first().destinationId) }
+    var selectedMenu by rememberSaveable { mutableStateOf(menuItems.first().destinationId) }
 
     BottomNavigation(
         modifier = Modifier
@@ -59,9 +57,9 @@ fun BottomNavigationBar(navigateTo: OnNavigateClick) {
     ) {
         menuItems.forEach {
             BottomNavigationItem(
-                selected = selectedMenu.value == it.destinationId,
+                selected = selectedMenu == it.destinationId,
                 onClick = {
-                    selectedMenu.value = it.destinationId
+                    selectedMenu = it.destinationId
                     navigateTo(it.destinationId)
                 },
                 icon = {

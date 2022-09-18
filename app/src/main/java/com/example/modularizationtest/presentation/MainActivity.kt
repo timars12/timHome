@@ -35,7 +35,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 if (destinationId != R.id.signInFragment) {
-                    BottomNavigationBar { navController.navigate(it) }
+                    BottomNavigationBar {
+                        //TODO add navigationSafe
+                        navController.navigate(it)
+                    }
                 }
             }
         }
