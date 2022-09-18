@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 if (destinationId != R.id.signInFragment) {
                     BottomNavigationBar {
-                        //TODO add navigationSafe
+                        // TODO add navigationSafe
                         navController.navigate(it)
                     }
                 }
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 //                            navController.navigate(R.id.signInFragment)
 //                        }
 //                        SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
-////                            SplitInstallManager.startConfirmationDialogForResult(...)
+// //                            SplitInstallManager.startConfirmationDialogForResult(...)
 //                        }
 //                        // Handle all remaining states:
 //                        SplitInstallSessionStatus.FAILED -> {}

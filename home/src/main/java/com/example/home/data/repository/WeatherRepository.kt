@@ -11,10 +11,10 @@ class WeatherRepository @Inject constructor(
     private val weatherApi: WeatherApi
 ) {
 
-    suspend fun getWeather(): CallStatus<WeatherResponse>{
+    suspend fun getWeather(): CallStatus<WeatherResponse> {
         return try {
             val response = weatherApi.getWeatherInLocation()
-            when{
+            when {
                 response.code() == 200 -> CallStatus.Success(response.body())
                 else -> CallStatus.Error()
             }

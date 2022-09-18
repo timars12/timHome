@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jlleitschuh.gradle.ktlint' version '10.3.0'
 }
 
 android {
@@ -45,6 +46,19 @@ android {
     }
 
     dynamicFeatures = [":authDynamic", ":home", ':settings', ':device']
+}
+ktlint {
+    verbose = true
+    android = true
+    outputToConsole = true
+    outputColorName = "RED"
+    ignoreFailures = false
+    enableExperimentalRules = false
+    disabledRules = ["no-wildcard-imports", "max-line-length", "import-ordering"]
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
+    }
 }
 
 dependencies {

@@ -47,5 +47,4 @@ class NetworkModule {
     fun provideApi(retrofit: Retrofit): ArduinoApi {
         return retrofit.create(ArduinoApi::class.java)
     }
-
 }

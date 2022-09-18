@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,8 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -158,7 +155,8 @@ class SignInFragment : Fragment() {
                                     onDone = {
                                         focusManager.clearFocus()
                                         viewModel::onSignInByEmail
-                                    })
+                                    }
+                                )
                             )
 
                             Button(onClick = viewModel::onSignInByEmail) {
@@ -212,7 +210,8 @@ class SignInFragment : Fragment() {
                             installMonitor.status.removeObserver(this)
                         }
                     }
-                })
+                }
+            )
         }
     }
 }

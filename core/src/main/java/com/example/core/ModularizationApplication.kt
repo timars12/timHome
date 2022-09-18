@@ -1,7 +1,6 @@
 package com.example.core
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import androidx.fragment.app.Fragment
 import com.example.core.di.CoreComponent
@@ -10,7 +9,7 @@ import com.github.venom.Venom
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.android.play.core.splitcompat.SplitCompatApplication
 
-class ModularizationApplication: SplitCompatApplication() {
+class ModularizationApplication : SplitCompatApplication() {
 
     private val coreComponent = DaggerCoreComponent.factory().create(this)
 

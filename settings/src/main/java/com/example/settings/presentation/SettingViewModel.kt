@@ -22,11 +22,11 @@ class SettingViewModel @AssistedInject constructor(
         }
     }
 
-    fun onIpAddressEntered(value: String){
+    fun onIpAddressEntered(value: String) {
         savedStateHandle["ipHomeAddress"] = value
     }
 
-    fun onSaveChangClick(){
+    fun onSaveChangClick() {
         viewModelScope.launch {
             repository.setHomeIpAddress(ipAddress.value)
         }

@@ -47,7 +47,6 @@ fun Co2Indicator(modifier: Modifier, co2: Int) {
                 fontSize = 12.sp
             )
         }
-
     }
 }
 

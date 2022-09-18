@@ -2,13 +2,11 @@ package com.example.authdynamic.presentation.signin
 
 import androidx.lifecycle.*
 import com.example.authdynamic.domain.IAuthorizationRepository
-import com.example.core.utils.CallStatus
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 
 class SignInViewModel @AssistedInject constructor(
     private val repository: IAuthorizationRepository,
@@ -59,5 +57,4 @@ class SignInViewModel @AssistedInject constructor(
     interface Factory : ViewModelAssistedFactory<SignInViewModel> {
         override fun create(handle: SavedStateHandle): SignInViewModel
     }
-
 }

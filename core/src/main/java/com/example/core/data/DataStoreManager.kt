@@ -31,8 +31,8 @@ class DataStoreManager @Inject constructor(context: Context) {
         dataStore.data.first()[PreferencesKeys.HOME_IP_ADDRESS]
 
     suspend fun setHomeIpAddress(ipAddress: String) = dataStore.edit { preferences ->
-            preferences[PreferencesKeys.HOME_IP_ADDRESS] = ipAddress
-        }
+        preferences[PreferencesKeys.HOME_IP_ADDRESS] = ipAddress
+    }
 
     suspend fun clearData() {
         dataStore.edit { preferences -> preferences.clear() }

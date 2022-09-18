@@ -9,7 +9,7 @@ import dagger.assisted.AssistedInject
 
 class DeviceListViewModel @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
-    ): ViewModel() {
+) : ViewModel() {
 
     @AssistedFactory
     interface Factory : ViewModelAssistedFactory<DeviceListViewModel> {

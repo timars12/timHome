@@ -88,7 +88,7 @@ class SettingFragment : Fragment() {
                         TextField(
                             modifier = Modifier.padding(top = 48.dp),
                             value = "",
-                            onValueChange = {  },
+                            onValueChange = { },
                             colors = TextFieldDefaults.textFieldColors(
                                 backgroundColor = Color.White,
                                 focusedIndicatorColor = Color.Transparent,
@@ -116,7 +116,8 @@ class SettingFragment : Fragment() {
                                 )
                                 .height(60.dp),
                             shape = remember { RoundedCornerShape(20) },
-                            onClick = viewModel::onSaveChangClick) {
+                            onClick = viewModel::onSaveChangClick
+                        ) {
                             Text(text = stringResource(R.string.save), fontSize = 20.sp)
                         }
                     }
@@ -124,5 +125,4 @@ class SettingFragment : Fragment() {
             }
         }
     }
-
 }

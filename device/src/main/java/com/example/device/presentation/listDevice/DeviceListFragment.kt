@@ -16,7 +16,7 @@ import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
 import com.example.device.di.DaggerDeviceComponent
 import javax.inject.Inject
 
-class DeviceListFragment: Fragment() {
+class DeviceListFragment : Fragment() {
     @Inject
     lateinit var abstractFactory: dagger.Lazy<InjectingSavedStateViewModelFactory>
 
@@ -48,5 +48,4 @@ class DeviceListFragment: Fragment() {
             }
         }
     }
-
 }
