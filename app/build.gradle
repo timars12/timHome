@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'org.jlleitschuh.gradle.ktlint' version '10.3.0'
+    id 'io.gitlab.arturbosch.detekt' version '1.21.0'
 }
 
 android {
@@ -46,6 +47,9 @@ android {
     }
 
     dynamicFeatures = [":authDynamic", ":home", ':settings', ':device']
+}
+detekt {
+    config = files("$rootDir/config/detekt/detekt.yml")
 }
 ktlint {
     verbose = true

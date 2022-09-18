@@ -31,6 +31,8 @@ import com.example.settings.R
 import com.example.settings.di.DaggerSettingComponent
 import javax.inject.Inject
 
+private const val CORNER_SHAPE_TEXT_FIELD = 20
+
 class SettingFragment : Fragment() {
     @Inject
     lateinit var abstractFactory: dagger.Lazy<InjectingSavedStateViewModelFactory>
@@ -76,7 +78,7 @@ class SettingFragment : Fragment() {
                                 disabledIndicatorColor = Color.Transparent,
                             ),
                             keyboardOptions = remember { KeyboardOptions(keyboardType = KeyboardType.Decimal) },
-                            shape = remember { RoundedCornerShape(20) },
+                            shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
                             maxLines = 1,
                             textStyle = LocalTextStyle.current.copy(
                                 textAlign = TextAlign.Center,
@@ -96,7 +98,7 @@ class SettingFragment : Fragment() {
                                 disabledIndicatorColor = Color.Transparent,
                             ),
                             keyboardOptions = remember { KeyboardOptions(keyboardType = KeyboardType.Text) },
-                            shape = remember { RoundedCornerShape(20) },
+                            shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
                             maxLines = 1,
                             textStyle = LocalTextStyle.current.copy(
                                 textAlign = TextAlign.Center,
@@ -115,7 +117,7 @@ class SettingFragment : Fragment() {
                                     end = 64.dp
                                 )
                                 .height(60.dp),
-                            shape = remember { RoundedCornerShape(20) },
+                            shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
                             onClick = viewModel::onSaveChangClick
                         ) {
                             Text(text = stringResource(R.string.save), fontSize = 20.sp)

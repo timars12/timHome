@@ -15,6 +15,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.core.ui.theme.*
+
+private const val INDICATOR_CO2_GOOD_VALUE = 400
+private const val INDICATOR_CO2_MIDDLE_VALUE = 600
+private const val INDICATOR_CO2_LOW_DANGER_VALUE = 600
 
 @Composable
 fun Co2Indicator(modifier: Modifier, co2: Int) {
@@ -43,7 +48,7 @@ fun Co2Indicator(modifier: Modifier, co2: Int) {
             )
             Text(
                 text = "co2",
-                color = Color(0xff9B9B9B),
+                color = TextColorCO2,
                 fontSize = 12.sp
             )
         }
@@ -52,9 +57,9 @@ fun Co2Indicator(modifier: Modifier, co2: Int) {
 
 private fun getColorByCO2(co2: Int): Color {
     return when {
-        co2 <= 400 -> Color(0xff92DB90)
-        co2 <= 600 -> Color(0xffEAE682)
-        co2 <= 800 -> Color(0xffE3AC41)
-        else -> Color(0xffEB736C)
+        co2 <= INDICATOR_CO2_GOOD_VALUE -> IndicatorCO2Good
+        co2 <= INDICATOR_CO2_MIDDLE_VALUE -> IndicatorCO2Middle
+        co2 <= INDICATOR_CO2_LOW_DANGER_VALUE -> IndicatorCO2LowDanger
+        else -> IndicatorCO2Danger
     }
 }

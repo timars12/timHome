@@ -4,6 +4,7 @@ import com.example.core.data.DataStoreManager
 import com.example.core.data.api.ArduinoApi
 import com.example.core.data.api.response.ArduinoResponse
 import com.example.core.utils.CallStatus
+import com.example.core.utils.Constant.CODE_200
 import javax.inject.Inject
 
 class ArduinoRepository @Inject constructor(
@@ -15,10 +16,10 @@ class ArduinoRepository @Inject constructor(
         return try {
             val response = arduinoApi.getCo2AndTemperature("http://${dataStore.getHomeIpAddress()}/")
             when {
-                response.code() == 200 -> CallStatus.Success(response.body())
+                response.code() == CODE_200 -> CallStatus.Success(response.body())
                 else -> CallStatus.Error()
             }
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             CallStatus.Error()
         }
     }

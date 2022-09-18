@@ -10,7 +10,8 @@ import javax.inject.Inject
 
 @Reusable
 class InjectingSavedStateViewModelFactory @Inject constructor(
-    private val assistedFactories: Map<Class<out ViewModel>, @JvmSuppressWildcards ViewModelAssistedFactory<out ViewModel>>
+    private val assistedFactories: Map<Class<out ViewModel>,
+        @JvmSuppressWildcards ViewModelAssistedFactory<out ViewModel>>
 ) {
     fun create(owner: SavedStateRegistryOwner, defaultArgs: Bundle? = null): AbstractSavedStateViewModelFactory {
         return object : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
@@ -25,8 +26,8 @@ class InjectingSavedStateViewModelFactory @Inject constructor(
                 assistedFactories[modelClass]?.let {
                     try {
                         return it.create(handle) as T
-                    } catch (e: Exception) {
-                        throw RuntimeException(e)
+                    } catch (exception: Exception) {
+                        throw RuntimeException(exception)
                     }
                 } ?: throw IllegalArgumentException("Unknown model class $modelClass")
             }

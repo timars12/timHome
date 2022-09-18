@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.core.coreComponent
+import com.example.core.utils.Constant.FRACTION_0_5
 import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
 import com.example.home.custom.Co2Indicator
 import com.example.home.custom.TemperatureBar
@@ -78,11 +79,11 @@ class HomeFragment : Fragment() {
                                 )
                             ) {
                                 TemperatureBar(
-                                    modifier = Modifier.fillMaxSize(.5f),
+                                    modifier = Modifier.fillMaxSize(FRACTION_0_5),
                                     temperatureOutside,
                                     temperatureInside
                                 )
-                                Co2Indicator(modifier = Modifier.fillMaxSize(.5f), co2 = co2)
+                                Co2Indicator(modifier = Modifier.fillMaxSize(FRACTION_0_5), co2 = co2)
                             }
                         }
                     }

@@ -16,6 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.home.R
 
+private const val SIZE_WIDTH_IN_DOOR_TEMPERATURE = 0.6f
+private const val SIZE_HEIGHT_IN_DOOR_TEMPERATURE = 0.7f
+private const val SIZE_WIDTH_OUT_DOOR_TEMPERATURE = 0.2f
+private const val SIZE_HEIGHT_OUT_DOOR_TEMPERATURE = 0.4f
+
 @Composable
 fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperature: Int) {
     val offsetBetweenTriangles = remember { 16.dp }
@@ -44,7 +49,7 @@ fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperatur
         modifier = modifier
     ) {
 
-        val dimension = (size.height.coerceAtMost(size.width)).toInt()
+        val dimension = size.height.coerceAtMost(size.width).toInt()
 
         val outDoorTriangle = Path().let {
             it.moveTo(0f, 0f)
@@ -75,8 +80,8 @@ fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperatur
 
         drawContext.canvas.nativeCanvas.drawText(
             outDoorTemperature.toString(),
-            size.width * .2f,
-            size.height * .4f,
+            size.width * SIZE_WIDTH_OUT_DOOR_TEMPERATURE,
+            size.height * SIZE_HEIGHT_OUT_DOOR_TEMPERATURE,
             paint
         )
 
@@ -92,8 +97,8 @@ fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperatur
         }
         drawContext.canvas.nativeCanvas.drawText(
             inDoorTemperature.toString(),
-            size.width * .6f,
-            size.height * .7f,
+            size.width * SIZE_WIDTH_IN_DOOR_TEMPERATURE,
+            size.height * SIZE_HEIGHT_IN_DOOR_TEMPERATURE,
             paint
         )
     }

@@ -6,6 +6,7 @@ import com.example.authdynamic.data.mapper.User
 import com.example.authdynamic.domain.IAuthorizationRepository
 import com.example.core.data.AppDatabase
 import com.example.core.utils.CallStatus
+import com.example.core.utils.Constant.CODE_200
 import javax.inject.Inject
 
 class AuthorizationRepositoryImpl @Inject constructor(
@@ -17,7 +18,7 @@ class AuthorizationRepositoryImpl @Inject constructor(
         val body = UserLoginRequest(email, password)
         try {
             val response = apiService.loginByEmail(body)
-            if (response.code() == 200) {
+            if (response.code() == CODE_200) {
                 response.body()?.user?.convertToUserEntity()
                     .also {
                         database.userDao().saveUserToDB(it!!)
