@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -23,6 +24,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.dynamicfeatures.DynamicExtras
 import androidx.navigation.dynamicfeatures.DynamicInstallMonitor
 import androidx.navigation.fragment.findNavController
+import com.example.authdynamic.R
 import com.example.authdynamic.di.DaggerAuthenticationComponent
 import com.example.authdynamic.presentation.signin.composable.EmailTextField
 import com.example.authdynamic.presentation.signin.composable.PasswordTextField
@@ -103,7 +105,7 @@ class SignInFragment : Fragment() {
                                 onClickDone = viewModel::onSignInByEmail
                             )
                             Button(onClick = viewModel::onSignInByEmail) {
-                                Text("Sign In")
+                                Text(stringResource(id = R.string.sign_in))
                             }
                         }
                         SnackbarMessage(
