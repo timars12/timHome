@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                         value = destination.id
                     }
                 }
-                if (destinationId != R.id.signInFragment) {
+                if (destinationId != R.id.signInFragment) { // check if token exist if not hide bar
                     BottomNavigationBar {
                         // TODO add navigationSafe
                         navController.navigate(it)

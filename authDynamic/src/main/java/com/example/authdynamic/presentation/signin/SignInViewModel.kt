@@ -17,14 +17,14 @@ class SignInViewModel @AssistedInject constructor(
     private var emailValue: String? = savedStateHandle.get<String>("email")
         set(value) {
             field = value
-            savedStateHandle.set("email", value)
+            savedStateHandle["email"] = value
             _email.value = value ?: ""
         }
 
     private var passwordValue: String? = savedStateHandle.get<String>("password")
         set(value) {
             field = value
-            savedStateHandle.set("password", value)
+            savedStateHandle["password"] = value
             _password.value = value ?: ""
         }
 
