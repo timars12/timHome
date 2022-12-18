@@ -9,6 +9,7 @@ android {
 
     signingConfigs {
         release {
+            storeFile file('/Users/ruslan/Downloads/adminTimApp.jks')
 //            storeFile file('C:\\Users\\user\\Desktop\\AndroidTim\\adminTimApp.jks')
             storePassword ''
             keyPassword ''
@@ -26,13 +27,18 @@ android {
         versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.release
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        benchmark {
+            initWith buildTypes.release
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
         }
     }
 

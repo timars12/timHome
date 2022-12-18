@@ -23,4 +23,10 @@
         android:id="@+id/settingFragment"
         android:name="com.example.settings.presentation.SettingFragment"
         />
+
+    <fragment
+        app:moduleName="device"
+        android:id="@+id/deviceListFragment"
+        android:name="com.example.device.presentation.listDevice.DeviceListFragment"
+        />
 </navigation>
