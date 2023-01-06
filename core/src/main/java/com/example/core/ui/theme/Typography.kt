@@ -52,7 +52,7 @@ val Typography = Typography(
 //    )
 )
 
-//val Typography.caption2: TextStyle
+// val Typography.caption2: TextStyle
 //    get() = TextStyle(
 //        fontFamily = ptSansFontFamily,
 //        fontSize = FONT_12.sp,

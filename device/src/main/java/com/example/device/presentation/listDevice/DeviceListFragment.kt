@@ -102,7 +102,7 @@ class DeviceListFragment : Fragment() {
                                     ) {
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween
+                                            horizontalArrangement = Arrangement.SpaceBetween
                                         ) {
                                             Text(
                                                 modifier = Modifier

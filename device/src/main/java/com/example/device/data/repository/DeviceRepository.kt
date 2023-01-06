@@ -6,11 +6,11 @@ import javax.inject.Inject
 
 interface IDeviceRepository
 
-class DeviceRepository @Inject constructor(): IDeviceRepository {
+class DeviceRepository @Inject constructor() : IDeviceRepository {
 
     suspend fun getAllProjects(): List<DeviceModel> = generateItems()
 
-    private fun generateItems(): List<DeviceModel>{
+    private fun generateItems(): List<DeviceModel> {
         val list = mutableListOf<DeviceModel>()
         val item1 = DeviceModel(
             id = 0,

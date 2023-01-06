@@ -53,7 +53,7 @@ class DeviceDetailFragment : Fragment() {
         DaggerDeviceComponent.factory().create(this.coreComponent()).inject(this)
     }
 
-    @Suppress("UnnecessaryParentheses") //TODO
+    @Suppress("UnnecessaryParentheses") // TODO
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

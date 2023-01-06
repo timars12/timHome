@@ -130,7 +130,6 @@ private fun RatingViewImpl(
                         animatableRating.snapTo(newRating)
                         onRatingChange?.invoke(animatableRating.value)
                     }
-
                 }
             }
             .pointerInput(Unit) {

@@ -23,7 +23,7 @@ fun ExpandableText(modifier: Modifier = Modifier, text: String) {
             isExpanded -> finalText = text
             textLayoutResult.hasVisualOverflow -> {
                 val lastCharIndex = textLayoutResult.getLineEnd(2 - 1)
-                val showMoreString = "... Show More" //TODO add to res and add span text
+                val showMoreString = "... Show More" // TODO add to res and add span text
                 val adjustedText = text
                     .substring(startIndex = 0, endIndex = lastCharIndex)
                     .dropLast(showMoreString.length)
