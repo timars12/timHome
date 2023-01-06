@@ -34,7 +34,7 @@ import com.example.core.coreComponent
 import com.example.core.ui.ExpandableText
 import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
-import com.example.device.data.repository.DeviceModel
+import com.example.device.data.models.DeviceModel
 import com.example.device.di.DaggerDeviceComponent
 import com.example.device.presentation.listDevice.composables.FavoriteWithRating
 import javax.inject.Inject

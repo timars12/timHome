@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
-import com.example.device.data.repository.DeviceModel
+import com.example.device.data.models.DeviceModel
 import com.example.device.data.repository.DeviceRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
