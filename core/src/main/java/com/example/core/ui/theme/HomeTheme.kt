@@ -10,5 +10,5 @@ private val Colors = lightColors(
 
 @Composable
 fun HomeTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colors = Colors, content = content)
+    MaterialTheme(colors = Colors, typography = Typography, content = content)
 }

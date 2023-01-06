@@ -16,7 +16,7 @@ class DeviceRepository @Inject constructor(): IDeviceRepository {
             id = 0,
             image = "https://cdn.lifehacker.ru/wp-content/uploads/2020/09/CHto-takoe-Arduino-i-pochemu-vam-nado-ego-kupit_1600809645.jpg",
             title = "Arduino main home module",
-            totalPrice = 18.81f,
+            totalPrice = "18.81$",
             description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
             dateCreated = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
             isFavorite = true,
@@ -26,7 +26,7 @@ class DeviceRepository @Inject constructor(): IDeviceRepository {
             id = 1,
             image = "https://knowhow.distrelec.com/wp-content/uploads/2021/06/iStock-1169550547-1-1920x800.jpg",
             title = "Arduino measure module",
-            totalPrice = 10.21f,
+            totalPrice = "10.21$",
             description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
             dateCreated = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
             isFavorite = false,
@@ -36,7 +36,7 @@ class DeviceRepository @Inject constructor(): IDeviceRepository {
             id = 2,
             image = "https://content1.rozetka.com.ua/goods/images/big/300749078.png",
             title = "Arduino test module",
-            totalPrice = 9.81f,
+            totalPrice = "9.81$",
             description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
             dateCreated = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
         )
@@ -53,7 +53,7 @@ data class DeviceModel(
     val image: String? = null,
     val title: String,
     val description: String? = null,
-    val totalPrice: Float,
+    val totalPrice: String,
     val rating: Float = 0f,
     val isFavorite: Boolean = false,
     val dateCreated: String
