@@ -1,6 +1,10 @@
 package com.example.device.data.repository
 
+import com.example.core.data.AppDatabase
+import com.example.core.data.db.entity.DeviceEntity
 import com.example.device.data.models.DeviceModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -8,10 +12,39 @@ import javax.inject.Inject
 
 interface IDeviceRepository
 
-class DeviceRepository @Inject constructor() : IDeviceRepository {
+class DeviceRepository @Inject constructor(private val database: AppDatabase) : IDeviceRepository {
 
-    suspend fun getAllProjects(): List<DeviceModel> = generateItems()
+    suspend fun getAllProjects(): Flow<List<DeviceModel>> {
+        saveDevicesToDB(generateItems())
+        return flow {
+            database.deviceDao().getAllDevices().collect { entityList ->
+                emit(entityList.map { convertEntityToModel(it) })
+            }
+        }
+    }
 
+    private suspend fun saveDevicesToDB(list: List<DeviceModel>) {
+        list.map { model ->
+            model.convertToEntityModel().also { entity ->
+                database.deviceDao().saveDeviceToDB(entity)
+            }
+        }
+    }
+
+    private fun convertEntityToModel(entity: DeviceEntity): DeviceModel {
+        return DeviceModel(
+            id = entity.id,
+            image = entity.image,
+            title = entity.title,
+            description = entity.description,
+            totalPrice = entity.totalPrice,
+            rating = entity.rating,
+            isFavorite = entity.isFavorite,
+            dateCreated = entity.dateCreated
+        )
+    }
+
+    //todo just for test it is butter to use flow then this
     private suspend fun generateItems(): List<DeviceModel> {
         return suspendCancellableCoroutine { continuation ->
             val list = mutableListOf<DeviceModel>()

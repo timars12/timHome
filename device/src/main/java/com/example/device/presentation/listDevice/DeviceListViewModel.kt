@@ -3,6 +3,7 @@ package com.example.device.presentation.listDevice
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.core.data.db.entity.DeviceEntity
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
 import com.example.device.data.models.DeviceModel
 import com.example.device.data.repository.DeviceRepository
@@ -11,6 +12,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -22,8 +24,9 @@ class DeviceListViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val list = repository.getAllProjects()
-            deviceList.update { list }
+            repository.getAllProjects().collect{ list ->
+                deviceList.update { list }
+            }
         }
     }
     @AssistedFactory
