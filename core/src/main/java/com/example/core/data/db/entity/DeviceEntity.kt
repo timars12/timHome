@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "devices")
-data class DeviceEntity (
+data class DeviceEntity(
     @PrimaryKey
     val id: Int,
     val image: String?,
