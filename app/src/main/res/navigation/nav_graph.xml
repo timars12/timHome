@@ -24,9 +24,10 @@
         android:name="com.example.settings.presentation.SettingFragment"
         />
 
-    <fragment
+    <include-dynamic
+        android:id="@+id/nav_device"
         app:moduleName="device"
-        android:id="@+id/deviceListFragment"
-        android:name="com.example.device.presentation.listDevice.DeviceListFragment"
-        />
+        app:graphResName="nav_devices"
+        app:graphPackage="${applicationId}.device" />
+
 </navigation>

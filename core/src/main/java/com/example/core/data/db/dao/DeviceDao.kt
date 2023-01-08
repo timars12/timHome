@@ -14,4 +14,7 @@ interface DeviceDao {
 
     @Query("select * from devices")
     fun getAllDevices(): Flow<List<DeviceEntity>>
+
+    @Query("select * from devices where id = :deviceId LIMIT 1")
+    suspend fun getSelectedDeviceById(deviceId: Int): DeviceEntity?
 }

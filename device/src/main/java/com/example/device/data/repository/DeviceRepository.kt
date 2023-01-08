@@ -25,6 +25,12 @@ class DeviceRepository @Inject constructor(
         }
     }
 
+    override suspend fun getSelectedDeviceById(deviceId: Int): DeviceModel? {
+        return database.deviceDao().getSelectedDeviceById(deviceId)?.let {
+            mapper.get().convertEntityToModel(it)
+        }
+    }
+
     private suspend fun saveDevicesToDB(list: List<DeviceModel>) {
         list.map { model ->
             mapper.get().convertToEntityModel(model).also { entity ->

@@ -5,4 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface IDeviceRepository {
     suspend fun getAllDevices(): Flow<List<DeviceModel>>
+
+    suspend fun getSelectedDeviceById(deviceId: Int): DeviceModel?
 }

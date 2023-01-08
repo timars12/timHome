@@ -24,20 +24,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.findNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.core.coreComponent
 import com.example.core.ui.ExpandableText
 import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
+import com.example.device.R
 import com.example.device.di.DaggerDeviceComponent
 import com.example.device.domain.models.DeviceModel
 import com.example.device.presentation.listDevice.composables.FavoriteWithRating
 import javax.inject.Inject
+
+const val SELECTED_DEVICE_ID = "selectedDeviceId"
 
 class DeviceListFragment : Fragment() {
     @Inject
@@ -69,7 +74,6 @@ class DeviceListFragment : Fragment() {
                 HomeTheme {
                     val deviceList by viewModel.deviceList.collectAsStateWithLifecycle()
                     Box(modifier = Modifier.fillMaxSize()) {
-
                         LazyColumn(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -83,7 +87,8 @@ class DeviceListFragment : Fragment() {
                                             color = Color.White,
                                             shape = RoundedCornerShape(10)
                                         )
-                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .clickable { navigateToDetailScreen(item) },
                                     verticalAlignment = CenterVertically
                                 ) {
                                     Image(
@@ -151,5 +156,12 @@ class DeviceListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun ComposeView.navigateToDetailScreen(item: DeviceModel) {
+        findNavController().navigate(
+            R.id.deviceDetailFragment,
+            bundleOf(SELECTED_DEVICE_ID to item.id)
+        )
     }
 }
