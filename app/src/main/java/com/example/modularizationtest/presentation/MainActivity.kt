@@ -2,30 +2,51 @@ package com.example.modularizationtest.presentation
 
 import android.content.Context
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.core.coreComponent
+import com.example.core.utils.NavigationDispatcher
 import com.example.modularizationtest.R
+import com.example.modularizationtest.di.DaggerAppComponent
 import com.example.modularizationtest.presentation.composables.BottomNavigationBar
 import com.google.android.play.core.splitcompat.SplitCompat
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
+    @Inject
+    lateinit var navigationDispatcher: NavigationDispatcher
+
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
         SplitCompat.installActivity(this)
+        DaggerAppComponent.factory().create(this.coreComponent()).inject(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState == null) initNavigation()
+        if (savedInstanceState == null) {
+            initNavigation()
+            lifecycleScope.launchWhenResumed { observeNavigationCommands() }
+            onBackPressedDispatcher.addCallback(
+                this /* lifecycle owner */,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if (!navController.popBackStack()) finish()
+                    }
+                }
+            )
+        }
         findViewById<ComposeView>(R.id.compose_view).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -37,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                 if (destinationId != R.id.signInFragment) { // TODO check if token exist if not hide bar
                     BottomNavigationBar {
                         // TODO add navigationSafe
-                        navController.navigate(it)
+                        navigationDispatcher.emit { nav -> nav.navigate(it) }
                     }
                 }
             }
@@ -51,6 +72,14 @@ class MainActivity : AppCompatActivity() {
             navHost.navController.graph = navGraph
             navController = navHost.navController
         }
+    }
+
+    private suspend fun observeNavigationCommands() {
+        for (command in navigationDispatcher.navigationEmitter) command.invoke(navController)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp()
     }
 
 //    private fun navigateWhenDownloadModule() {
