@@ -65,6 +65,8 @@ fun RatingView(
     )
 }
 
+private const val DURATION_RATING = 300
+
 @Composable
 private fun RatingViewImpl(
     modifier: Modifier = Modifier,
@@ -104,7 +106,7 @@ private fun RatingViewImpl(
             if (animationEnabled) {
                 animatableRating.animateTo(
                     targetValue = coerced,
-                    animationSpec = tween(300, easing = LinearEasing)
+                    animationSpec = tween(DURATION_RATING, easing = LinearEasing)
 
                 )
             } else {
@@ -212,7 +214,7 @@ private fun DrawScope.drawRatingImages(
         )
 
         for (i in 0 until itemCount) {
-            translate(left = (imageHeight * i + space * i), top = 0f) {
+            translate(left = imageHeight * i + space * i, top = 0f) {
                 drawImage(
                     image = imageEmpty,
                     dstSize = IntSize(size.width.toInt(), imageHeight.toInt()),

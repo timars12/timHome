@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
-val Context.getDataStore: DataStore<Preferences> by preferencesDataStore(name = "prePayDataStore")
+val Context.getDataStore: DataStore<Preferences> by preferencesDataStore(name = "timDataStore")
 
 @Singleton
 class DataStoreManager @Inject constructor(context: Context) {

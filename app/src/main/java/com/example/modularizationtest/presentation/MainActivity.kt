@@ -35,8 +35,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initNavigation()
         if (savedInstanceState == null) {
-            initNavigation()
             lifecycleScope.launchWhenResumed { observeNavigationCommands() }
             onBackPressedDispatcher.addCallback(
                 this /* lifecycle owner */,
@@ -75,7 +75,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun observeNavigationCommands() {
-        for (command in navigationDispatcher.navigationEmitter) command.invoke(navController)
+        for (command in navigationDispatcher.navigationEmitter) {
+            command.invoke(navController)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

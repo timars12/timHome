@@ -8,6 +8,7 @@ data class DeviceEntity(
     @PrimaryKey
     val id: Int,
     val image: String?,
+    val ownerName: String,
     val title: String,
     val description: String?,
     val totalPrice: String,

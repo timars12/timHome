@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.example.core.R
 import com.example.core.ui.RatingView
 
+private const val DIVIDER_FOR_RATING = 10f
+
 @Composable
 fun FavoriteWithRating(modifier: Modifier = Modifier, isFavorite: Boolean, rating: Float) {
     Row(
@@ -55,7 +57,7 @@ fun FavoriteWithRating(modifier: Modifier = Modifier, isFavorite: Boolean, ratin
             )
         }
         RatingView(
-            rating = rating / 10f,
+            rating = rating / DIVIDER_FOR_RATING,
             space = 2.dp,
             imageEmpty = ImageBitmap.imageResource(id = R.mipmap.ic_star),
             imageFilled = ImageBitmap.imageResource(id = R.mipmap.ic_star_filled),
