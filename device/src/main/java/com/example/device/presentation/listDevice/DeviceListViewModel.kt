@@ -12,6 +12,7 @@ import com.example.device.domain.models.DeviceModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,7 +23,7 @@ class DeviceListViewModel @AssistedInject constructor(
     private val navigationDispatcher: NavigationDispatcher,
     private val repository: DeviceRepository,
 ) : ViewModel() {
-    val deviceList = MutableStateFlow(listOf<DeviceModel>())
+    val deviceList = MutableStateFlow(listOf<DeviceModel>().toImmutableList())
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

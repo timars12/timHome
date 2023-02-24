@@ -8,6 +8,8 @@ import com.example.device.data.model.Device
 import com.example.device.data.model.ModuleModel
 import com.example.device.domain.IDeviceRepository
 import com.example.device.domain.models.DeviceModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -19,11 +21,11 @@ class DeviceRepository @Inject constructor(
 ) : IDeviceRepository {
 
     @Suppress("SuspendFunWithFlowReturnType")
-    override suspend fun getAllDevices(): Flow<List<DeviceModel>> {
+    override suspend fun getAllDevices(): Flow<ImmutableList<DeviceModel>> {
         saveDevicesToDB(mock.generateItems())
         return flow {
             database.deviceDao().getAllDevices().collect { entityList ->
-                emit(entityList.map { mapper.convertEntityToModel(it) })
+                emit(entityList.map { mapper.convertEntityToModel(it) }.toImmutableList())
             }
         }
     }
