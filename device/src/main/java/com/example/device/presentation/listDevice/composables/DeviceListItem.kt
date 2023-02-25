@@ -21,13 +21,14 @@ import com.example.core.ui.ExpandableText
 import com.example.core.ui.theme.DataCreatedItemColor
 import com.example.core.ui.theme.PriceColor
 import com.example.core.ui.theme.cornerRoundedShapes
+import com.example.core.utils.OnClick
 import com.example.device.domain.models.DeviceModel
 
 private const val WEIGHT_IMAGE_DEVICE_LIST = 2f
 private const val WEIGHT_CONTENT_DEVICE_LIST = 8f
 
 @Composable
-fun DeviceListItem(item: DeviceModel, navigateToDetailScreen: () -> Unit) {
+fun DeviceListItem(item: DeviceModel, navigateToDetailScreen: OnClick) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
