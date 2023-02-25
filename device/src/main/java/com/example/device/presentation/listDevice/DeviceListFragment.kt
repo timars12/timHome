@@ -5,17 +5,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.core.coreComponent
+import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
 import com.example.device.di.DaggerDeviceComponent
+import com.example.device.domain.models.DeviceModel
+import com.example.device.presentation.listDevice.composables.DeviceListItem
 import javax.inject.Inject
+
+const val SELECTED_DEVICE_ID = "selectedDeviceId"
 
 class DeviceListFragment : Fragment() {
     @Inject
@@ -35,6 +47,7 @@ class DeviceListFragment : Fragment() {
         DaggerDeviceComponent.factory().create(this.coreComponent()).inject(this)
     }
 
+    @OptIn(ExperimentalLifecycleComposeApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,8 +56,21 @@ class DeviceListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MaterialTheme {
-                    Text(text = viewModel::class.java.simpleName)
+                HomeTheme {
+                    val deviceList by viewModel.deviceList.collectAsStateWithLifecycle()
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        items(items = deviceList, key = DeviceModel::id) { item ->
+                            DeviceListItem(
+                                item = item,
+                                navigateToDetailScreen = { viewModel.navigateToDetailScreen(item) }
+                            )
+                        }
+                    }
                 }
             }
         }

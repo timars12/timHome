@@ -30,6 +30,7 @@ import com.example.authdynamic.presentation.signin.composable.EmailTextField
 import com.example.authdynamic.presentation.signin.composable.PasswordTextField
 import com.example.core.coreComponent
 import com.example.core.ui.SnackbarMessage
+import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
 import com.google.android.play.core.splitinstall.SplitInstallSessionState
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
@@ -63,7 +64,7 @@ class SignInFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MaterialTheme {
+                HomeTheme {
 
                     val lifecycleOwner = LocalLifecycleOwner.current
                     val focusManager = LocalFocusManager.current

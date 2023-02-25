@@ -54,8 +54,8 @@ dependencies {
     api 'androidx.core:core-ktx:1.9.0'
     api 'androidx.appcompat:appcompat:1.5.1'
 
-    api "androidx.activity:activity-ktx:1.5.1"
-    api "androidx.fragment:fragment-ktx:1.5.2"
+    api "androidx.activity:activity-ktx:1.6.1"
+    api "androidx.fragment:fragment-ktx:1.5.5"
 
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewmodel_version"
@@ -90,19 +90,24 @@ dependencies {
     // Material Design
     api "androidx.compose.material:material:$compose_version"
     // Integration with activities
-    api 'androidx.activity:activity-compose:1.5.1'
+    api 'androidx.activity:activity-compose:1.6.1'
     // Integration with ViewModels
     api 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
     // Integration with observables
     api "androidx.compose.runtime:runtime-livedata:$compose_version"
+    api 'io.coil-kt:coil-compose:2.2.0'
+
+    api "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
 
     api "com.google.accompanist:accompanist-insets:$accompanist_version"
     api "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     api "com.google.accompanist:accompanist-permissions:$accompanist_version"
 
     api "androidx.datastore:datastore-preferences:$datastore_version"
+    
+    api "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5"
 
     //for testing process death
     debugImplementation "com.github.YarikSOffice.Venom:venom:0.5.0"
-    releaseImplementation "com.github.YarikSOffice.Venom:venom-no-op:0.3.1"
+    releaseImplementation "com.github.YarikSOffice.Venom:venom-no-op:0.5.0"
 }

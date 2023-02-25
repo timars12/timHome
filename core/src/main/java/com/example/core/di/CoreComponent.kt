@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.core.data.AppDatabase
 import com.example.core.data.DataStoreManager
 import com.example.core.data.api.ArduinoApi
+import com.example.core.utils.NavigationDispatcher
 import dagger.BindsInstance
 import dagger.Component
 import okhttp3.OkHttpClient
@@ -18,6 +19,7 @@ interface CoreComponent {
     val appDatabase: AppDatabase
     val dataStore: DataStoreManager
     val arduinoApi: ArduinoApi
+    val navigationDispatcher: NavigationDispatcher
 
     @Component.Factory
     interface Factory {

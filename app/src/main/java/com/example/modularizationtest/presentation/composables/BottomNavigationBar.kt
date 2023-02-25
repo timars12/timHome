@@ -34,7 +34,7 @@ fun BottomNavigationBar(navigateTo: OnNavigateClick) {
                 icon = R.drawable.ic_home_bottom_menu
             ),
             BottomNavigationMenuItem(
-                destinationId = R.id.deviceListFragment,
+                destinationId = R.id.nav_device,
                 label = R.string.device,
                 icon = R.drawable.ic_device_bottom_menu
             ),
