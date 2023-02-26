@@ -57,7 +57,9 @@ class DeviceDetailFragment : Fragment() {
 
                     if (device == null) return@HomeTheme
                     LazyColumnWithParallax(
-                        modifier = Modifier.fillMaxSize().background(color = DeviceDetailForegroundColor),
+                        modifier = Modifier
+                            .background(color = DeviceDetailForegroundColor)
+                            .fillMaxSize(),
                         device = device!!,
                         modules = modules,
                         viewModel::goBack

@@ -17,8 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.core.ui.theme.DeviceDetailBackgroundColor
 import com.example.core.ui.theme.DeviceDetailForegroundColor
+import com.example.core.ui.theme.PrimaryColor
 import com.example.core.utils.OnClick
 import com.example.device.R
 import com.example.device.data.model.ModuleModel
@@ -98,7 +98,7 @@ fun LazyColumnWithParallax(
 
 @Composable
 fun HatOfList(modifier: Modifier) {
-    Box(modifier = modifier.background(color = DeviceDetailBackgroundColor)) {
+    Box(modifier = modifier.background(PrimaryColor)) {
         Box(
             modifier = modifier
                 .background(
