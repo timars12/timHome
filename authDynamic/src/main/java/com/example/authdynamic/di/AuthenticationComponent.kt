@@ -4,6 +4,7 @@ import com.example.authdynamic.presentation.signin.SignInFragment
 import com.example.authdynamic.presentation.signin.di.SignInModule
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
+import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
 import dagger.Component
 
 @FeatureScope
@@ -15,4 +16,5 @@ internal interface AuthenticationComponent {
     }
 
     fun inject(fragment: SignInFragment)
+    fun getViewModel() : InjectingSavedStateViewModelFactory
 }
