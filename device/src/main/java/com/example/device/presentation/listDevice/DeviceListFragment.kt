@@ -60,9 +60,9 @@ class DeviceListFragment : Fragment() {
                     val deviceList by viewModel.deviceList.collectAsStateWithLifecycle()
 
                     LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(16.dp)
+                        contentPadding = PaddingValues(bottom = 90.dp)
                     ) {
                         items(items = deviceList, key = DeviceModel::id) { item ->
                             DeviceListItem(
