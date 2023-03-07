@@ -13,11 +13,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class DeviceDetailViewMode @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val navigationDispatcher: NavigationDispatcher,
