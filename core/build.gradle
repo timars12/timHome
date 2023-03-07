@@ -23,6 +23,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
     kotlinOptions {
         freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
@@ -32,6 +37,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion kotlin_compiler_extension_version
     }
+    namespace 'com.example.core'
 }
 detekt {
     config = files("$rootDir/config/detekt/detekt.yml")
