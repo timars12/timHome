@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.core.coreComponent
 import com.example.core.ui.theme.DeviceDetailForegroundColor
@@ -32,8 +31,8 @@ class DeviceDetailFragment : Fragment() {
      * This method androidx uses for `by viewModels` method.
      * We can set out injecting factory here and therefore don't touch it again later
      */
-    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory =
-        abstractFactory.get().create(this, arguments)
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() = abstractFactory.get().create(this, arguments)
 
     private val viewModel: DeviceDetailViewMode by viewModels()
 
@@ -42,7 +41,6 @@ class DeviceDetailFragment : Fragment() {
         DaggerDeviceComponent.factory().create(this.coreComponent()).inject(this)
     }
 
-    @OptIn(ExperimentalLifecycleComposeApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

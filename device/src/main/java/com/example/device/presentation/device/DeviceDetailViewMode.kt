@@ -27,8 +27,9 @@ class DeviceDetailViewMode @AssistedInject constructor(
     val module = MutableStateFlow<List<ModuleModel>>(listOf())
 
     init {
-        savedStateHandle.get<Int>(SELECTED_DEVICE_ID)?.let {
-            getSelectedDeviceById(it)
+        val deviceId = savedStateHandle.get<Int>(SELECTED_DEVICE_ID)
+        if (deviceId != null) {
+            getSelectedDeviceById(deviceId)
         }
     }
 
