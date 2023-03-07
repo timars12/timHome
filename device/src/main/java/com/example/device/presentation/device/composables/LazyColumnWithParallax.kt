@@ -13,12 +13,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.core.ui.theme.DeviceDetailBackgroundColor
 import com.example.core.ui.theme.DeviceDetailForegroundColor
+import com.example.core.ui.theme.PrimaryColor
 import com.example.core.utils.OnClick
 import com.example.device.R
 import com.example.device.data.model.ModuleModel
@@ -37,21 +38,26 @@ fun LazyColumnWithParallax(
     val isShowTextOnToolbar = remember { mutableStateOf(false) }
     val calculateOpacity = remember {
         derivedStateOf {
-            val calculateOpacity =
-                scrollState.firstVisibleItemScrollOffset.toFloat() / scrollState.layoutInfo.viewportEndOffset * 1.56f
-            val value = if (scrollState.firstVisibleItemIndex == 0) min(
-                1f,
-                calculateOpacity
-            ) else 1f
-            isShowTextOnToolbar.value = value >= 0.96f
-            value
+            val calculateOpacity = when {
+                scrollState.firstVisibleItemScrollOffset == 0 -> 0f
+                scrollState.layoutInfo.visibleItemsInfo.isNotEmpty() && scrollState.firstVisibleItemIndex == 0 -> {
+                    val imageSize = scrollState.layoutInfo.visibleItemsInfo[0].size
+                    val scrollOffset = scrollState.firstVisibleItemScrollOffset + 200
+                    scrollOffset / imageSize.toFloat()
+                }
+                else -> 1f
+            }
+
+            isShowTextOnToolbar.value = calculateOpacity >= 0.96f
+            calculateOpacity
         }
     }
+    val density = LocalDensity.current.density
     val calculateTextSize = remember {
         derivedStateOf {
             val calculateTextSize =
-                scrollState.firstVisibleItemScrollOffset.toFloat() / scrollState.layoutInfo.viewportEndOffset * 0.8f
-            max(22f, min(48f, 48f * (1 - calculateTextSize))).sp
+                scrollState.firstVisibleItemScrollOffset.toFloat() * 0.07f / density
+            max(22f, min(48f, 48f - calculateTextSize)).sp
         }
     }
     val modifierItem = Modifier
@@ -61,8 +67,9 @@ fun LazyColumnWithParallax(
 
     Box(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             state = scrollState,
+            contentPadding = PaddingValues(bottom = 90.dp),
         ) {
             item {
                 DeviceDetailHeader(
@@ -98,7 +105,7 @@ fun LazyColumnWithParallax(
 
 @Composable
 fun HatOfList(modifier: Modifier) {
-    Box(modifier = modifier.background(color = DeviceDetailBackgroundColor)) {
+    Box(modifier = modifier.background(PrimaryColor)) {
         Box(
             modifier = modifier
                 .background(

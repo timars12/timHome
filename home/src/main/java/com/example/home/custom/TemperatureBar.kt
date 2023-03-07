@@ -51,20 +51,18 @@ fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperatur
 
         val dimension = size.height.coerceAtMost(size.width).toInt()
 
-        val outDoorTriangle = Path().let {
-            it.moveTo(0f, 0f)
-            it.lineTo(this.size.width - offsetBetweenTriangles.value, 0f)
-            it.lineTo(0f, size.height - offsetBetweenTriangles.value)
-            it.close()
-            it
+        val outDoorTriangle = Path().apply {
+            moveTo(0f, 0f)
+            lineTo(size.width - offsetBetweenTriangles.value, 0f)
+            lineTo(0f, size.height - offsetBetweenTriangles.value)
+            close()
         }
 
-        val inDoorTriangle = Path().let {
-            it.moveTo(this.size.width, 0f + offsetBetweenTriangles.value)
-            it.lineTo(this.size.width, size.height)
-            it.lineTo(0f + offsetBetweenTriangles.value, size.height)
-            it.close()
-            it
+        val inDoorTriangle = Path().apply {
+            moveTo(size.width, 0f + offsetBetweenTriangles.value)
+            lineTo(size.width, size.height)
+            lineTo(0f + offsetBetweenTriangles.value, size.height)
+            close()
         }
 
         drawPath(

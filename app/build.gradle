@@ -43,6 +43,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
     kotlinOptions {
         freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
@@ -54,6 +59,7 @@ android {
     }
 
     dynamicFeatures = [":authDynamic", ":home", ':settings', ':device']
+    namespace 'com.example.modularizationtest'
 }
 detekt {
     config = files("$rootDir/config/detekt/detekt.yml")

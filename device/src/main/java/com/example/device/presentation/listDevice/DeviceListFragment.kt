@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.core.coreComponent
 import com.example.core.ui.theme.HomeTheme
@@ -37,8 +35,8 @@ class DeviceListFragment : Fragment() {
      * This method androidx uses for `by viewModels` method.
      * We can set out injecting factory here and therefore don't touch it again later
      */
-    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory =
-        abstractFactory.get().create(this, arguments)
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() = abstractFactory.get().create(this, arguments)
 
     private val viewModel: DeviceListViewModel by viewModels()
 
@@ -47,7 +45,6 @@ class DeviceListFragment : Fragment() {
         DaggerDeviceComponent.factory().create(this.coreComponent()).inject(this)
     }
 
-    @OptIn(ExperimentalLifecycleComposeApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,9 +57,9 @@ class DeviceListFragment : Fragment() {
                     val deviceList by viewModel.deviceList.collectAsStateWithLifecycle()
 
                     LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(16.dp)
+                        contentPadding = PaddingValues(bottom = 90.dp)
                     ) {
                         items(items = deviceList, key = DeviceModel::id) { item ->
                             DeviceListItem(

@@ -41,8 +41,8 @@ class SettingFragment : Fragment() {
      * This method androidx uses for `by viewModels` method.
      * We can set out injecting factory here and therefore don't touch it again later
      */
-    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory =
-        abstractFactory.get().create(this, arguments)
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() = abstractFactory.get().create(this, arguments)
 
     private val viewModel: SettingViewModel by viewModels()
 
