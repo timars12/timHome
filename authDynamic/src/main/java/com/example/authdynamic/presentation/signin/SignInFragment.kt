@@ -134,8 +134,8 @@ class SignInFragment : Fragment() {
             installMonitor.status.observe(
                 viewLifecycleOwner,
                 object : Observer<SplitInstallSessionState> {
-                    override fun onChanged(sessionState: SplitInstallSessionState) {
-                        when (sessionState.status()) {
+                    override fun onChanged(value: SplitInstallSessionState) {
+                        when (value.status()) {
                             SplitInstallSessionStatus.INSTALLED -> {
                                 findNavController().navigate(com.example.modularizationtest.R.id.home_navigation)
                             }
@@ -144,7 +144,7 @@ class SignInFragment : Fragment() {
                             }
                             // Handle all remaining states:
                             SplitInstallSessionStatus.FAILED -> {
-                                Log.e("0707", sessionState.errorCode().toString())
+                                Log.e("0707", value.errorCode().toString())
                             }
                             SplitInstallSessionStatus.CANCELED -> {
                             }
@@ -152,7 +152,7 @@ class SignInFragment : Fragment() {
                             }
                         }
 
-                        if (sessionState.hasTerminalStatus()) {
+                        if (value.hasTerminalStatus()) {
                             installMonitor.status.removeObserver(this)
                         }
                     }

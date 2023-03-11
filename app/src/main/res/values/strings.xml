@@ -8,4 +8,12 @@
     <string name="setting">Setting</string>
     <string name="title_settings">Setting</string>
     <string name="title_device">Device</string>
+    <string name="notification_channel_id">TimHomeNotificationChannel</string>
+    <string name="notification_channel_name">TimHomeNotificationChannelName</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="explain_why_we_should_enable_notification">Enabling notifications in an app can provide real-time updates, improve user engagement and provide personalization. It\'s important to use notifications appropriately to avoid annoying the user.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="dangerous_levels_of_co2">Dangerous levels of CO2</string>
+    <string name="value_levels_of_co2">CO2 = %1$d ppm.</string>
+    <string name="notification_message_levels_of_co2">Please open a window for ventilation as there is a dangerous level of CO2 in the air, with a concentration of CO2 = %1$d ppm.</string>
 </resources>
