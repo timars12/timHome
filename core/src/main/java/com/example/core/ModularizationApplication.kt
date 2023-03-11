@@ -1,6 +1,7 @@
 package com.example.core
 
 import android.app.Activity
+import android.app.Service
 import android.content.Context
 import androidx.fragment.app.Fragment
 import com.example.core.di.CoreComponent
@@ -35,5 +36,6 @@ class ModularizationApplication : SplitCompatApplication() {
     }
 }
 
+fun Service.coreComponent() = ModularizationApplication.coreComponent(this)
 fun Activity.coreComponent() = ModularizationApplication.coreComponent(this)
 fun Fragment.coreComponent() = ModularizationApplication.coreComponent(requireContext())

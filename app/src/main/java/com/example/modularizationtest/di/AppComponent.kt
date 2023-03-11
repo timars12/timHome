@@ -2,6 +2,7 @@ package com.example.modularizationtest.di
 
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
+import com.example.modularizationtest.presentation.CO2JobService
 import com.example.modularizationtest.presentation.MainActivity
 import dagger.Component
 
@@ -14,4 +15,5 @@ internal interface AppComponent {
     }
 
     fun inject(activity: MainActivity)
+    fun inject(service: CO2JobService)
 }
