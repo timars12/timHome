@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.core.coreComponent
 import com.example.core.data.repository.ArduinoRepository
+import com.example.core.utils.CallStatus
 import com.example.modularizationtest.R
 import com.example.modularizationtest.di.DaggerAppComponent
 import kotlinx.coroutines.*
@@ -26,7 +27,6 @@ private const val END_NIGHT = 8
 
 class CO2JobService : JobService() {
     private var job: Job? = null
-    private var co2 = 900
 
     @Inject
     lateinit var arduinoRepository: ArduinoRepository
@@ -39,11 +39,8 @@ class CO2JobService : JobService() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartJob(params: JobParameters?): Boolean {
         job = CoroutineScope(Dispatchers.Default).launch {
-            // Perform periodic work here using coroutines
-            if (coroutineContext.isActive) {
-                jobFinished(params, true)
-                getCO2()
-            }
+            jobFinished(params, true)
+            if (coroutineContext.isActive && isDayPeriod()) getCO2()
         }
         return true // Indicates that the job is still running
     }
@@ -57,16 +54,40 @@ class CO2JobService : JobService() {
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun getCO2() {
         withContext(Dispatchers.IO) {
-//            val aa = arduinoRepository.getCo2AndTemperature()
-            // TODO set in setting should user show notification of danger level co2
-            if (co2 > 800 && isDayPeriod()) {
-                sendNotification(co2)
-                co2 = 600
+            when (val result = arduinoRepository.getCo2AndTemperature()) {
+                is CallStatus.Success -> {
+                    val co2 = result.data?.co2 ?: return@withContext
+                    when {
+                        co2 >= 800 -> {
+                            isDangerCO2LevelsInRoom = true
+                            sendNotification(
+                                title = getString(R.string.dangerous_levels_of_co2),
+                                text = getString(R.string.value_levels_of_co2, co2),
+                                bigText = getString(
+                                    R.string.notification_message_levels_of_co2,
+                                    co2
+                                )
+                            )
+                        }
+                        isDangerCO2LevelsInRoom && co2 < 500 -> {
+                            isDangerCO2LevelsInRoom = false
+                            sendNotification(
+                                title = getString(R.string.air_is_clean),
+                                text = getString(R.string.co2_level_returned_to_normal),
+                                bigText = getString(R.string.co2_level_returned_to_normal_long_text, co2)
+                            )
+                        }
+                    }
+                }
+                else -> {
+                    // TODO send notification that service is not response
+                    return@withContext
+                }
             }
         }
     }
 
-    private fun sendNotification(co2: Int) {
+    private fun sendNotification(title: String, text: String, bigText: String) {
         val channelId = getString(R.string.notification_channel_id)
         // Create the PendingIntent
         val intent = Intent(this, MainActivity::class.java)
@@ -83,14 +104,11 @@ class CO2JobService : JobService() {
         val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, channelId)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(getString(R.string.dangerous_levels_of_co2))
-            .setContentText(getString(R.string.value_levels_of_co2, co2))
+            .setSmallIcon(com.example.core.R.mipmap.ic_launcher_round)
+            .setContentTitle(title)
+            .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText(getString(R.string.notification_message_levels_of_co2, co2))
-            )
+            .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
 
         // Display the notification
         NotificationManagerCompat.from(this).apply {
@@ -99,7 +117,7 @@ class CO2JobService : JobService() {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                Log.e("0707", "=======================================")
+                Log.e("0707", "=================sendNotification======================")
                 return
             }
             notify(NOTIFICATION_ID, builder.build())
@@ -116,5 +134,6 @@ class CO2JobService : JobService() {
 
     companion object {
         private const val NOTIFICATION_ID = 1025
+        private var isDangerCO2LevelsInRoom = false
     }
 }

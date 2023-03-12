@@ -48,7 +48,7 @@ class HomeViewModel @AssistedInject constructor(
                 co2.value = result.data?.co2 ?: 0
             }
             is CallStatus.Error -> {
-                Log.e("0909", "scxc")
+                Log.e("0909", "scxc") // TODO
             }
         }
     }
@@ -59,7 +59,7 @@ class HomeViewModel @AssistedInject constructor(
                 temperatureOutside.value = result.data?.main?.temp?.roundToInt() ?: 0
             }
             is CallStatus.Error -> {
-                Log.e("0909", "scxc")
+                Log.e("0909", "scxc") // TODO
             }
         }
     }

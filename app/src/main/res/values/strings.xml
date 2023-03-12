@@ -16,4 +16,7 @@
     <string name="dangerous_levels_of_co2">Dangerous levels of CO2</string>
     <string name="value_levels_of_co2">CO2 = %1$d ppm.</string>
     <string name="notification_message_levels_of_co2">Please open a window for ventilation as there is a dangerous level of CO2 in the air, with a concentration of CO2 = %1$d ppm.</string>
+    <string name="air_is_clean">The air is clean</string>
+    <string name="co2_level_returned_to_normal">The CO2 level has returned to normal</string>
+    <string name="co2_level_returned_to_normal_long_text">The CO2 level has returned to normal and is now at %1$d. You can close the window and continue your work.</string>
 </resources>
