@@ -1,6 +1,7 @@
 package com.example.modularizationtest.presentation
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.job.JobInfo
@@ -118,7 +119,8 @@ class MainActivity : AppCompatActivity() {
         if (jobs == null) {
             val jobInfo = JobInfo.Builder(jobId, ComponentName(this, CO2JobService::class.java))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // Requires a network connection
-                .setPeriodic(15 * 60 * 1000) // Sets the job to repeat every 5 minutes
+                .setPeriodic(AlarmManager.INTERVAL_FIFTEEN_MINUTES) // Sets the job to repeat every 5 minutes
+                .setPersisted(true) // Job should persist after device reboot
                 .build()
 
             jobScheduler.schedule(jobInfo)
