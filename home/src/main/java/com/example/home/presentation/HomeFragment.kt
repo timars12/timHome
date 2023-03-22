@@ -83,7 +83,7 @@ class HomeFragment : Fragment() {
                                     temperatureOutside,
                                     temperatureInside
                                 )
-                                Co2Indicator(modifier = Modifier.fillMaxSize(FRACTION_0_5), co2 = co2)
+                                Co2Indicator(modifier = Modifier.fillMaxSize(FRACTION_0_5), co2 = 800)
                             }
                         }
                     }

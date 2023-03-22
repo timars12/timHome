@@ -16,10 +16,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.core.ui.theme.*
-
-private const val INDICATOR_CO2_GOOD_VALUE = 400
-private const val INDICATOR_CO2_MIDDLE_VALUE = 600
-private const val INDICATOR_CO2_LOW_DANGER_VALUE = 600
+import com.example.core.utils.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
+import com.example.core.utils.Constant.INDICATOR_CO2_BED_LEVEL
+import com.example.core.utils.Constant.INDICATOR_CO2_GOOD_LEVEL
+import com.example.core.utils.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
+import com.example.core.utils.Constant.INDICATOR_CO2_UNCOMFORTABLE_LEVEL
 
 @Composable
 fun Co2Indicator(modifier: Modifier, co2: Int) {
@@ -57,9 +58,11 @@ fun Co2Indicator(modifier: Modifier, co2: Int) {
 
 private fun getColorByCO2(co2: Int): Color {
     return when {
-        co2 <= INDICATOR_CO2_GOOD_VALUE -> IndicatorCO2Good
-        co2 <= INDICATOR_CO2_MIDDLE_VALUE -> IndicatorCO2Middle
-        co2 <= INDICATOR_CO2_LOW_DANGER_VALUE -> IndicatorCO2LowDanger
+        co2 <= INDICATOR_CO2_GOOD_LEVEL -> IndicatorCO2Good
+        co2 <= INDICATOR_CO2_ACCEPTABLE_VALUE -> IndicatorCO2Acceptable
+        co2 <= INDICATOR_CO2_UNCOMFORTABLE_LEVEL -> IndicatorCO2Uncomfortable
+        co2 <= INDICATOR_CO2_BED_LEVEL -> IndicatorCO2Bed
+        co2 <= INDICATOR_CO2_LOW_DANGER_LEVEL -> IndicatorCO2LowDanger
         else -> IndicatorCO2Danger
     }
 }

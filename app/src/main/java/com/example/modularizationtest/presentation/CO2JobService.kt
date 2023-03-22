@@ -54,6 +54,7 @@ class CO2JobService : JobService() {
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun getCO2() {
         withContext(Dispatchers.IO) {
+            // TODO check if user set baseurl before call
             when (val result = arduinoRepository.getCo2AndTemperature()) {
                 is CallStatus.Success -> {
                     val co2 = result.data?.co2 ?: return@withContext
