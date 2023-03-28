@@ -14,6 +14,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.core.coreComponent
+import com.example.core.data.AppDatabase
+import com.example.core.data.db.entity.CarbonDioxideEntity
 import com.example.core.data.repository.ArduinoRepository
 import com.example.core.utils.CallStatus
 import com.example.modularizationtest.R
@@ -31,6 +33,9 @@ class CO2JobService : JobService() {
     @Inject
     lateinit var arduinoRepository: ArduinoRepository
 
+    @Inject
+    lateinit var database: AppDatabase
+
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
         DaggerAppComponent.factory().create(coreComponent()).inject(this)
@@ -40,7 +45,7 @@ class CO2JobService : JobService() {
     override fun onStartJob(params: JobParameters?): Boolean {
         job = CoroutineScope(Dispatchers.Default).launch {
             jobFinished(params, true)
-            if (coroutineContext.isActive && isDayPeriod()) getCO2()
+            if (coroutineContext.isActive) getCO2()
         }
         return true // Indicates that the job is still running
     }
@@ -54,12 +59,15 @@ class CO2JobService : JobService() {
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun getCO2() {
         withContext(Dispatchers.IO) {
+            saveToDataBase(800) // TODO FAKE
             // TODO check if user set baseurl before call
             when (val result = arduinoRepository.getCo2AndTemperature()) {
                 is CallStatus.Success -> {
                     val co2 = result.data?.co2 ?: return@withContext
+                    saveToDataBase(co2)
                     when {
-                        co2 >= 800 -> {
+                        isDayPeriod() -> return@withContext
+                        co2 >= 2500 -> {
                             isDangerCO2LevelsInRoom = true
                             sendNotification(
                                 title = getString(R.string.dangerous_levels_of_co2),
@@ -75,7 +83,10 @@ class CO2JobService : JobService() {
                             sendNotification(
                                 title = getString(R.string.air_is_clean),
                                 text = getString(R.string.co2_level_returned_to_normal),
-                                bigText = getString(R.string.co2_level_returned_to_normal_long_text, co2)
+                                bigText = getString(
+                                    R.string.co2_level_returned_to_normal_long_text,
+                                    co2
+                                )
                             )
                         }
                     }
@@ -86,6 +97,13 @@ class CO2JobService : JobService() {
                 }
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun saveToDataBase(co2: Int) {
+        database.carbonDioxideDao().saveCO2LevelToDB(
+            CarbonDioxideEntity(co2Level = co2, date = LocalDateTime.now().toString())
+        )
     }
 
     private fun sendNotification(title: String, text: String, bigText: String) {
