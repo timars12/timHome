@@ -1,8 +1,10 @@
 package com.example.core.ui.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
 val Typography = Typography(
@@ -58,3 +60,17 @@ val Typography = Typography(
 //        fontSize = FONT_12.sp,
 //        lineHeight = FONT_20.sp
 //    )
+
+val Typography.chartAxisTextStyle: TextStyle
+    get() = TextStyle(
+        fontSize = 14.sp,
+        color = Color.Black,
+        textAlign = TextAlign.Center,
+    )
+
+val Typography.chartValueTextStyle: TextStyle
+    get() = TextStyle(
+        fontSize = 10.sp,
+        color = Color.Black,
+        textAlign = TextAlign.Center,
+    )

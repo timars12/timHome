@@ -6,20 +6,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.*
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.core.data.db.entity.CarbonDioxideEntity
-import com.example.core.ui.theme.DeviceDetailForegroundColor
-import com.example.core.ui.theme.IndicatorCO2Bed
-import com.example.core.ui.theme.SelectedTabBottomBar
+import com.example.core.ui.theme.*
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -70,11 +65,7 @@ fun ChartView(
                 drawText(
                     textMeasurer = textMeasure,
                     text = entity.co2Level.toString(),
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = 10.sp,
-                        textAlign = TextAlign.Center,
-                    ),
+                    style = Typography.chartValueTextStyle,
                     maxLines = 1,
                     topLeft = Offset(0f, y)
                 )
@@ -82,11 +73,7 @@ fun ChartView(
                 drawText(
                     textMeasurer = textMeasure,
                     text = entity.date,
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = 10.sp,
-                        textAlign = TextAlign.Center,
-                    ),
+                    style = Typography.chartValueTextStyle,
                     maxLines = 1,
                     topLeft = Offset(x - padding.value, size.height - padding.value)
                 )
@@ -122,11 +109,7 @@ private fun DrawScope.drawAxisLine(
     drawText(
         textMeasurer = textMeasure,
         text = xLabel,
-        style = TextStyle(
-            color = Color.Black,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
-        ),
+        style = Typography.chartAxisTextStyle,
         maxLines = 1,
         topLeft = Offset(
             size.width - padding - xAxisLabel.size.width,
@@ -137,11 +120,7 @@ private fun DrawScope.drawAxisLine(
         drawText(
             textMeasurer = textMeasure,
             text = yLabel,
-            style = TextStyle(
-                color = Color.Black,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-            ),
+            style = Typography.chartAxisTextStyle,
             maxLines = 1,
             topLeft = Offset(
                 x = size.width - padding - yAxisLabel.size.width + textAxisOffset,
