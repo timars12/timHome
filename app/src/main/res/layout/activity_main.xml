@@ -13,9 +13,11 @@
         android:layout_height="match_parent"
         app:navGraph="@navigation/nav_graph" />
 
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/compose_view"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_gravity="bottom"/>
+        android:layout_height="75dp"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        app:menu="@menu/bottom_nav_menu"/>
 </FrameLayout>

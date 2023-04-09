@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -20,10 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.ui.theme.DeviceDetailForegroundColor
 import com.example.core.ui.theme.PrimaryColor
+import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.core.utils.OnClick
 import com.example.device.R
 import com.example.device.data.model.ModuleModel
 import com.example.device.domain.models.DeviceModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.max
 import kotlin.math.min
 
@@ -31,7 +35,7 @@ import kotlin.math.min
 fun LazyColumnWithParallax(
     modifier: Modifier = Modifier,
     device: DeviceModel,
-    modules: List<ModuleModel>, // TODO use immutable list
+    modules: ImmutableList<ModuleModel>,
     onBackClick: OnClick
 ) {
     val scrollState = rememberLazyListState()
@@ -73,8 +77,12 @@ fun LazyColumnWithParallax(
         ) {
             item {
                 DeviceDetailHeader(
-                    device.image,
-                    device.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .clip(MaterialTheme.cornerRoundedShapes.micro),
+                    image = device.image,
+                    title = device.title,
                     calculateTextSize = { calculateTextSize.value }
                 )
             }

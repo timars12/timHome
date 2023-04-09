@@ -12,6 +12,7 @@ import com.example.device.presentation.listDevice.SELECTED_DEVICE_ID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class DeviceDetailViewMode @AssistedInject constructor(
     private val repository: IDeviceRepository
 ) : ViewModel() {
     val device = MutableStateFlow<DeviceModel?>(null)
-    val module = MutableStateFlow<List<ModuleModel>>(listOf())
+    val module = MutableStateFlow(listOf<ModuleModel>().toImmutableList())
 
     init {
         val deviceId = savedStateHandle.get<Int>(SELECTED_DEVICE_ID)
@@ -35,7 +36,7 @@ class DeviceDetailViewMode @AssistedInject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val model = repository.getDeviceWithModuleById(deviceId)
             device.value = model.device
-            module.value = model.modules
+            module.value = model.modules.toImmutableList()
         }
     }
 

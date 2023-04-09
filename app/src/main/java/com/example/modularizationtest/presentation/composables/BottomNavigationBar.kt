@@ -19,15 +19,16 @@ import androidx.compose.ui.unit.dp
 import com.example.core.ui.theme.SelectedTabBottomBar
 import com.example.modularizationtest.R
 import com.example.modularizationtest.data.BottomNavigationMenuItem
-import okhttp3.internal.immutableListOf
+import okhttp3.internal.toImmutableList
 
 typealias OnNavigateClick = (destinationId: Int) -> Unit
 
+// can not use because has problem with stack of destination
 @Composable
 fun BottomNavigationBar(navigateTo: OnNavigateClick) {
     val shape = remember { RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp) }
-    val menuItems = remember {
-        immutableListOf(
+    val menuItems = // TODO always recomposition
+        listOf(
             BottomNavigationMenuItem(
                 destinationId = R.id.home_navigation,
                 label = R.string.home,
@@ -43,9 +44,9 @@ fun BottomNavigationBar(navigateTo: OnNavigateClick) {
                 label = R.string.setting,
                 icon = R.drawable.ic_setting_bottom_menu
             )
-        )
-    }
-    var selectedMenu by rememberSaveable { mutableStateOf(menuItems.first().destinationId) }
+        ).toImmutableList()
+
+    val selectedMenu = rememberSaveable { mutableStateOf(menuItems.first().destinationId) }
 
     BottomNavigation(
         modifier = Modifier
@@ -57,9 +58,10 @@ fun BottomNavigationBar(navigateTo: OnNavigateClick) {
     ) {
         menuItems.forEach {
             BottomNavigationItem(
-                selected = selectedMenu == it.destinationId,
+                selected = selectedMenu.value == it.destinationId,
                 onClick = {
-                    selectedMenu = it.destinationId
+                    if (selectedMenu.value == it.destinationId) return@BottomNavigationItem
+                    selectedMenu.value = it.destinationId
                     navigateTo(it.destinationId)
                 },
                 icon = {
