@@ -13,26 +13,24 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import com.example.core.coreComponent
 import com.example.core.utils.NavigationDispatcher
 import com.example.modularizationtest.R
 import com.example.modularizationtest.di.DaggerAppComponent
-import com.example.modularizationtest.presentation.composables.BottomNavigationBar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.splitcompat.SplitCompat
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -80,19 +78,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             )
-        }
-        findViewById<ComposeView>(R.id.compose_view).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                val destinationId by produceState(initialValue = R.id.signInFragment) {
-                    navController.addOnDestinationChangedListener { _, destination, _ ->
-                        value = destination.id
-                    }
-                }
-                if (destinationId != R.id.signInFragment) { // TODO check if token exist if not hide bar
-                    BottomNavigationBar {
-                        // TODO add navigationSafe
-                        navigationDispatcher.emit { nav -> nav.navigate(it) }
+            navController.addOnDestinationChangedListener { controller, _, _ ->
+                if (controller.currentDestination?.id != R.id.signInFragment) { // TODO change signInFragment to graph
+                    findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
+                        if (visibility == View.GONE) visibility = View.VISIBLE
                     }
                 }
             }
@@ -158,6 +147,10 @@ class MainActivity : AppCompatActivity() {
             val navGraph = navInflater.inflate(R.navigation.nav_graph)
             navHost.navController.graph = navGraph
             navController = navHost.navController
+            NavigationUI.setupWithNavController(
+                findViewById<BottomNavigationView>(R.id.bottomNavigationView),
+                navController
+            )
         }
     }
 

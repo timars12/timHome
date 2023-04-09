@@ -65,7 +65,7 @@ class SettingFragment : Fragment() {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(top = 46.dp),
+                            .padding(top = 46.dp, bottom = 80.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         TextField(

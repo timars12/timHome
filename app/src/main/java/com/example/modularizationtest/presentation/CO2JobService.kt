@@ -18,6 +18,8 @@ import com.example.core.data.AppDatabase
 import com.example.core.data.db.entity.CarbonDioxideEntity
 import com.example.core.data.repository.ArduinoRepository
 import com.example.core.utils.CallStatus
+import com.example.core.utils.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
+import com.example.core.utils.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
 import com.example.modularizationtest.R
 import com.example.modularizationtest.di.DaggerAppComponent
 import kotlinx.coroutines.*
@@ -67,7 +69,7 @@ class CO2JobService : JobService() {
                     saveToDataBase(co2)
                     when {
                         isDayPeriod() -> return@withContext
-                        co2 >= 2500 -> {
+                        co2 >= INDICATOR_CO2_LOW_DANGER_LEVEL -> {
                             isDangerCO2LevelsInRoom = true
                             sendNotification(
                                 title = getString(R.string.dangerous_levels_of_co2),
@@ -78,7 +80,7 @@ class CO2JobService : JobService() {
                                 )
                             )
                         }
-                        isDangerCO2LevelsInRoom && co2 < 500 -> {
+                        isDangerCO2LevelsInRoom && co2 < INDICATOR_CO2_ACCEPTABLE_VALUE -> {
                             isDangerCO2LevelsInRoom = false
                             sendNotification(
                                 title = getString(R.string.air_is_clean),

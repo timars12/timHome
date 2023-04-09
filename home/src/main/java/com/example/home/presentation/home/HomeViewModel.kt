@@ -54,7 +54,7 @@ class HomeViewModel @AssistedInject constructor(
                 co2.value = result.data?.co2 ?: 0
             }
             is CallStatus.Error -> {
-                Log.e("0909", "getCO2AndTemperature") // TODO
+                Log.e("0909", "getCO2AndTemperature") // TODO show error
             }
         }
     }

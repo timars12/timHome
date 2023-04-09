@@ -10,8 +10,10 @@ import com.example.device.domain.IDeviceRepository
 import com.example.device.domain.models.DeviceModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DeviceRepository @Inject constructor(
@@ -22,7 +24,12 @@ class DeviceRepository @Inject constructor(
 
     @Suppress("SuspendFunWithFlowReturnType")
     override suspend fun getAllDevices(): Flow<ImmutableList<DeviceModel>> {
-        saveDevicesToDB(mock.generateItems())
+        coroutineScope {
+            launch {
+                mock.generateItems().collect { responseList -> saveDevicesToDB(responseList) }
+            }
+        }
+
         return flow {
             database.deviceDao().getAllDevices().collect { entityList ->
                 emit(entityList.map { mapper.convertEntityToModel(it) }.toImmutableList())

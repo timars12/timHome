@@ -3,7 +3,8 @@ package com.example.device.data.mock
 import com.example.core.di.scope.FeatureScope
 import com.example.device.data.model.Device
 import com.example.device.data.model.ModuleModel
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -11,11 +12,10 @@ import javax.inject.Inject
 @FeatureScope
 class GenerateDate @Inject constructor() {
 
-    // todo just for test it is butter to use flow then this
     @Suppress("LongMethod")
-    suspend fun generateItems(): List<Device> {
-        return suspendCancellableCoroutine { continuation ->
-            val list = mutableListOf<Device>()
+    fun generateItems(): Flow<List<Device>> {
+        val list = mutableListOf<Device>()
+        return flow {
             val item1 = Device(
                 id = 0,
                 image = "https://cdn.lifehacker.ru/wp-content/uploads/2020/09/CHto-takoe-Arduino-i-pochemu-vam-nado-ego-kupit_1600809645.jpg",
@@ -126,18 +126,15 @@ class GenerateDate @Inject constructor() {
                     .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
                 modules = emptyList()
             )
-            continuation.resumeWith(
-                Result.success(
-                    list.apply {
-                        add(item1)
-                        add(item2)
-                        add(item3)
-                        add(item4)
-                        add(item5)
-                        add(item6)
-                    }
-                )
-            )
+            list.apply {
+                add(item1)
+                add(item2)
+                add(item3)
+                add(item4)
+                add(item5)
+                add(item6)
+            }
+            emit(list)
         }
     }
 }

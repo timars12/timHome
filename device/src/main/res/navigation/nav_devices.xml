@@ -12,5 +12,4 @@
         android:id="@+id/deviceDetailFragment"
         android:name="com.example.device.presentation.device.DeviceDetailFragment"
         android:label="DeviceDetailFragment" />
-
 </navigation>
