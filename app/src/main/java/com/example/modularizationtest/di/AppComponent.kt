@@ -1,17 +1,17 @@
 package com.example.modularizationtest.di
 
-import com.example.core.di.CoreComponent
-import com.example.core.di.scope.FeatureScope
+import com.example.base.BaseComponent
+import com.example.base.BaseScope
 import com.example.modularizationtest.presentation.CO2JobService
 import com.example.modularizationtest.presentation.MainActivity
 import dagger.Component
 
-@FeatureScope
-@Component(dependencies = [CoreComponent::class])
+@BaseScope
+@Component(dependencies = [BaseComponent::class])
 internal interface AppComponent {
     @Component.Factory
     interface Factory {
-        fun create(coreComponent: CoreComponent): AppComponent
+        fun create(coreComponent: BaseComponent): AppComponent
     }
 
     fun inject(activity: MainActivity)

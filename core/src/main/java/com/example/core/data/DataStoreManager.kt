@@ -5,8 +5,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 val Context.getDataStore: DataStore<Preferences> by preferencesDataStore(name = "timDataStore")
 
@@ -38,9 +41,16 @@ class DataStoreManager @Inject constructor(context: Context) {
         dataStore.edit { preferences -> preferences.clear() }
     }
 
+    fun isUseMockDate(): Boolean = runBlocking {
+        withTimeoutOrNull(1.seconds) {
+            dataStore.data.first()[PreferencesKeys.IS_USE_MOCK]
+        } ?: true
+    }
+
     private object PreferencesKeys {
         val ACCESS_TOKEN = stringPreferencesKey("accessToken")
         val REFRESH_TOKEN = stringPreferencesKey("refreshToken")
         val HOME_IP_ADDRESS = stringPreferencesKey("homeIpAddress")
+        val IS_USE_MOCK = booleanPreferencesKey("isUseMockDate")
     }
 }

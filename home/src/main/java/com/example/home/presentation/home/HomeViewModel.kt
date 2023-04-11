@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.data.db.entity.CarbonDioxideEntity
-import com.example.core.data.repository.ArduinoRepository
+import com.example.core.data.repository.ArduinoRepositoryImpl
 import com.example.core.utils.CallStatus
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
 import com.example.home.data.repository.WeatherRepository
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class HomeViewModel @AssistedInject constructor(
-    private val repository: ArduinoRepository,
+    private val repository: ArduinoRepositoryImpl,
     private val weatherRepository: WeatherRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {

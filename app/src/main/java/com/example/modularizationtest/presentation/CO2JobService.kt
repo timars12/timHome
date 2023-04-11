@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
 import com.example.core.data.AppDatabase
 import com.example.core.data.db.entity.CarbonDioxideEntity
@@ -40,7 +41,10 @@ class CO2JobService : JobService() {
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
-        DaggerAppComponent.factory().create(coreComponent()).inject(this)
+        DaggerAppComponent
+            .factory()
+            .create(coreComponent = DaggerBaseComponent.factory().create(coreComponent()))
+            .inject(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -61,7 +65,6 @@ class CO2JobService : JobService() {
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun getCO2() {
         withContext(Dispatchers.IO) {
-            saveToDataBase(800) // TODO FAKE
             // TODO check if user set baseurl before call
             when (val result = arduinoRepository.getCo2AndTemperature()) {
                 is CallStatus.Success -> {
