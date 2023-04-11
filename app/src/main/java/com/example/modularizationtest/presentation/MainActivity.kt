@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         SplitCompat.installActivity(this)
         DaggerAppComponent
             .factory()
-            .create(coreComponent = DaggerBaseComponent.factory().create(coreComponent()))
+            .create(baseComponent = DaggerBaseComponent.factory().create(coreComponent()))
             .inject(this)
     }
 

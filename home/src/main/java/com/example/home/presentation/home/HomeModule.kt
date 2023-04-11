@@ -1,7 +1,7 @@
 package com.example.home.presentation.home
 
 import androidx.lifecycle.ViewModel
-import com.example.core.di.scope.FeatureScope
+import com.example.base.BaseScope
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
 import com.example.core.utils.viewmodel.ViewModelKey
 import com.example.home.data.api.WeatherApi
@@ -19,6 +19,6 @@ class HomeModule {
     fun bindVMFactory(f: HomeViewModel.Factory): ViewModelAssistedFactory<out ViewModel> = f
 
     @Provides
-    @FeatureScope
+    @BaseScope
     fun provideApi(retrofit: Retrofit): WeatherApi = retrofit.create(WeatherApi::class.java)
 }
