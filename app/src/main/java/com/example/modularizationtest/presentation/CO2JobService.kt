@@ -71,7 +71,7 @@ class CO2JobService : JobService() {
                     val co2 = result.data?.co2 ?: return@withContext
                     saveToDataBase(co2)
                     when {
-                        isDayPeriod() -> return@withContext
+                        isNightPeriod() -> return@withContext
                         co2 >= INDICATOR_CO2_LOW_DANGER_LEVEL -> {
                             isDangerCO2LevelsInRoom = true
                             sendNotification(
@@ -149,11 +149,11 @@ class CO2JobService : JobService() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun isDayPeriod(): Boolean {
+    private fun isNightPeriod(): Boolean {
         val currentDateTime = LocalDateTime.now()
-        val currentHour = currentDateTime.hour
+        val currentHour = 1
         val currentMinute = currentDateTime.minute
-        return currentHour in END_NIGHT..START_NIGHT && currentMinute > 0
+        return currentHour < END_NIGHT || currentHour > START_NIGHT && currentMinute > 0
     }
 
     companion object {
