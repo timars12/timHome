@@ -11,7 +11,7 @@ import dagger.Component
 internal interface AppComponent {
     @Component.Factory
     interface Factory {
-        fun create(coreComponent: BaseComponent): AppComponent
+        fun create(baseComponent: BaseComponent): AppComponent
     }
 
     fun inject(activity: MainActivity)

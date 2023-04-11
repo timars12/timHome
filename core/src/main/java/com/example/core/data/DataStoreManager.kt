@@ -37,14 +37,18 @@ class DataStoreManager @Inject constructor(context: Context) {
         preferences[PreferencesKeys.HOME_IP_ADDRESS] = ipAddress
     }
 
-    suspend fun clearData() {
-        dataStore.edit { preferences -> preferences.clear() }
+    suspend fun setUseMockDate(isUseMock: Boolean) = dataStore.edit { preferences ->
+        preferences[PreferencesKeys.IS_USE_MOCK] = isUseMock
     }
 
     fun isUseMockDate(): Boolean = runBlocking {
         withTimeoutOrNull(1.seconds) {
-            dataStore.data.first()[PreferencesKeys.IS_USE_MOCK]
+            !getHomeIpAddress().isNullOrBlank() || dataStore.data.first()[PreferencesKeys.IS_USE_MOCK] ?: true
         } ?: true
+    }
+
+    suspend fun clearData() {
+        dataStore.edit { preferences -> preferences.clear() }
     }
 
     private object PreferencesKeys {

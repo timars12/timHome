@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="save">Save</string>
+    <string name="ip_address">Ip address</string>
+    <string name="is_use_mock_date">Is use mock date:</string>
+    <string name="location">Location</string>
 </resources>

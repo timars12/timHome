@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
 import com.example.core.data.db.entity.CarbonDioxideEntity
 import com.example.core.ui.ChartView
@@ -56,7 +57,10 @@ class HomeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        DaggerHomeComponent.factory().create(this.coreComponent()).inject(this)
+        DaggerHomeComponent
+            .factory()
+            .create(DaggerBaseComponent.factory().create(this.coreComponent()))
+            .inject(this)
     }
 
     override fun onCreateView(

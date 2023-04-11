@@ -12,6 +12,6 @@ interface CarbonDioxideDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveCO2LevelToDB(device: CarbonDioxideEntity)
 
-    @Query("select * from carbon_dioxide limit 10")
+    @Query("select * from carbon_dioxide ORDER BY date DESC limit 10")
     fun getAllCO2Levels(): Flow<List<CarbonDioxideEntity>>
 }

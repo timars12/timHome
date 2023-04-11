@@ -10,15 +10,20 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
+private const val IP_HOME_ADDRESS_KEY = "ipHomeAddress"
+private const val IS_USE_MOCK_KEY = "isUseMock"
+
 class SettingViewModel @AssistedInject constructor(
     private val repository: SettingRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    val ipAddress = savedStateHandle.getStateFlow("ipHomeAddress", "")
+    val ipAddress = savedStateHandle.getStateFlow(IP_HOME_ADDRESS_KEY, "")
+    val isUseMock = savedStateHandle.getStateFlow(IS_USE_MOCK_KEY, true)
 
     init {
         viewModelScope.launch {
             savedStateHandle["ipHomeAddress"] = repository.getHomeIpAddress() ?: ""
+            savedStateHandle["isUseMock"] = repository.checkIsUseMock()
         }
     }
 
@@ -26,9 +31,14 @@ class SettingViewModel @AssistedInject constructor(
         savedStateHandle["ipHomeAddress"] = value
     }
 
+    fun onSetUseMockClick(isUseMock: Boolean) {
+        savedStateHandle["isUseMock"] = isUseMock
+    }
+
     fun onSaveChangClick() {
         viewModelScope.launch {
             repository.setHomeIpAddress(ipAddress.value)
+            repository.setUseMock(isUseMock.value)
         }
     }
 

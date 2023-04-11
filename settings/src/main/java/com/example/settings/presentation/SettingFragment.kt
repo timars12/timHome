@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,10 +24,13 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.core.coreComponent
+import com.example.core.ui.theme.TextFieldBackgroundColor
 import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
 import com.example.settings.R
 import com.example.settings.di.DaggerSettingComponent
+import com.example.settings.presentation.composables.SwitchWithText
 import javax.inject.Inject
 
 private const val CORNER_SHAPE_TEXT_FIELD = 20
@@ -60,7 +62,8 @@ class SettingFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
-                    val ipAddress by viewModel.ipAddress.collectAsState()
+                    val ipAddress by viewModel.ipAddress.collectAsStateWithLifecycle()
+                    val isUseMock by viewModel.isUseMock.collectAsStateWithLifecycle()
 
                     Column(
                         modifier = Modifier
@@ -72,7 +75,7 @@ class SettingFragment : Fragment() {
                             value = ipAddress,
                             onValueChange = viewModel::onIpAddressEntered,
                             colors = TextFieldDefaults.textFieldColors(
-                                backgroundColor = Color.White,
+                                backgroundColor = TextFieldBackgroundColor,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent,
@@ -85,14 +88,14 @@ class SettingFragment : Fragment() {
                                 fontSize = 26.sp,
                                 lineHeight = 32.sp
                             ),
-                            label = { Text(text = "Ip address") }
+                            label = { Text(text = stringResource(R.string.ip_address)) }
                         )
                         TextField(
                             modifier = Modifier.padding(top = 48.dp),
-                            value = "",
-                            onValueChange = { },
+                            value = "", // TODO
+                            onValueChange = { }, // TODO
                             colors = TextFieldDefaults.textFieldColors(
-                                backgroundColor = Color.White,
+                                backgroundColor = TextFieldBackgroundColor,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent,
@@ -105,14 +108,22 @@ class SettingFragment : Fragment() {
                                 fontSize = 26.sp,
                                 lineHeight = 32.sp
                             ),
-                            label = { Text(text = "Location") }
+                            label = { Text(text = stringResource(R.string.location)) }
+                        )
+                        SwitchWithText(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 32.dp, start = 64.dp, end = 48.dp),
+                            text = stringResource(R.string.is_use_mock_date),
+                            isUseMock = isUseMock,
+                            onSetUseMockClick = viewModel::onSetUseMockClick
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(
-                                    bottom = 48.dp,
+                                    bottom = 28.dp,
                                     start = 64.dp,
                                     end = 64.dp
                                 )
