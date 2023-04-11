@@ -118,6 +118,8 @@ class SettingFragment : Fragment() {
                             isUseMock = isUseMock,
                             onSetUseMockClick = viewModel::onSetUseMockClick
                         )
+
+                        // TODO add select from and to time when we should show notification about co2
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
                             modifier = Modifier
