@@ -80,5 +80,6 @@ ktlint {
 
 dependencies {
     implementation project(":core")
+    implementation project(":base")
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 }

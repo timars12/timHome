@@ -19,4 +19,5 @@
     <string name="air_is_clean">The air is clean</string>
     <string name="co2_level_returned_to_normal">The CO2 level has returned to normal</string>
     <string name="co2_level_returned_to_normal_long_text">The CO2 level has returned to normal and is now at %1$d. You can close the window and continue your work.</string>
+    <string name="title_mock">Mock request</string>
 </resources>

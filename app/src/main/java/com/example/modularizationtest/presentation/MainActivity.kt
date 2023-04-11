@@ -26,6 +26,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
 import com.example.core.utils.NavigationDispatcher
 import com.example.modularizationtest.R
@@ -53,7 +54,10 @@ class MainActivity : AppCompatActivity() {
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
         SplitCompat.installActivity(this)
-        DaggerAppComponent.factory().create(this.coreComponent()).inject(this)
+        DaggerAppComponent
+            .factory()
+            .create(coreComponent = DaggerBaseComponent.factory().create(coreComponent()))
+            .inject(this)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
