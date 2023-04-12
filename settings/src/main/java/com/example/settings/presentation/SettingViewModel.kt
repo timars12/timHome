@@ -22,17 +22,17 @@ class SettingViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            savedStateHandle["ipHomeAddress"] = repository.getHomeIpAddress() ?: ""
-            savedStateHandle["isUseMock"] = repository.checkIsUseMock()
+            savedStateHandle[IP_HOME_ADDRESS_KEY] = repository.getHomeIpAddress() ?: ""
+            savedStateHandle[IS_USE_MOCK_KEY] = repository.checkIsUseMock()
         }
     }
 
     fun onIpAddressEntered(value: String) {
-        savedStateHandle["ipHomeAddress"] = value
+        savedStateHandle[IP_HOME_ADDRESS_KEY] = value
     }
 
     fun onSetUseMockClick(isUseMock: Boolean) {
-        savedStateHandle["isUseMock"] = isUseMock
+        savedStateHandle[IS_USE_MOCK_KEY] = isUseMock
     }
 
     fun onSaveChangClick() {
