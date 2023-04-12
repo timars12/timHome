@@ -151,7 +151,7 @@ class CO2JobService : JobService() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun isNightPeriod(): Boolean {
         val currentDateTime = LocalDateTime.now()
-        val currentHour = 1
+        val currentHour = currentDateTime.hour
         val currentMinute = currentDateTime.minute
         return currentHour < END_NIGHT || currentHour > START_NIGHT && currentMinute > 0
     }
