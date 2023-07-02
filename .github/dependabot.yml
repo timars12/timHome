@@ -5,14 +5,13 @@
 
 version: 2
 updates:
-  - package-ecosystem: "gradle" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: gradle
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "21:40"
-      timezone: "Europe/Kiev"
+      interval: weekly
+      day: sunday
+      time: 22:00
+      timezone: Europe/Kiev
     open-pull-requests-limit: 10
-    target-branch: "master"
-    reviewers: 
-      -"RuslanTimkov"
+    target-branch: master
+    reviewers: -"RuslanTimkov"
