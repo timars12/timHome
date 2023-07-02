@@ -33,7 +33,7 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         letterSpacing = 0.15.sp
-    ),
+    )
 //    button = TextStyle(
 //        fontFamily = ptSansFontFamily,
 //        fontSize = FONT_16.sp,
@@ -65,12 +65,12 @@ val Typography.chartAxisTextStyle: TextStyle
     get() = TextStyle(
         fontSize = 14.sp,
         color = Color.Black,
-        textAlign = TextAlign.Center,
+        textAlign = TextAlign.Center
     )
 
 val Typography.chartValueTextStyle: TextStyle
     get() = TextStyle(
         fontSize = 10.sp,
         color = Color.Black,
-        textAlign = TextAlign.Center,
+        textAlign = TextAlign.Center
     )

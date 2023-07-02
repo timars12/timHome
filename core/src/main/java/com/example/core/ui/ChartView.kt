@@ -88,7 +88,7 @@ private fun DrawScope.drawAxisLine(
     textMeasure: TextMeasurer,
     padding: Float,
     xLabel: String,
-    yLabel: String,
+    yLabel: String
 ) {
     val textAxisOffset = 10f
 
@@ -148,7 +148,7 @@ fun TestChartView() {
             CarbonDioxideEntity(co2Level = 1200, date = "13:15"),
             CarbonDioxideEntity(co2Level = 1400, date = "13:30"),
             CarbonDioxideEntity(co2Level = 1600, date = "13:45"),
-            CarbonDioxideEntity(co2Level = 3800, date = "14:00"),
+            CarbonDioxideEntity(co2Level = 3800, date = "14:00")
         ).toImmutableList()
     )
 }

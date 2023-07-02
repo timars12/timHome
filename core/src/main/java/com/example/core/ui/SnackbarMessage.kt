@@ -21,7 +21,7 @@ fun SnackbarMessage(snackbarHostState: SnackbarHostState, modifier: Modifier = M
             ) {
                 Text(
                     text = data.message,
-                    color = Color.White,
+                    color = Color.White
                 )
             }
         },

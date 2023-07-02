@@ -29,7 +29,7 @@ fun ExpandableText(
             text = text,
             maxLines = if (expanded || !showButton) Int.MAX_VALUE else maxLines,
             modifier = Modifier.animateContentSize(animationSpec = tween(durationMillis)),
-            onTextLayout = { textLayoutResultState.value = it },
+            onTextLayout = { textLayoutResultState.value = it }
         )
 
         LaunchedEffect(text) {

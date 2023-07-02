@@ -48,7 +48,6 @@ fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperatur
     Canvas(
         modifier = modifier
     ) {
-
         val dimension = size.height.coerceAtMost(size.width).toInt()
 
         val outDoorTriangle = Path().apply {
@@ -67,7 +66,7 @@ fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperatur
 
         drawPath(
             path = outDoorTriangle,
-            color = Color.Transparent,
+            color = Color.Transparent
         )
         clipPath(outDoorTriangle, Intersect) {
             drawImage(
@@ -85,7 +84,7 @@ fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperatur
 
         drawPath(
             path = inDoorTriangle,
-            color = Color.Transparent,
+            color = Color.Transparent
         )
         clipPath(inDoorTriangle, Intersect) {
             drawImage(

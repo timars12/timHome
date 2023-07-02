@@ -52,7 +52,7 @@ private fun TextFontChengDynamically(
 ) {
     Box(
         modifier = modifier.background(
-            brush = Brush.verticalGradient(listOf(Color.Transparent, LightBlack)),
+            brush = Brush.verticalGradient(listOf(Color.Transparent, LightBlack))
         )
     ) {
         Text(

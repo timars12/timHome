@@ -47,8 +47,11 @@ fun PasswordTextField(
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         trailingIcon = {
-            val image = if (passwordVisible) Icons.Filled.ArrowBack
-            else Icons.Filled.Warning
+            val image = if (passwordVisible) {
+                Icons.Filled.ArrowBack
+            } else {
+                Icons.Filled.Warning
+            }
 
             // Please provide localized description for accessibility services
             val description = if (passwordVisible) "Hide password" else "Show password"

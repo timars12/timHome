@@ -9,7 +9,10 @@ import com.example.device.presentation.listDevice.DeviceListModule
 import dagger.Component
 
 @FeatureScope
-@Component(dependencies = [CoreComponent::class], modules = [DeviceListModule::class, DeviceDetailModel::class])
+@Component(
+    dependencies = [CoreComponent::class],
+    modules = [DeviceListModule::class, DeviceDetailModel::class]
+)
 internal interface DeviceComponent {
     @Component.Factory
     interface Factory {

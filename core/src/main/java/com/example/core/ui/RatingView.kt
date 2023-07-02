@@ -58,7 +58,7 @@ fun RatingView(
                 itemCount = itemCount,
                 imageEmpty = imageEmpty,
                 imageFilled = imageFilled,
-                space = spaceBetween,
+                space = spaceBetween
             )
         },
         onRatingChange = onRatingChange
@@ -80,7 +80,7 @@ private fun RatingViewImpl(
     space: Dp = 0.dp,
     block: DrawScope.(
         rating: Float,
-        space: Float,
+        space: Float
     ) -> Unit,
     onRatingChange: ((Float) -> Unit)? = null
 ) {
@@ -125,7 +125,7 @@ private fun RatingViewImpl(
                         itemIntervals = itemIntervals,
                         ratingBarDimension = ratingBarWidth,
                         space = spacePx,
-                        totalCount = itemCount,
+                        totalCount = itemCount
                     )
 
                     coroutineScope.launch {
@@ -144,7 +144,7 @@ private fun RatingViewImpl(
                         itemIntervals = itemIntervals,
                         ratingBarDimension = ratingBarWidth,
                         space = spacePx,
-                        totalCount = itemCount,
+                        totalCount = itemCount
                     )
 
                     coroutineScope.launch {
@@ -181,7 +181,7 @@ private fun DrawScope.drawRatingImages(
     itemCount: Int,
     imageEmpty: ImageBitmap,
     imageFilled: ImageBitmap,
-    space: Float,
+    space: Float
 ) {
     val imageHeight = size.height
     val ratingInt = rating.toInt()
@@ -194,7 +194,7 @@ private fun DrawScope.drawRatingImages(
             translate(left = start, top = 0f) {
                 drawImage(
                     image = imageFilled,
-                    dstSize = IntSize(size.width.toInt(), imageHeight.toInt()),
+                    dstSize = IntSize(size.width.toInt(), imageHeight.toInt())
                 )
             }
         }
@@ -217,7 +217,7 @@ private fun DrawScope.drawRatingImages(
             translate(left = imageHeight * i + space * i, top = 0f) {
                 drawImage(
                     image = imageEmpty,
-                    dstSize = IntSize(size.width.toInt(), imageHeight.toInt()),
+                    dstSize = IntSize(size.width.toInt(), imageHeight.toInt())
                 )
             }
         }
