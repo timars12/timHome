@@ -102,7 +102,7 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
     // Integration with observables
     api "androidx.compose.runtime:runtime-livedata:$compose_version"
-    api 'io.coil-kt:coil-compose:2.2.0'
+    api 'io.coil-kt:coil-compose:2.4.0'
 
     api "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
 
