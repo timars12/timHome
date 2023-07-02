@@ -5,13 +5,13 @@
 
 version: 2
 updates:
-  - package-ecosystem: gradle
-    directory: /core/
+  - package-ecosystem: "gradle"
+    directory: "/core/"
     schedule:
-      interval: weekly
-      day: sunday
-      time: 23:45
-      timezone: Europe/Kiev
+      interval: "weekly"
+      day: "sunday"
+      time: "23:58"
+      timezone: "Europe/Kiev"
     open-pull-requests-limit: 10
-    target-branch: master
+    target-branch: "master"
     reviewers: -"RuslanTimkov"
