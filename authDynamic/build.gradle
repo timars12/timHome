@@ -6,19 +6,19 @@ plugins {
     id 'io.gitlab.arturbosch.detekt' version '1.21.0'
 }
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 23
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+        freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
     }
     buildFeatures {
         compose true
