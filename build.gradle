@@ -7,7 +7,7 @@ buildscript {
         room_version = '2.5.2'
         lifecycle_version = '2.6.1'
         retrofit_version = '2.9.0'
-        okhttp_version = '5.0.0-alpha.2'
+        okhttp_version = '5.0.0-alpha.11'
         coroutines_version = '1.5.1'
         dagger_version = "2.45"
         compose_version = '1.6.0-alpha01'
