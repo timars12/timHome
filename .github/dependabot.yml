@@ -10,7 +10,7 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "01:58"
+      time: "02:01"
       timezone: "Europe/Kiev"
     open-pull-requests-limit: 10
     target-branch: "master"
