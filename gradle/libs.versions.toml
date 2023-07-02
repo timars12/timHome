@@ -1,9 +1,13 @@
 [versions]
 androidx-core-v = "1.9.0"
+datastore = "1.0.0"
+coil = "2.2.0"
 #checkstyle = "8.37"
 
 [libraries]
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core-v" }
+datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 #groovy-json = { module = "org.codehaus.groovy:groovy-json", version.ref = "groovy" }
 #groovy-nio = { module = "org.codehaus.groovy:groovy-nio", version.ref = "groovy" }
 #commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version = { strictly = "[3.8, 4.0[", prefer="3.9" } }
