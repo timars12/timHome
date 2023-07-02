@@ -6,11 +6,11 @@
 version: 2
 updates:
   - package-ecosystem: gradle
-    directory: /
+    directory: /core/
     schedule:
       interval: weekly
       day: sunday
-      time: 23:30
+      time: 23:41
       timezone: Europe/Kiev
     open-pull-requests-limit: 10
     target-branch: master
