@@ -58,7 +58,7 @@ ktlint {
 }
 
 dependencies {
-    api libs.androidx.core
+    api (libs.androidx.core)
     api 'androidx.appcompat:appcompat:1.6.1'
 
     api "androidx.activity:activity-ktx:1.6.1"
