@@ -10,8 +10,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
-      time: "23:58"
+      time: "23:59"
       timezone: "Europe/Kiev"
     open-pull-requests-limit: 10
     target-branch: "master"
-    reviewers: -"RuslanTimkov"
+    reviewers: 
+      - "RuslanTimkov"
