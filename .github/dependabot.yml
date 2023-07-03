@@ -5,25 +5,14 @@
 
 version: 2
 updates:
-  - package-ecosystem: "toml"
+  - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "10:54"
+      time: "11:50"
       timezone: "Europe/Kiev"
     open-pull-requests-limit: 10
     target-branch: "master"
     reviewers: 
       - "RuslanTimkov"
-#  - package-ecosystem: "toml"
-#      directory: "/"
-#        schedule:
-#          interval: "weekly"
-#          day: "monday"
-#          time: "03:20"
-#          timezone: "Europe/Kiev"
-#        open-pull-requests-limit: 10
-#        target-branch: "master"
-#        reviewers:
-#          - "RuslanTimkov"
