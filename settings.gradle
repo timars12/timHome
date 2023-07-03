@@ -15,8 +15,9 @@ dependencyResolutionManagement {
     versionCatalogs {
         libs {
 //            from(files("../gradle/libs.versions.toml"))
-//        version('androidx-core-v', '1.9.0') 
+        version('coil-v', '2.2.0')
 //            version('checkstyle', '8.37')
+            library('coil', 'io.coil-kt', 'coil-compose').versionRef('coil-v')
 //            library('androidx-core', 'androidx.core:core-ktx:1.9.0')
 //        library('androidx-core', 'androidx.core', 'core-ktx').versionRef('androidx-core-v')
 //            library('groovy-json', 'org.codehaus.groovy', 'groovy-json').versionRef('groovy')
