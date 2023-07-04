@@ -13,28 +13,19 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.core.coreComponent
 import com.example.core.ui.theme.DeviceDetailForegroundColor
 import com.example.core.ui.theme.HomeTheme
-import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
+import com.example.core.utils.viewmodel.ViewModelFactory
 import com.example.device.di.DaggerDeviceComponent
 import com.example.device.presentation.device.composables.LazyColumnWithParallax
 import javax.inject.Inject
 
 class DeviceDetailFragment : Fragment() {
     @Inject
-    lateinit var abstractFactory: dagger.Lazy<InjectingSavedStateViewModelFactory>
-
-    /**
-     * This method androidx uses for `by viewModels` method.
-     * We can set out injecting factory here and therefore don't touch it again later
-     */
-    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
-        get() = abstractFactory.get().create(this, arguments)
-
-    private val viewModel: DeviceDetailViewMode by viewModels()
+    lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
+    private val viewModel: DeviceDetailViewMode by viewModels { abstractFactory.get() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

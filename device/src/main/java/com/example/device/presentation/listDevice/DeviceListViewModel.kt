@@ -12,11 +12,10 @@ import com.example.device.domain.models.DeviceModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 class DeviceListViewModel @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
@@ -26,12 +25,12 @@ class DeviceListViewModel @AssistedInject constructor(
     val deviceList = MutableStateFlow(listOf<DeviceModel>().toImmutableList())
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getAllDevices().collect { list ->
-                deviceList.update { list }
-            }
-        }
+        viewModelScope.launch(Dispatchers.IO) { repository.initAllDevices() }
     }
+
+    fun getAllDevices() = repository.getAllDevices()
+
+    fun updateList(list: ImmutableList<DeviceModel>) = deviceList.update { list }
 
     fun navigateToDetailScreen(device: DeviceModel) {
         navigationDispatcher.emit {

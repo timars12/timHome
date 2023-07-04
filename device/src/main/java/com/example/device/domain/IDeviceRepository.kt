@@ -5,8 +5,9 @@ import com.example.device.domain.models.DeviceModel
 import kotlinx.coroutines.flow.Flow
 
 interface IDeviceRepository {
-    @Suppress("SuspendFunWithFlowReturnType")
-    suspend fun getAllDevices(): Flow<List<DeviceModel>>
+    suspend fun initAllDevices()
+
+    fun getAllDevices(): Flow<List<DeviceModel>>
 
     suspend fun getSelectedDeviceById(deviceId: Int): DeviceModel
 

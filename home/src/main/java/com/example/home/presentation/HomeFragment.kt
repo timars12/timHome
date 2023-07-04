@@ -9,9 +9,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
@@ -29,31 +32,22 @@ import com.example.core.data.db.entity.CarbonDioxideEntity
 import com.example.core.ui.ChartView
 import com.example.core.ui.theme.DataCreatedItemColor
 import com.example.core.ui.theme.LightBlack
-import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
+import com.example.core.utils.viewmodel.ViewModelFactory
 import com.example.home.R
 import com.example.home.custom.Co2Indicator
 import com.example.home.custom.TemperatureBar
 import com.example.home.di.DaggerHomeComponent
 import com.example.home.presentation.home.HomeViewModel
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeFragment : Fragment() {
 
     @Inject
-    lateinit var abstractFactory: dagger.Lazy<InjectingSavedStateViewModelFactory>
-
-    /**
-     * This method androidx uses for `by viewModels` method.
-     * We can set out injecting factory here and therefore don't touch it again later
-     */
-    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
-        get() = abstractFactory.get().create(this, arguments)
-
-    private val viewModel: HomeViewModel by viewModels()
+    lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
+    private val viewModel: HomeViewModel by viewModels { abstractFactory.get() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -63,6 +57,7 @@ class HomeFragment : Fragment() {
             .inject(this)
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -77,11 +72,25 @@ class HomeFragment : Fragment() {
                     val temperatureOutside by viewModel.temperatureOutside.collectAsStateWithLifecycle()
                     val co2 by viewModel.co2.collectAsStateWithLifecycle()
                     val chartCO2 by viewModel.measureCO2Levels.collectAsStateWithLifecycle()
+                    val isAnimated = remember { mutableStateOf(false) }
+                    val pullRefreshState =
+                        rememberPullRefreshState(isRefreshing, onRefresh = viewModel::getDate)
 
-                    SwipeRefresh(
-                        modifier = Modifier.fillMaxSize(),
-                        state = rememberSwipeRefreshState(isRefreshing),
-                        onRefresh = viewModel::getDate
+                    DisposableEffect(key1 = Lifecycle.State.RESUMED) {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                                isAnimated.value = true
+                            }
+                        }
+                        onDispose {
+                            isAnimated.value = false
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .pullRefresh(pullRefreshState)
+                            .fillMaxSize()
                     ) {
                         Column(
                             Modifier
@@ -118,12 +127,18 @@ class HomeFragment : Fragment() {
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(24.dp),
-                                        co2 = co2
+                                        co2 = co2,
+                                        isAnimated = isAnimated.value
                                     )
                                 }
                             }
                             ChartStatisticView(chartCO2 = chartCO2)
                         }
+                        PullRefreshIndicator(
+                            isRefreshing,
+                            pullRefreshState,
+                            Modifier.align(Alignment.TopCenter)
+                        )
                     }
                 }
             }
@@ -154,7 +169,8 @@ class HomeFragment : Fragment() {
                     xLabel = stringResource(R.string.time),
                     yLabel = "Temperature",
                     isShouldShowValue = false,
-                    list = listOf( // TODO FAKE
+                    list = listOf(
+                        // TODO FAKE
                         CarbonDioxideEntity(co2Level = 540, date = "12:00"),
                         CarbonDioxideEntity(co2Level = 600, date = "12:15"),
                         CarbonDioxideEntity(co2Level = 660, date = "12:30"),

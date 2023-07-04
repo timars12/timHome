@@ -23,11 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.core.coreComponent
 import com.example.core.ui.theme.TextFieldBackgroundColor
-import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
+import com.example.core.utils.viewmodel.ViewModelFactory
 import com.example.settings.R
 import com.example.settings.di.DaggerSettingComponent
 import com.example.settings.presentation.composables.SwitchWithText
@@ -37,16 +36,8 @@ private const val CORNER_SHAPE_TEXT_FIELD = 20
 
 class SettingFragment : Fragment() {
     @Inject
-    lateinit var abstractFactory: dagger.Lazy<InjectingSavedStateViewModelFactory>
-
-    /**
-     * This method androidx uses for `by viewModels` method.
-     * We can set out injecting factory here and therefore don't touch it again later
-     */
-    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
-        get() = abstractFactory.get().create(this, arguments)
-
-    private val viewModel: SettingViewModel by viewModels()
+    lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
+    private val viewModel: SettingViewModel by viewModels { abstractFactory.get() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
