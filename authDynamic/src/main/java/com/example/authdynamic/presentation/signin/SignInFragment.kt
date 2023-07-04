@@ -6,20 +6,30 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material.Button
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.*
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.dynamicfeatures.DynamicExtras
 import androidx.navigation.dynamicfeatures.DynamicInstallMonitor
@@ -31,7 +41,7 @@ import com.example.authdynamic.presentation.signin.composable.PasswordTextField
 import com.example.core.coreComponent
 import com.example.core.ui.SnackbarMessage
 import com.example.core.ui.theme.HomeTheme
-import com.example.core.utils.viewmodel.InjectingSavedStateViewModelFactory
+import com.example.core.utils.viewmodel.ViewModelFactory
 import com.google.android.play.core.splitinstall.SplitInstallSessionState
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -40,16 +50,8 @@ import javax.inject.Inject
 class SignInFragment : Fragment() {
 
     @Inject
-    lateinit var abstractFactory: dagger.Lazy<InjectingSavedStateViewModelFactory>
-
-    /**
-     * This method androidx uses for `by viewModels` method.
-     * We can set out injecting factory here and therefore don't touch it again later
-     */
-    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
-        get() = abstractFactory.get().create(this, arguments)
-
-    private val viewModel: SignInViewModel by viewModels()
+    lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
+    private val viewModel: SignInViewModel by viewModels { abstractFactory.get() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

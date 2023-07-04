@@ -67,8 +67,8 @@ class MainActivity : AppCompatActivity() {
 
         checkNotificationPermission()
 
-        initNavigation()
         if (savedInstanceState == null) {
+            initNavigation()
             lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     observeNavigationCommands()

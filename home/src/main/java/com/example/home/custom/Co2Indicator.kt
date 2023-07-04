@@ -1,19 +1,19 @@
 package com.example.home.custom
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.ui.theme.*
 import com.example.core.utils.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
@@ -21,48 +21,120 @@ import com.example.core.utils.Constant.INDICATOR_CO2_BED_LEVEL
 import com.example.core.utils.Constant.INDICATOR_CO2_GOOD_LEVEL
 import com.example.core.utils.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
 import com.example.core.utils.Constant.INDICATOR_CO2_UNCOMFORTABLE_LEVEL
+import okhttp3.internal.toImmutableList
+
+private const val MILLIS_DURATION_FOR_CO2_INDICATOR = 3000
+private const val MILLIS_DURATION_FOR_TEXT_CO2_INDICATOR = 180
+private const val SIZE_INNER_CIRCLE_RATIO = .94F
+private const val OFFSET_INNER_CIRCLE_RATIO = .3F
 
 @Composable
-fun Co2Indicator(modifier: Modifier, co2: Int) {
-    val indicatorColor = remember(co2) { getColorByCO2(co2) }
+fun Co2Indicator(modifier: Modifier, co2: Int, isAnimated: Boolean) {
+    val countOfIteration = remember(co2) { getCountByCO2(co2) }
+    val listColors = listOf(
+        IndicatorCO2Good,
+        IndicatorCO2Acceptable,
+        IndicatorCO2Uncomfortable,
+        IndicatorCO2Bed,
+        IndicatorCO2LowDanger,
+        IndicatorCO2Danger
+    ).toImmutableList()
+    val indicatorColor = remember(co2) { listColors[countOfIteration] }
+
+    val sweepAngle by animateFloatAsState(
+        targetValue = if (isAnimated) 360f else 0f,
+        animationSpec = tween(durationMillis = 500, easing = LinearEasing)
+    )
+
+    val co2ColorIndicator = remember { Animatable(initialValue = listColors[0]) }
+    LaunchedEffect(key1 = co2) {
+        co2ColorIndicator.animateTo(
+            targetValue = indicatorColor,
+            animationSpec = keyframes {
+                if (countOfIteration == 0) return@keyframes
+                durationMillis = MILLIS_DURATION_FOR_CO2_INDICATOR
+                val secondFrame = durationMillis / countOfIteration
+                for (secondColor in 0..countOfIteration) {
+                    listColors[secondColor] at secondFrame with FastOutLinearInEasing
+                }
+            }
+        )
+    }
 
     Box {
         Canvas(
-            modifier = modifier
-                .fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
-            drawCircle(
-                color = indicatorColor,
-                style = Stroke(width = 15f, cap = StrokeCap.Round)
+            drawArc(
+                color = co2ColorIndicator.value,
+                startAngle = -90f,
+                sweepAngle = sweepAngle,
+                useCenter = true,
+                size = Size(size.width, size.height)
+            )
+            drawArc(
+                color = Color.White,
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = true,
+                size = Size(
+                    size.width * SIZE_INNER_CIRCLE_RATIO,
+                    size.height * SIZE_INNER_CIRCLE_RATIO
+                ),
+                topLeft = Offset(
+                    size.width * OFFSET_INNER_CIRCLE_RATIO,
+                    size.height * OFFSET_INNER_CIRCLE_RATIO
+                )
             )
         }
-        Column(
+        AnimatedVisibility(
             modifier = Modifier.align(Alignment.Center),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            visible = isAnimated,
+            enter = remember {
+                scaleIn(
+                    animationSpec = tween(
+                        durationMillis = MILLIS_DURATION_FOR_TEXT_CO2_INDICATOR,
+                        easing = LinearEasing
+                    )
+                )
+            }
         ) {
-            Text(
-                text = co2.toString(),
-                color = indicatorColor,
-                fontWeight = FontWeight.W900,
-                fontSize = 16.sp
-            )
-            Text(
-                text = "co2",
-                color = TextColorCO2,
-                fontSize = 12.sp
-            )
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = co2.toString(),
+                    color = indicatorColor,
+                    fontWeight = FontWeight.W900,
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = "co2", // TODO
+                    color = TextColorCO2,
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 }
 
-private fun getColorByCO2(co2: Int): Color {
+@Suppress("MagicNumber")
+private fun getCountByCO2(co2: Int): Int {
     return when {
-        co2 <= INDICATOR_CO2_GOOD_LEVEL -> IndicatorCO2Good
-        co2 <= INDICATOR_CO2_ACCEPTABLE_VALUE -> IndicatorCO2Acceptable
-        co2 <= INDICATOR_CO2_UNCOMFORTABLE_LEVEL -> IndicatorCO2Uncomfortable
-        co2 <= INDICATOR_CO2_BED_LEVEL -> IndicatorCO2Bed
-        co2 <= INDICATOR_CO2_LOW_DANGER_LEVEL -> IndicatorCO2LowDanger
-        else -> IndicatorCO2Danger
+        co2 <= INDICATOR_CO2_GOOD_LEVEL -> 0
+        co2 <= INDICATOR_CO2_ACCEPTABLE_VALUE -> 1
+        co2 <= INDICATOR_CO2_UNCOMFORTABLE_LEVEL -> 2
+        co2 <= INDICATOR_CO2_BED_LEVEL -> 3
+        co2 <= INDICATOR_CO2_LOW_DANGER_LEVEL -> 4
+        else -> 5
     }
+}
+
+@Preview
+@Composable
+@Suppress("MagicNumber")
+fun PreviewCo2Indicator() {
+    Co2Indicator(Modifier.size(150.dp), 2500, true)
 }

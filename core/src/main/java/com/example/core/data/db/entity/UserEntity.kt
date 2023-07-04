@@ -3,7 +3,7 @@ package com.example.core.data.db.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "userEntity")
 data class UserEntity(
     @PrimaryKey val id: Int,
     val email: String,
