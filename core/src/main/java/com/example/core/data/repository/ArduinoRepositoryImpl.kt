@@ -18,7 +18,9 @@ class ArduinoRepositoryImpl @Inject constructor(
 
     override suspend fun getCo2AndTemperature(): CallStatus<ArduinoResponse> {
         return try {
-            val response = arduinoApi.getCo2AndTemperature("http://${dataStore.getHomeIpAddress()}/")
+            val response = arduinoApi.getCo2AndTemperature(
+                "http://${dataStore.getHomeIpAddress()}/"
+            )
             when {
                 response.code() == CODE_200 -> CallStatus.Success(response.body())
                 else -> CallStatus.Error()

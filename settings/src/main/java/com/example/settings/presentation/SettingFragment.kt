@@ -78,9 +78,13 @@ class SettingFragment : Fragment() {
                                 backgroundColor = TextFieldBackgroundColor,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
                             ),
-                            keyboardOptions = remember { KeyboardOptions(keyboardType = KeyboardType.Decimal) },
+                            keyboardOptions = remember {
+                                KeyboardOptions(
+                                    keyboardType = KeyboardType.Decimal
+                                )
+                            },
                             shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
                             maxLines = 1,
                             textStyle = LocalTextStyle.current.copy(
@@ -98,9 +102,13 @@ class SettingFragment : Fragment() {
                                 backgroundColor = TextFieldBackgroundColor,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
                             ),
-                            keyboardOptions = remember { KeyboardOptions(keyboardType = KeyboardType.Text) },
+                            keyboardOptions = remember {
+                                KeyboardOptions(
+                                    keyboardType = KeyboardType.Text
+                                )
+                            },
                             shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
                             maxLines = 1,
                             textStyle = LocalTextStyle.current.copy(

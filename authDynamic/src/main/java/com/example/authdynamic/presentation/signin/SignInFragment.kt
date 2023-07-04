@@ -65,7 +65,6 @@ class SignInFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 HomeTheme {
-
                     val lifecycleOwner = LocalLifecycleOwner.current
                     val focusManager = LocalFocusManager.current
                     val snackbarHostState = remember { SnackbarHostState() }
@@ -137,7 +136,9 @@ class SignInFragment : Fragment() {
                     override fun onChanged(value: SplitInstallSessionState) {
                         when (value.status()) {
                             SplitInstallSessionStatus.INSTALLED -> {
-                                findNavController().navigate(com.example.modularizationtest.R.id.home_navigation)
+                                findNavController().navigate(
+                                    com.example.modularizationtest.R.id.home_navigation
+                                )
                             }
                             SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
 //                            SplitInstallManager.startConfirmationDialogForResult(...)

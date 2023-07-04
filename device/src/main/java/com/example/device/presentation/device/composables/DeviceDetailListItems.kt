@@ -28,7 +28,10 @@ fun DeviceDetailListItems(
 ) {
     Row(
         modifier = modifier
-            .background(color = DeviceDetailItemBackgroundColor, shape = MaterialTheme.cornerRoundedShapes.medium)
+            .background(
+                color = DeviceDetailItemBackgroundColor,
+                shape = MaterialTheme.cornerRoundedShapes.medium
+            )
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

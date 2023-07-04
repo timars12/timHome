@@ -73,7 +73,7 @@ fun LazyColumnWithParallax(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = scrollState,
-            contentPadding = PaddingValues(bottom = 90.dp),
+            contentPadding = PaddingValues(bottom = 90.dp)
         ) {
             item {
                 DeviceDetailHeader(

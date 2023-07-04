@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class DeviceListViewModel @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val navigationDispatcher: NavigationDispatcher,
-    private val repository: DeviceRepository,
+    private val repository: DeviceRepository
 ) : ViewModel() {
     val deviceList = MutableStateFlow(listOf<DeviceModel>().toImmutableList())
 

@@ -13,7 +13,7 @@ import androidx.room.ForeignKey.Companion.CASCADE
             onDelete = CASCADE
         )
     ],
-    indices = [Index(value = ["device_id"])],
+    indices = [Index(value = ["device_id"])]
 )
 data class ModuleEntity(
     @PrimaryKey

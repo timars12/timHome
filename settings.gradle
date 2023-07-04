@@ -12,6 +12,22 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url 'https://jitpack.io' }
     }
+    versionCatalogs {
+        libs {
+//            from(files("../gradle/libs.versions.toml"))
+//        version('coil-v', '2.2.0')
+//            version('checkstyle', '8.37')
+//            library('coil', 'io.coil-kt', 'coil-compose').versionRef('coil-v')
+//            library('androidx-core', 'androidx.core:core-ktx:1.9.0')
+//        library('androidx-core', 'androidx.core', 'core-ktx').versionRef('androidx-core-v')
+//            library('groovy-json', 'org.codehaus.groovy', 'groovy-json').versionRef('groovy')
+//            library('groovy-nio', 'org.codehaus.groovy', 'groovy-nio').versionRef('groovy')
+//            library('commons-lang3', 'org.apache.commons', 'commons-lang3').version {
+//                strictly '[3.8, 4.0['
+//                prefer '3.9'
+//            }
+        }
+    }
 }
 rootProject.name = "ModularizationTest"
 include ':app'

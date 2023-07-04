@@ -7,7 +7,10 @@ import com.example.core.di.scope.FeatureScope
 import dagger.Component
 
 @FeatureScope
-@Component(dependencies = [CoreComponent::class], modules = [LoginModule::class, SignInModule::class])
+@Component(
+    dependencies = [CoreComponent::class],
+    modules = [LoginModule::class, SignInModule::class]
+)
 internal interface AuthenticationComponent {
     @Component.Factory
     interface Factory {

@@ -81,7 +81,7 @@ class HomeFragment : Fragment() {
                     SwipeRefresh(
                         modifier = Modifier.fillMaxSize(),
                         state = rememberSwipeRefreshState(isRefreshing),
-                        onRefresh = viewModel::getDate,
+                        onRefresh = viewModel::getDate
                     ) {
                         Column(
                             Modifier
@@ -159,7 +159,7 @@ class HomeFragment : Fragment() {
                         CarbonDioxideEntity(co2Level = 600, date = "12:15"),
                         CarbonDioxideEntity(co2Level = 660, date = "12:30"),
                         CarbonDioxideEntity(co2Level = 700, date = "12:45"),
-                        CarbonDioxideEntity(co2Level = 760, date = "13:00"),
+                        CarbonDioxideEntity(co2Level = 760, date = "13:00")
                     ).toImmutableList()
                 )
             }

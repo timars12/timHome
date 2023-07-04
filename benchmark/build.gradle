@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.example.benchmark'
-    compileSdk 32
+    compileSdk 34
 
     defaultConfig {
         minSdk 29
@@ -32,8 +32,8 @@ android {
     experimentalProperties["android.experimental.self-instrumenting"] = true
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 

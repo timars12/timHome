@@ -2,11 +2,11 @@ plugins {
     id 'com.android.dynamic-feature'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'org.jlleitschuh.gradle.ktlint' version '10.3.0'
-    id 'io.gitlab.arturbosch.detekt' version '1.21.0'
+    id 'org.jlleitschuh.gradle.ktlint' version '11.4.2'
+    id 'io.gitlab.arturbosch.detekt' version '1.23.0'
 }
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 23
@@ -14,12 +14,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+        freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
     }
     buildFeatures {
         compose true
@@ -49,7 +49,6 @@ ktlint {
 dependencies {
     implementation project(":app")
     implementation project(path: ':core')
-    implementation 'androidx.core:core-ktx:1.9.0'
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation 'junit:junit:4.13.2'

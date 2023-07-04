@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import com.example.core.di.CoreComponent
 import com.example.core.di.DaggerCoreComponent
+import com.github.venom.BuildConfig
 import com.github.venom.Venom
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.android.play.core.splitcompat.SplitCompatApplication

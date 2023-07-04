@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'org.jlleitschuh.gradle.ktlint' version '10.3.0'
-    id 'io.gitlab.arturbosch.detekt' version '1.21.0'
+    id 'org.jlleitschuh.gradle.ktlint' version '11.4.2'
+    id 'io.gitlab.arturbosch.detekt' version '1.23.0'
 }
 
 android {
@@ -18,12 +18,12 @@ android {
         }
     }
 
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.timhome.modularizationtest"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 9
         versionName "1.1"
 
@@ -44,12 +44,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+        freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
     }
     buildFeatures {
         compose true

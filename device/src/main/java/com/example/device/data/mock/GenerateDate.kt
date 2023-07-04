@@ -62,7 +62,7 @@ class GenerateDate @Inject constructor() {
                         title = "PL2303HX+1PCS CP2102",
                         price = "0.63$",
                         link = "https://www.aliexpress.com/item/1005005104583795.html?spm=a2g0o.productlist.main.31.20534350c84LZq&algo_pvid=e69dd9c6-a717-40c5-b2d6-406c314dcc09&algo_exp_id=e69dd9c6-a717-40c5-b2d6-406c314dcc09-15&pdp_ext_f=%7B\"sku_id\"%3A\"12000031674762311\"%7D&pdp_npi=3%40dis%21USD%210.97%210.63%21%21%21%21%21%4021209f9e16773402224721952d06d8%2112000031674762311%21sea%21UA%21722964942&curPageLogUid=fGgOQczaERB9"
-                    ),
+                    )
                 )
             )
             val item2 = Device(
