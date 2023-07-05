@@ -113,7 +113,6 @@ class MainActivity : AppCompatActivity() {
             val jobInfo = JobInfo.Builder(jobId, ComponentName(this, CO2JobService::class.java))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // Requires a network connection
                 .setPeriodic(AlarmManager.INTERVAL_FIFTEEN_MINUTES) // Sets the job to repeat every 5 minutes
-                .setPersisted(true) // Job should persist after device reboot
                 .build()
 
             jobScheduler.schedule(jobInfo)
