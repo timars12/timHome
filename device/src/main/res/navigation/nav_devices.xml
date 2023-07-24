@@ -5,11 +5,11 @@
 
     <fragment
         android:id="@+id/deviceListFragment"
-        android:name="com.example.device.presentation.listDevice.DeviceListFragment"
+        android:name="com.example.device.ui.listDevice.DeviceListFragment"
         android:label="DeviceListFragment" />
 
     <fragment
         android:id="@+id/deviceDetailFragment"
-        android:name="com.example.device.presentation.device.DeviceDetailFragment"
+        android:name="com.example.device.ui.device.DeviceDetailFragment"
         android:label="DeviceDetailFragment" />
 </navigation>

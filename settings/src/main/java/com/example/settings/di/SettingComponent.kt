@@ -2,8 +2,8 @@ package com.example.settings.di
 
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
-import com.example.settings.presentation.SettingFragment
-import com.example.settings.presentation.SettingModule
+import com.example.settings.ui.SettingFragment
+import com.example.settings.ui.SettingModule
 import dagger.Component
 
 @FeatureScope

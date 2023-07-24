@@ -25,7 +25,7 @@
             tools:targetApi="29" />
 
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,11 +34,11 @@
         </activity>
 
         <service
-            android:name=".presentation.CO2JobService"
+            android:name=".ui.CO2JobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
-            android:name=".presentation.RunServiceAfterRebootReceiver"
+            android:name=".ui.RunServiceAfterRebootReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

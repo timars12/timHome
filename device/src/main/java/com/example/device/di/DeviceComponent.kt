@@ -2,10 +2,10 @@ package com.example.device.di
 
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
-import com.example.device.presentation.device.DeviceDetailFragment
-import com.example.device.presentation.device.DeviceDetailModel
-import com.example.device.presentation.listDevice.DeviceListFragment
-import com.example.device.presentation.listDevice.DeviceListModule
+import com.example.device.ui.device.DeviceDetailFragment
+import com.example.device.ui.device.DeviceDetailModel
+import com.example.device.ui.listDevice.DeviceListFragment
+import com.example.device.ui.listDevice.DeviceListModule
 import dagger.Component
 
 @FeatureScope

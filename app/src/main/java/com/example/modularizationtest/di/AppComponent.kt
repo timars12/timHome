@@ -2,8 +2,8 @@ package com.example.modularizationtest.di
 
 import com.example.base.BaseComponent
 import com.example.base.BaseScope
-import com.example.modularizationtest.presentation.CO2JobService
-import com.example.modularizationtest.presentation.MainActivity
+import com.example.modularizationtest.ui.CO2JobService
+import com.example.modularizationtest.ui.MainActivity
 import dagger.Component
 
 @BaseScope

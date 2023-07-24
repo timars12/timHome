@@ -2,8 +2,8 @@ package com.example.home.di
 
 import com.example.base.BaseComponent
 import com.example.base.BaseScope
-import com.example.home.presentation.HomeFragment
-import com.example.home.presentation.home.HomeModule
+import com.example.home.ui.HomeFragment
+import com.example.home.ui.home.HomeModule
 import dagger.Component
 
 @BaseScope

@@ -1,7 +1,7 @@
 package com.example.authdynamic.di
 
-import com.example.authdynamic.presentation.signin.SignInFragment
-import com.example.authdynamic.presentation.signin.di.SignInModule
+import com.example.authdynamic.ui.signin.SignInFragment
+import com.example.authdynamic.ui.signin.di.SignInModule
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
 import dagger.Component

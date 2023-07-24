@@ -1,19 +1,83 @@
-#[versions]
-#androidx-core-v = "1.9.0"
-#datastore = "1.0.0"
-#coil = "2.2.0"
-##checkstyle = "8.37"
-#
-#[libraries]
-#androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core-v" }
-#datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
-#coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-##groovy-json = { module = "org.codehaus.groovy:groovy-json", version.ref = "groovy" }
-##groovy-nio = { module = "org.codehaus.groovy:groovy-nio", version.ref = "groovy" }
-##commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version = { strictly = "[3.8, 4.0[", prefer="3.9" } }
-#
-##[bundles]
-##groovy = ["groovy-core", "groovy-json", "groovy-nio"]
-#
-##[plugins]
-##versions = { id = "com.github.ben-manes.versions", version = "0.45.0" }
+[versions]
+accompanist = "0.30.1"
+androidGradlePlugin = "8.0.2"
+androidxActivity = "1.7.0"
+androidxComposeRuntimeTracing = "1.0.0-alpha03"
+androidxCore = "1.9.0"
+androidxDataStore = "1.0.0"
+androidxLifecycle = "2.6.1"
+androidxMetrics = "1.0.0-alpha03"
+firebaseCrashlyticsPlugin = "2.9.2"
+junit4 = "4.13.2"
+kotlin = "1.8.22"
+kotlinxCoroutines = "1.6.4"
+ksp = "1.8.22-1.0.11"
+okhttp_version = "4.10.0"
+retrofit = "2.9.0"
+retrofitKotlinCoroutinesAdapter = "0.9.2"
+room_version = "2.5.2"
+dagger_version = "2.46.1"
+kotlin_compiler_extension_version = "1.4.8"
+nav_version = "2.6.0"
+coil_version = "2.4.0"
+collections_immutable_version = "0.3.5"
+material3 = "1.1.1"
+
+[libraries]
+accompanist-insets = { group = "com.google.accompanist", name = "accompanist-insets", version.ref = "accompanist" }
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+accompanist-swiperefresh = { group = "com.google.accompanist", name = "accompanist-swiperefresh", version.ref = "accompanist" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+# Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-runtime-tracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "androidxComposeRuntimeTracing" }
+androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil_version" }
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDataStore" }
+collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "collections_immutable_version" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
+androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
+androidx-lifecycle-viewModelSavedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycle" }
+#androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", version.ref = "androidxMetrics" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp_version" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp_version" }
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+retrofit-scalars = { group = "com.squareup.retrofit2", name = "converter-scalars", version.ref = "retrofit" }
+retrofit-kotlin-coroutines = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlin-coroutines-adapter", version.ref = "retrofitKotlinCoroutinesAdapter" }
+dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger_version" }
+dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger_version" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room_version" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room_version" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room_version" }
+navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "nav_version" }
+navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "nav_version" }
+navigation-dynamic-features-fragment = { group = "androidx.navigation", name = "navigation-dynamic-features-fragment", version.ref = "nav_version" }
+#Turbine is a small testing library for kotlinx.coroutines Flow
+#turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+# Dependencies of the included build-logic
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+#ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+
+[bundles]
+compose = ["androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-foundation", "androidx-compose-material3", "androidx-activity-compose", "coil"]
+lifecycle = ["androidx-lifecycle-runtime-ktx", "androidx-lifecycle-runtimeCompose", "androidx-lifecycle-viewModelCompose", "androidx-lifecycle-viewModelSavedstate"]
+navigation = ["navigation-fragment-ktx", "navigation-ui-ktx", "navigation-dynamic-features-fragment"]
+room = ["room-ktx", "room-runtime"]
+retrofit = ["retrofit-core", "retrofit-gson", "retrofit-kotlin-coroutines"]
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

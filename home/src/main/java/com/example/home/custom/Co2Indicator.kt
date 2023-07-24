@@ -4,7 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +28,7 @@ private const val MILLIS_DURATION_FOR_TEXT_CO2_INDICATOR = 180
 private const val SIZE_INNER_CIRCLE_RATIO = .94F
 private const val OFFSET_INNER_CIRCLE_RATIO = .3F
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Co2Indicator(modifier: Modifier, co2: Int, isAnimated: Boolean) {
     val countOfIteration = remember(co2) { getCountByCO2(co2) }
