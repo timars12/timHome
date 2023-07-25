@@ -69,6 +69,10 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":base"))
-    implementation("androidx.core:core-ktx:+")
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.bundles.navigation)
+    implementation(libs.bundles.retrofit)
+    implementation(libs.bundles.room)
+    implementation(libs.dagger)
     kapt(libs.dagger.compiler)
 }

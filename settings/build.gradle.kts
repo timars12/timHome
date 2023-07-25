@@ -11,7 +11,12 @@ android {
 dependencies {
     implementation(project(":app"))
     implementation(project(":core"))
-    implementation("androidx.core:core-ktx:+")
+    implementation(libs.bundles.compose)
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.bundles.navigation)
+    implementation(libs.bundles.retrofit)
+    implementation(libs.datastore)
+    implementation(libs.dagger)
     kapt(libs.dagger.compiler)
 
     testImplementation("junit:junit:4.13.2")

@@ -44,28 +44,28 @@ android {
 }
 
 dependencies {
-    api(libs.bundles.lifecycle)
-    api(libs.bundles.retrofit)
-    api(libs.retrofit.scalars)
-    api(libs.okhttp)
-    api(libs.okhttp.logging)
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.bundles.retrofit)
+    implementation(libs.retrofit.scalars)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 
-    api(libs.dagger)
+    implementation(libs.dagger)
     implementation("androidx.core:core-ktx:+")
     kapt(libs.dagger.compiler)
 
-    api(libs.bundles.room)
+    implementation(libs.bundles.room)
     ksp(libs.room.compiler)
 
-    api(libs.bundles.navigation)
-    api(libs.bundles.compose)
+    implementation(libs.bundles.navigation)
+    implementation(libs.bundles.compose)
 
     implementation(libs.accompanist.insets)
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.accompanist.permissions)
 
-    api(libs.datastore)
-    api(libs.collections.immutable)
+    implementation(libs.datastore)
+    implementation(libs.collections.immutable)
 
     // for testing process death
     debugImplementation("com.github.YarikSOffice.Venom:venom:0.5.0")

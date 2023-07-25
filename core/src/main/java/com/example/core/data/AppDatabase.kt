@@ -20,7 +20,7 @@ import com.example.core.utils.Constant.APP_DATABASE
         ModuleEntity::class,
         CarbonDioxideEntity::class
     ],
-    version = 1,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -30,6 +30,7 @@ android {
 
 dependencies {
     implementation(project(":core"))
-    implementation("androidx.core:core-ktx:+")
+    implementation(libs.bundles.room)
+    implementation(libs.dagger)
     kapt(libs.dagger.compiler)
 }

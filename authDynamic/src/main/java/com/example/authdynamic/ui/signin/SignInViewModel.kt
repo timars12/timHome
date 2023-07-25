@@ -8,7 +8,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class SignInViewModel @AssistedInject constructor(
     private val repository: IAuthorizationRepository,
@@ -16,8 +15,8 @@ class SignInViewModel @AssistedInject constructor(
 ) : ViewModel() {
     val events = Channel<SignInEvent>(Channel.UNLIMITED)
 
-    val email = MutableStateFlow(savedStateHandle["email"] ?: "")
-    val password = MutableStateFlow(savedStateHandle["password"] ?: "")
+    val email = savedStateHandle.getStateFlow("email", "")
+    val password = savedStateHandle.getStateFlow("password", "")
 
     fun onEnterEmail(value: String) {
         savedStateHandle["email"] = value
