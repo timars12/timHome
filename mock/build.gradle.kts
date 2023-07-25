@@ -1,7 +1,8 @@
 plugins {
-    id ("com.android.library")
-    id ("org.jetbrains.kotlin.android")
-    id ("kotlin-kapt")
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("timHome.dynamic-feature.quality")
 }
 android {
     namespace = "com.example.mock"
@@ -15,7 +16,10 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -25,7 +29,7 @@ android {
 }
 
 dependencies {
-    implementation (project(":core"))
+    implementation(project(":core"))
     implementation("androidx.core:core-ktx:+")
-    kapt (libs.dagger.compiler)
+    kapt(libs.dagger.compiler)
 }

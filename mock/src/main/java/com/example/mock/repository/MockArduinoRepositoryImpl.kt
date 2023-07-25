@@ -11,9 +11,8 @@ import javax.inject.Inject
 
 open class MockArduinoRepositoryImpl @Inject constructor(
     private val mockAPI: Co2AndTemperatureMock,
-    private val database: AppDatabase,
+    private val database: AppDatabase
 ) : ArduinoRepository {
-
     override suspend fun getCo2AndTemperature(): CallStatus<ArduinoResponse> {
         return CallStatus.Success(mockAPI.getCo2AndTemperature())
     }

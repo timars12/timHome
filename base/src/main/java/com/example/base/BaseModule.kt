@@ -7,7 +7,6 @@ import com.example.core.di.scope.FeatureScope
 import com.example.mock.repository.MockArduinoRepositoryImpl
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class BaseModule {

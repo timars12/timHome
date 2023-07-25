@@ -4,6 +4,12 @@ plugins {
     `kotlin-dsl`
 }
 
+repositories {
+    gradlePluginPortal()
+    google()
+    mavenCentral()
+}
+
 group = "com.google.samples.apps.nowinandroid.buildlogic"
 
 // Configure the build-logic plugins to target JDK 17
@@ -19,9 +25,10 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
+    implementation(libs.ktlint.gradlePlugin)
+    implementation(libs.detekt.gradlePlugin)
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.firebase.crashlytics.gradlePlugin)
-//    compileOnly(libs.firebase.performance.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
 }
@@ -32,14 +39,14 @@ gradlePlugin {
             id = "timHome.dynamic-feature.compose"
             implementationClass = "DynamicFeatureComposeConventionPlugin"
         }
-//        register("androidApplication") {
-//            id = "nowinandroid.android.application"
-//            implementationClass = "AndroidApplicationConventionPlugin"
-//        }
-//        register("androidApplicationJacoco") {
-//            id = "nowinandroid.android.application.jacoco"
-//            implementationClass = "AndroidApplicationJacocoConventionPlugin"
-//        }
+        register("androidDynamicFeatureConventionPlugin") {
+            id = "timHome.dynamic-feature"
+            implementationClass = "DynamicFeatureConventionPlugin"
+        }
+        register("androidDynamicFeatureQuality") {
+            id = "timHome.dynamic-feature.quality"
+            implementationClass = "DynamicFeatureQualityConventionPlugin"
+        }
 //        register("androidLibraryCompose") {
 //            id = "nowinandroid.android.library.compose"
 //            implementationClass = "AndroidLibraryComposeConventionPlugin"
