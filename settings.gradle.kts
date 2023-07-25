@@ -1,8 +1,9 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 dependencyResolutionManagement {
@@ -29,4 +30,3 @@ include(":device")
 include(":benchmark")
 include(":mock")
 include(":base")
-include(":build-logic")

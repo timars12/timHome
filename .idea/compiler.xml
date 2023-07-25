@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
-      <module name="ModularizationTest.app" target="17" />
-      <module name="ModularizationTest.authDynamic" target="17" />
-      <module name="ModularizationTest.base" target="17" />
-      <module name="ModularizationTest.benchmark" target="17" />
-      <module name="ModularizationTest.core" target="17" />
-      <module name="ModularizationTest.device" target="17" />
-      <module name="ModularizationTest.home" target="17" />
-      <module name="ModularizationTest.mock" target="17" />
-      <module name="ModularizationTest.settings" target="17" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="17" />
   </component>
 </project>

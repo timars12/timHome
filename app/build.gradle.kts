@@ -86,5 +86,6 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
 dependencies {
     implementation(project(":core"))
     implementation(project(":base"))
+    implementation("androidx.core:core-ktx:+")
     kapt(libs.dagger.compiler)
 }

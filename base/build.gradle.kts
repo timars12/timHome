@@ -29,5 +29,6 @@ android {
 dependencies {
     implementation (project(":core"))
     implementation (project(":mock"))
+    implementation("androidx.core:core-ktx:+")
     kapt (libs.dagger.compiler)
 }

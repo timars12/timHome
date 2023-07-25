@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.dynamic-feature")
+    id("timHome.dynamic-feature.compose")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("org.jlleitschuh.gradle.ktlint") version "11.4.2"
@@ -21,25 +21,19 @@ android {
     kotlinOptions {
         freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.8"
-    }
     namespace = "com.example.settings"
 }
 detekt {
-    config = files("$rootDir/config/detekt/detekt.yml")
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
 }
-ktlint {
-    verbose = true
-    android = true
-    outputToConsole = true
-    outputColorName = "RED"
-    ignoreFailures = false
-    enableExperimentalRules = false
-    disabledRules = listOf("no-wildcard-imports", "max-line-length", "import-ordering")
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    verbose.set(true)
+    android.set(true)
+    outputToConsole.set(true)
+    outputColorName.set("RED")
+    ignoreFailures.set(false)
+    enableExperimentalRules.set(false)
+    disabledRules.set(setOf("no-wildcard-imports", "max-line-length", "import-ordering"))
     filter {
         exclude("**/generated/**")
         include("**/kotlin/**")
@@ -49,6 +43,7 @@ ktlint {
 dependencies {
     implementation(project(":app"))
     implementation(project(":core"))
+    implementation("androidx.core:core-ktx:+")
     kapt(libs.dagger.compiler)
 
     testImplementation("junit:junit:4.13.2")

@@ -3,7 +3,6 @@ accompanist = "0.30.1"
 androidGradlePlugin = "8.0.2"
 androidxActivity = "1.7.0"
 androidxComposeRuntimeTracing = "1.0.0-alpha03"
-androidxCore = "1.9.0"
 androidxDataStore = "1.0.0"
 androidxLifecycle = "2.6.1"
 androidxMetrics = "1.0.0-alpha03"
@@ -22,12 +21,15 @@ nav_version = "2.6.0"
 coil_version = "2.4.0"
 collections_immutable_version = "0.3.5"
 material3 = "1.1.1"
+androidxComposeCompiler = "1.4.8"
+androidxComposeBom = "2023.06.01"
 
 [libraries]
 accompanist-insets = { group = "com.google.accompanist", name = "accompanist-insets", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-swiperefresh = { group = "com.google.accompanist", name = "accompanist-swiperefresh", version.ref = "accompanist" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 # Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
@@ -65,7 +67,7 @@ navigation-dynamic-features-fragment = { group = "androidx.navigation", name = "
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
-#ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 [bundles]
 compose = ["androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-foundation", "androidx-compose-material3", "androidx-activity-compose", "coil"]
