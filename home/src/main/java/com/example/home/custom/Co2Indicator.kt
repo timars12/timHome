@@ -26,7 +26,7 @@ import okhttp3.internal.toImmutableList
 private const val MILLIS_DURATION_FOR_CO2_INDICATOR = 3000
 private const val MILLIS_DURATION_FOR_TEXT_CO2_INDICATOR = 180
 private const val SIZE_INNER_CIRCLE_RATIO = .94F
-private const val OFFSET_INNER_CIRCLE_RATIO = .3F
+private const val OFFSET_INNER_CIRCLE_RATIO = .03F
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
