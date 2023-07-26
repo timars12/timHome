@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -14,22 +14,18 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.core.coreComponent
 import com.example.core.ui.theme.DeviceDetailForegroundColor
 import com.example.core.ui.theme.HomeTheme
-import com.example.core.utils.viewmodel.ViewModelFactory
-import com.example.device.di.DaggerDeviceComponent
+import com.example.device.di.InjectDaggerDependency
+import com.example.device.di.InjectDaggerDependencyImpl
 import com.example.device.ui.device.composables.LazyColumnWithParallax
-import javax.inject.Inject
 
-class DeviceDetailFragment : Fragment() {
-    @Inject
-    lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
-    private val viewModel: DeviceDetailViewMode by viewModels { abstractFactory.get() }
+class DeviceDetailFragment : Fragment(), InjectDaggerDependency by InjectDaggerDependencyImpl() {
+    private val viewModel: DeviceDetailViewMode by viewModels { getAbstractFactory() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        DaggerDeviceComponent.factory().create(this.coreComponent()).inject(this)
+        inject(context)
     }
 
     override fun onCreateView(

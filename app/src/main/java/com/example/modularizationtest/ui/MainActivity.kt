@@ -37,7 +37,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var navController: NavController
+    private val navController: NavController by lazy {
+        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+    }
 
     @Inject
     lateinit var navigationDispatcher: NavigationDispatcher
@@ -67,26 +69,24 @@ class MainActivity : AppCompatActivity() {
 
         checkNotificationPermission()
 
-        if (savedInstanceState == null) {
-            initNavigation()
-            lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                    observeNavigationCommands()
+        initNavigation()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                observeNavigationCommands()
+            }
+        }
+        onBackPressedDispatcher.addCallback(
+            this /* lifecycle owner */,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (!navController.popBackStack()) finish()
                 }
             }
-            onBackPressedDispatcher.addCallback(
-                this /* lifecycle owner */,
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        if (!navController.popBackStack()) finish()
-                    }
-                }
-            )
-            navController.addOnDestinationChangedListener { controller, _, _ ->
-                if (controller.currentDestination?.id != R.id.signInFragment) { // TODO change signInFragment to graph
-                    findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
-                        if (visibility == View.GONE) visibility = View.VISIBLE
-                    }
+        )
+        navController.addOnDestinationChangedListener { controller, _, _ ->
+            if (controller.currentDestination?.id != R.id.signInFragment) { // TODO change signInFragment to graph
+                findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
+                    if (visibility == View.GONE) visibility = View.VISIBLE
                 }
             }
         }
@@ -99,6 +99,7 @@ class MainActivity : AppCompatActivity() {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !areNotificationsEnabled() -> {
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
+
                 else -> createNotificationChannel()
             }
         }
@@ -145,16 +146,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNavigation() {
-        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).also { navHost ->
-            val navInflater = navHost.navController.navInflater
-            val navGraph = navInflater.inflate(R.navigation.nav_graph)
-            navHost.navController.graph = navGraph
-            navController = navHost.navController
-            NavigationUI.setupWithNavController(
-                findViewById<BottomNavigationView>(R.id.bottomNavigationView),
-                navController
-            )
-        }
+        NavigationUI.setupWithNavController(
+            findViewById<BottomNavigationView>(R.id.bottomNavigationView),
+            navController
+        )
     }
 
     private suspend fun observeNavigationCommands() {

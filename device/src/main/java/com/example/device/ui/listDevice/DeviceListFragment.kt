@@ -18,24 +18,20 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.example.core.coreComponent
 import com.example.core.ui.theme.HomeTheme
-import com.example.core.utils.viewmodel.ViewModelFactory
-import com.example.device.di.DaggerDeviceComponent
+import com.example.device.di.InjectDaggerDependency
+import com.example.device.di.InjectDaggerDependencyImpl
 import com.example.device.domain.models.DeviceModel
 import com.example.device.ui.listDevice.composables.DeviceListItem
-import javax.inject.Inject
 
 const val SELECTED_DEVICE_ID = "selectedDeviceId"
 
-class DeviceListFragment : Fragment() {
-    @Inject
-    lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
-    private val viewModel: DeviceListViewModel by viewModels { abstractFactory.get() }
+class DeviceListFragment : Fragment(), InjectDaggerDependency by InjectDaggerDependencyImpl() {
+    private val viewModel: DeviceListViewModel by viewModels { getAbstractFactory() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        DaggerDeviceComponent.factory().create(this.coreComponent()).inject(this)
+        inject(context)
     }
 
     override fun onCreateView(
