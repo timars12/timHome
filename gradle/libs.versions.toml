@@ -25,6 +25,13 @@ androidxComposeCompiler = "1.4.8"
 androidxComposeBom = "2023.06.01"
 detekt = "1.23.0"
 ktlint = "11.5.0"
+venom_version = "0.5.0"
+leakcanary_version = "2.12"
+androidxMacroBenchmark = "1.2.0-alpha16"
+androidxEspresso = "3.5.0"
+androidxUiAutomator = "2.2.0"
+androidxJunit = "1.1.3"
+androidxAnnotation = "1.4.0"
 
 [libraries]
 accompanist-insets = { group = "com.google.accompanist", name = "accompanist-insets", version.ref = "accompanist" }
@@ -48,7 +55,13 @@ androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "life
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelSavedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycle" }
 #androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", version.ref = "androidxMetrics" }
+junit = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
+annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiAutomator" }
+
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp_version" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp_version" }
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
@@ -63,6 +76,12 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "nav_version" }
 navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "nav_version" }
 navigation-dynamic-features-fragment = { group = "androidx.navigation", name = "navigation-dynamic-features-fragment", version.ref = "nav_version" }
+
+venom = { group = "com.github.YarikSOffice.Venom", name = "venom", version.ref = "venom_version" }
+venom-no-op = { group = "com.github.YarikSOffice.Venom", name = "venom-no-op", version.ref = "venom_version" }
+
+leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary_version" }
+
 #Turbine is a small testing library for kotlinx.coroutines Flow
 #turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 # Dependencies of the included build-logic
@@ -72,6 +91,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
+feature-delivery-ktx = { group = "com.google.android.play", name = "feature-delivery-ktx", version = "2.1.0" }
 
 [bundles]
 compose = ["androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-foundation", "androidx-compose-material3", "androidx-activity-compose", "coil"]

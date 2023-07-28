@@ -1,12 +1,13 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
-    id("timHome.dynamic-feature.quality")
+    id("timHome.android.application")
+    id("timHome.application.compose")
+    id("org.jetbrains.kotlin.kapt")
+    id("timHome.quality.convention.plugin")
 }
 
 android {
 
+    // TODO https://developer.android.com/studio/publish/app-signing#secure-shared-keystore
     signingConfigs {
         create("release") {
             keyAlias = "key0admin"
@@ -17,49 +18,32 @@ android {
         }
     }
 
-    compileSdk = 34
-
     defaultConfig {
         applicationId = "com.timhome.modularizationtest"
-        minSdk = 23
-        targetSdk = 34
+
         versionCode = 9
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
         signingConfig = signingConfigs.getByName("debug")
     }
 
     buildTypes {
-        getByName("release") {
+        val release by getting {
             isMinifyEnabled = true
+            isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
-        create("benchmark") {
-            initWith(getByName("release"))
+        register("benchmark") {
+            initWith(release)
             signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("release")
+            matchingFallbacks.add("release")
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.8"
-//        kotlinCompilerExtensionVersion = libs.kotlin_compiler_extension_version
     }
 
     dynamicFeatures += listOf(":authDynamic", ":home", ":settings", ":device")

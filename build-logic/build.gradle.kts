@@ -44,21 +44,21 @@ gradlePlugin {
             implementationClass = "DynamicFeatureConventionPlugin"
         }
         register("androidDynamicFeatureQuality") {
-            id = "timHome.dynamic-feature.quality"
-            implementationClass = "DynamicFeatureQualityConventionPlugin"
+            id = "timHome.quality.convention.plugin"
+            implementationClass = "QualityConventionPlugin"
         }
-//        register("androidLibraryCompose") {
-//            id = "nowinandroid.android.library.compose"
-//            implementationClass = "AndroidLibraryComposeConventionPlugin"
-//        }
-//        register("androidLibrary") {
-//            id = "nowinandroid.android.library"
-//            implementationClass = "AndroidLibraryConventionPlugin"
-//        }
-//        register("androidFeature") {
-//            id = "nowinandroid.android.feature"
-//            implementationClass = "AndroidFeatureConventionPlugin"
-//        }
+        register("androidAndroidApplication") {
+            id = "timHome.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
+        register("applicationComposeConventionPlugin") {
+            id = "timHome.application.compose"
+            implementationClass = "ApplicationComposeConventionPlugin"
+        }
+        register("androidLibraryConventionPlugin") {
+            id = "timHome.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
 //        register("androidLibraryJacoco") {
 //            id = "nowinandroid.android.library.jacoco"
 //            implementationClass = "AndroidLibraryJacocoConventionPlugin"

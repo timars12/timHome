@@ -1,8 +1,8 @@
 plugins {
     id("timHome.dynamic-feature.compose")
     id("timHome.dynamic-feature")
-    id("kotlin-kapt")
-    id("timHome.dynamic-feature.quality")
+    id("org.jetbrains.kotlin.kapt")
+    id("timHome.quality.convention.plugin")
 }
 android {
     namespace = "com.example.home"

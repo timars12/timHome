@@ -4,23 +4,11 @@ buildscript {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath ("com.android.tools.build:gradle:8.1.0")
-        classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22-1.0.11") //TODO kotlin_version
-        classpath ("com.google.firebase:firebase-crashlytics-gradle:2.9.6")
-    }
 }
 
 plugins {
-    id ("com.android.application") version "8.1.0" apply false
-    id ("com.android.library") version "8.1.0" apply false
-    id ("org.jetbrains.kotlin.android") version "1.8.22" apply false
-    id ("com.android.dynamic-feature") version "8.1.0" apply false
-    id ("com.google.devtools.ksp") version "1.8.22-1.0.11" apply false
-    id ("com.android.test") version "8.1.0" apply false
-    id("org.jetbrains.kotlin.jvm") version "1.8.20" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
 }
-
-//task clean(type: Delete) {
-//    delete rootProject.buildDir
-//}

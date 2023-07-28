@@ -1,8 +1,8 @@
 plugins {
     id("timHome.dynamic-feature.compose")
     id("timHome.dynamic-feature")
-    id("kotlin-kapt")
-    id("timHome.dynamic-feature.quality")
+    id("org.jetbrains.kotlin.kapt")
+    id("timHome.quality.convention.plugin")
 }
 android {
     namespace = "com.example.settings"
@@ -19,8 +19,8 @@ dependencies {
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation("androidx.annotation:annotation:1.4.0")
+    testImplementation(libs.junit4)
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.annotation)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

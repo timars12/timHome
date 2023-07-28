@@ -16,6 +16,7 @@ android {
     buildTypes {
         create("release") {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         // This benchmark buildType is used for benchmarking, and should function like your
@@ -24,7 +25,7 @@ android {
         create("benchmark") {
             initWith(getByName("release"))
             signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("release")
+            matchingFallbacks.add("release")
         }
     }
 
@@ -39,14 +40,13 @@ android {
 
 dependencies {
     implementation(libs.junit4)
-    implementation ("androidx.test.espresso:espresso-core:3.5.0")
-    implementation ("androidx.test.uiautomator:uiautomator:2.2.0")
-    implementation ("androidx.benchmark:benchmark-macro-junit4:1.1.1")
-    implementation("androidx.core:core-ktx:+")
+    implementation(libs.androidx.benchmark.macro)
+    implementation(libs.androidx.test.uiautomator)
+    implementation(libs.androidx.test.espresso.core)
 }
 
 androidComponents {
-    beforeVariants { variantBuilder ->
-        variantBuilder.enabled = variantBuilder.buildType == "benchmark"
+    beforeVariants {
+        it.enable = it.buildType == "benchmark"
     }
 }
