@@ -46,7 +46,7 @@ android {
         }
     }
 
-    dynamicFeatures += listOf(":authDynamic", ":home", ":settings", ":device")
+    dynamicFeatures += listOf(":feature:authDynamic", ":feature:home", ":feature:settings", ":feature:device")
     namespace = "com.example.modularizationtest"
 }
 

@@ -22,6 +22,10 @@
 -dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
 -dontwarn com.google.errorprone.annotations.MustBeClosed
 
+## Rules for Retrofit2
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
 # TODO New proguard rules added but not published yet(https://github.com/square/retrofit/issues/3751#issuecomment-1192043644)
 # Keep generic signature of Call, Response (R8 full mode strips signatures from non-kept items).
 -keep,allowobfuscation,allowshrinking interface retrofit2.Call

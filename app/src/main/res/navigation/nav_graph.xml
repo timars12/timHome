@@ -4,7 +4,6 @@
     android:id="@+id/nav_graph.xml"
     app:startDestination="@id/signInFragment">
 
-
     <fragment
         app:moduleName="authDynamic"
         android:id="@+id/signInFragment"
