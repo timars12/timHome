@@ -21,8 +21,8 @@ android {
     defaultConfig {
         applicationId = "com.timhome.modularizationtest"
 
-        versionCode = 10
-        versionName = "1.2"
+        versionCode = 12
+        versionName = "1.2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
@@ -32,7 +32,7 @@ android {
     buildTypes {
         val release by getting {
             isMinifyEnabled = true
-            isShrinkResources = true
+//            isShrinkResources = true do not use because drawable not available in another module that use that drawable
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

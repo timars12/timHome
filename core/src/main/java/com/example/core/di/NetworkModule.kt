@@ -1,15 +1,13 @@
 package com.example.core.di
 
 import com.example.core.data.api.ArduinoApi
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -27,17 +25,14 @@ class NetworkModule {
         writeTimeout(timeout = 1, TimeUnit.MINUTES)
     }.build()
 
-    @Singleton
-    @Provides
-    fun provideGson(): Gson = GsonBuilder().setLenient().create()
 
     @Singleton
     @Provides
-    fun provideRetrofitClient(httpClient: OkHttpClient, gson: Gson): Retrofit {
+    fun provideRetrofitClient(httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://demo.treblle.com/api/v1/")
             .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(MoshiConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
     }
