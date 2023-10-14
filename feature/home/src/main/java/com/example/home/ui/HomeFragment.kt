@@ -62,14 +62,11 @@ class HomeFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
-//                    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
                     val temperatureInside by viewModel.temperatureInside.collectAsStateWithLifecycle()
                     val temperatureOutside by viewModel.temperatureOutside.collectAsStateWithLifecycle()
                     val co2 by viewModel.co2.collectAsStateWithLifecycle()
                     val chartCO2 by viewModel.measureCO2Levels.collectAsStateWithLifecycle()
                     val isAnimated = remember { mutableStateOf(false) }
-//                    val pullRefreshState =
-//                        rememberPullRefreshState(isRefreshing, onRefresh = viewModel::getDate)
 
                     DisposableEffect(key1 = Lifecycle.State.RESUMED) {
                         viewLifecycleOwner.lifecycleScope.launch {
@@ -82,58 +79,49 @@ class HomeFragment : Fragment() {
                         }
                     }
 
-                    Box(
-                        modifier = Modifier
-//                            .pullRefresh(pullRefreshState)
+
+                    Column(
+                        Modifier
                             .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 16.dp)
                     ) {
-                        Column(
-                            Modifier
-                                .verticalScroll(rememberScrollState())
-                                .padding(horizontal = 16.dp)
+                        Row(
+                            modifier = Modifier
+                                .height(180.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                24.dp,
+                                alignment = Alignment.CenterHorizontally
+                            )
                         ) {
-                            Row(
+                            Box(
                                 modifier = Modifier
-                                    .height(180.dp)
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(
-                                    24.dp,
-                                    alignment = Alignment.CenterHorizontally
-                                )
+                                    .weight(1f, fill = false)
+                                    .fillMaxHeight()
                             ) {
-                                Box(
+                                TemperatureBar(
                                     modifier = Modifier
-                                        .weight(1f, fill = false)
-                                        .fillMaxHeight()
-                                ) {
-                                    TemperatureBar(
-                                        modifier = Modifier
-                                            .fillMaxSize(),
-                                        temperatureOutside,
-                                        temperatureInside
-                                    )
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f, fill = false)
-                                        .fillMaxHeight()
-                                ) {
-                                    Co2Indicator(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(24.dp),
-                                        co2 = co2,
-                                        isAnimated = isAnimated.value
-                                    )
-                                }
+                                        .fillMaxSize(),
+                                    temperatureOutside,
+                                    temperatureInside
+                                )
                             }
-                            ChartStatisticView(chartCO2 = chartCO2)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .fillMaxHeight()
+                            ) {
+                                Co2Indicator(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(24.dp),
+                                    co2 = co2,
+                                    isAnimated = isAnimated.value
+                                )
+                            }
                         }
-//                        PullRefreshIndicator(
-//                            isRefreshing,
-//                            pullRefreshState,
-//                            Modifier.align(Alignment.TopCenter)
-//                        )
+                        ChartStatisticView(chartCO2 = chartCO2)
                     }
                 }
             }

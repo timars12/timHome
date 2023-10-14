@@ -71,7 +71,7 @@ fun Co2Indicator(modifier: Modifier, co2: Int, isAnimated: Boolean) {
                 startAngle = -90f,
                 sweepAngle = sweepAngle,
                 useCenter = true,
-                size = Size(size.width, size.height)
+                size = Size(size.width, size.width)
             )
             drawArc(
                 color = Color.White,
@@ -80,7 +80,7 @@ fun Co2Indicator(modifier: Modifier, co2: Int, isAnimated: Boolean) {
                 useCenter = true,
                 size = Size(
                     size.width * SIZE_INNER_CIRCLE_RATIO,
-                    size.height * SIZE_INNER_CIRCLE_RATIO
+                    size.width * SIZE_INNER_CIRCLE_RATIO
                 ),
                 topLeft = Offset(
                     size.width * OFFSET_INNER_CIRCLE_RATIO,

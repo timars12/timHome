@@ -57,6 +57,15 @@ private fun TextFontChengDynamically(
     ) {
         Text(
             modifier = Modifier.padding(24.dp),
+            //TODO lets try to use
+            /**
+             * https://developer.android.com/jetpack/compose/animation/quick-guide#animate-text-scale
+             * .graphicsLayer {
+             *                 scaleX = scale
+             *                 scaleY = scale
+             *                 transformOrigin = TransformOrigin.Center
+             *             }
+             */
             text = title,
             color = Color.Black,
             style = MaterialTheme.typography.titleMedium.copy(
