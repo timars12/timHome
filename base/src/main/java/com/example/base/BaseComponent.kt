@@ -6,6 +6,7 @@ import com.example.core.data.repository.ArduinoRepository
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
 import com.example.core.utils.NavigationDispatcher
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Component
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -18,6 +19,7 @@ interface BaseComponent {
     val appDatabase: AppDatabase
     val dataStore: DataStoreManager
     val arduinoRepository: ArduinoRepository
+    val firebaseAnalytics: FirebaseAnalytics
     val navigationDispatcher: NavigationDispatcher
 
     @Component.Factory

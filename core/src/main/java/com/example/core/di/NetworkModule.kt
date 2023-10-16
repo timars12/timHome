@@ -25,7 +25,6 @@ class NetworkModule {
         writeTimeout(timeout = 1, TimeUnit.MINUTES)
     }.build()
 
-
     @Singleton
     @Provides
     fun provideRetrofitClient(httpClient: OkHttpClient): Retrofit {

@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.datastore)
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
+    implementation(libs.firebase.analytics)
 
     testImplementation(libs.junit4)
     androidTestImplementation(libs.junit)

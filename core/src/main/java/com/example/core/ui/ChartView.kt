@@ -121,8 +121,8 @@ private fun DrawScope.drawAxisLine(
             style = Typography.chartAxisTextStyle,
             maxLines = 1,
             topLeft = Offset(
-                x = size.width - yAxisLabel.size.width - padding/2,
-                y = yAxisLabel.size.height.toFloat() - yAxisLabel.size.height + padding/2
+                x = size.width - yAxisLabel.size.width - padding / 2,
+                y = yAxisLabel.size.height.toFloat() - yAxisLabel.size.height + padding / 2
             )
         )
     }

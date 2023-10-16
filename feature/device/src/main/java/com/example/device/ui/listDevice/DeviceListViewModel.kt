@@ -9,6 +9,7 @@ import com.example.core.utils.viewmodel.ViewModelAssistedFactory
 import com.example.device.R
 import com.example.device.data.repository.DeviceRepository
 import com.example.device.domain.models.DeviceModel
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -20,11 +21,16 @@ import kotlinx.coroutines.flow.*
 class DeviceListViewModel @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val navigationDispatcher: NavigationDispatcher,
-    private val repository: DeviceRepository
+    private val repository: DeviceRepository,
+    firebaseAnalytics: FirebaseAnalytics
 ) : ViewModel() {
     val deviceList = MutableStateFlow(listOf<DeviceModel>().toImmutableList())
 
     init {
+        firebaseAnalytics.logEvent(
+            FirebaseAnalytics.Event.SCREEN_VIEW,
+            bundleOf(Pair(FirebaseAnalytics.Param.SCREEN_NAME, "device_list"))
+        )
         viewModelScope.launch(Dispatchers.IO) { repository.initAllDevices() }
     }
 

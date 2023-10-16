@@ -57,7 +57,7 @@ private fun TextFontChengDynamically(
     ) {
         Text(
             modifier = Modifier.padding(24.dp),
-            //TODO lets try to use
+            // TODO lets try to use
             /**
              * https://developer.android.com/jetpack/compose/animation/quick-guide#animate-text-scale
              * .graphicsLayer {

@@ -33,6 +33,7 @@ import com.example.modularizationtest.R
 import com.example.modularizationtest.di.DaggerAppComponent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.splitcompat.SplitCompat
+import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -105,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @AddTrace(name = "startCo2JobService", enabled = true)
     private fun startCo2JobService() {
         val jobId = 1 // Unique job ID
         val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler

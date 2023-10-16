@@ -79,7 +79,6 @@ class HomeFragment : Fragment() {
                         }
                     }
 
-
                     Column(
                         Modifier
                             .fillMaxSize()

@@ -3,6 +3,9 @@ plugins {
     id("timHome.application.compose")
     id("org.jetbrains.kotlin.kapt")
     id("timHome.quality.convention.plugin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.firebase-perf")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -11,8 +14,8 @@ android {
     signingConfigs {
         create("release") {
             keyAlias = "key0admin"
-            keyPassword = ""
-            storePassword = ""
+            keyPassword = "mrwata02"
+            storePassword = "mrwata02"
             storeFile = file("/Users/ruslan/Downloads/adminTimApp.jks")
 //            storeFile = file("C:\\Users\\user\\Desktop\\AndroidTim\\adminTimApp.jks")
         }
@@ -46,7 +49,12 @@ android {
         }
     }
 
-    dynamicFeatures += listOf(":feature:authDynamic", ":feature:home", ":feature:settings", ":feature:device")
+    dynamicFeatures += listOf(
+        ":feature:authDynamic",
+        ":feature:home",
+        ":feature:settings",
+        ":feature:device"
+    )
     namespace = "com.example.modularizationtest"
 }
 
@@ -58,5 +66,6 @@ dependencies {
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.room)
     implementation(libs.dagger)
+    implementation(libs.bundles.firebase)
     kapt(libs.dagger.compiler)
 }

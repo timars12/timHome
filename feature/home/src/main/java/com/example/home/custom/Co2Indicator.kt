@@ -44,7 +44,8 @@ fun Co2Indicator(modifier: Modifier, co2: Int, isAnimated: Boolean) {
 
     val sweepAngle by animateFloatAsState(
         targetValue = if (isAnimated) 360f else 0f,
-        animationSpec = tween(durationMillis = 500, easing = LinearEasing), label = ""
+        animationSpec = tween(durationMillis = 500, easing = LinearEasing),
+        label = ""
     )
 
     val co2ColorIndicator = remember { Animatable(initialValue = listColors[0]) }

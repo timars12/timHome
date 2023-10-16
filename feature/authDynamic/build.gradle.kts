@@ -17,5 +17,6 @@ dependencies {
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.room)
     implementation(libs.dagger)
+    implementation(libs.firebase.analytics)
     kapt(libs.dagger.compiler)
 }

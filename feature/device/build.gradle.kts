@@ -18,5 +18,7 @@ dependencies {
     implementation(libs.bundles.retrofit)
     implementation(libs.collections.immutable)
     implementation(libs.dagger)
+    implementation(libs.firebase.perf)
+    implementation(libs.firebase.analytics)
     kapt(libs.dagger.compiler)
 }

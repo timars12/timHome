@@ -5,6 +5,7 @@ import com.example.core.data.AppDatabase
 import com.example.core.data.DataStoreManager
 import com.example.core.data.api.ArduinoApi
 import com.example.core.utils.NavigationDispatcher
+import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.BindsInstance
 import dagger.Component
 import okhttp3.OkHttpClient
@@ -19,6 +20,7 @@ interface CoreComponent {
     val appDatabase: AppDatabase
     val dataStore: DataStoreManager
     val arduinoApi: ArduinoApi
+    val firebaseAnalytics: FirebaseAnalytics
     val navigationDispatcher: NavigationDispatcher
 
     @Component.Factory

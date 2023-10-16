@@ -6,7 +6,12 @@ androidxComposeRuntimeTracing = "1.0.0-alpha03"
 androidxDataStore = "1.0.0"
 androidxLifecycle = "2.6.1"
 androidxMetrics = "1.0.0-alpha03"
-firebaseCrashlyticsPlugin = "2.9.7"
+googleServices = "4.4.0"
+firebasePerfPlugin = "1.4.2"
+firebaseCrashlyticsPlugin = "2.9.9"
+firebaseCrashlytics = "18.4.3"
+firebasePerf = "20.4.1"
+firebaseAnalytics = "21.3.0"
 junit4 = "4.13.2"
 kotlin = "1.8.22"
 kotlinxCoroutines = "1.6.4"
@@ -86,7 +91,12 @@ leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.re
 #turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+
+firebase-perf = { group = "com.google.firebase", name = "firebase-perf-ktx", version.ref = "firebasePerf" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx", version.ref = "firebaseAnalytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "firebaseCrashlytics" }
 firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
@@ -100,11 +110,14 @@ lifecycle = ["androidx-lifecycle-runtime-ktx", "androidx-lifecycle-runtimeCompos
 navigation = ["navigation-fragment-ktx", "navigation-ui-ktx", "navigation-dynamic-features-fragment"]
 room = ["room-ktx", "room-runtime"]
 retrofit = ["retrofit-core", "retrofit-moshi", "retrofit-kotlin-coroutines"]
+firebase = ["firebase-perf", "firebase-analytics", "firebase-crashlytics"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-perf-plugin = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
