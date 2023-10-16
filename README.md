@@ -18,12 +18,16 @@
 - Jetpack Library
   - Room
   - ViewModel
+  - Datastore
   - Lifecycles
   - Navigation
-  - Datastore
+- Firebase
+  - Analytics
+  - Crashlytics
+  - Performance 
 - GitHub Action(CI)
-  - Detekt
   - Lint
-- Dependabot
+  - Detekt
+- Dependabot (disable)
 - Retrofit2
 - Leakcanary
