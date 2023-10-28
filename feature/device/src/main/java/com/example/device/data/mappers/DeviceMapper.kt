@@ -9,7 +9,7 @@ import com.example.device.domain.models.DeviceModel
 import javax.inject.Inject
 
 @FeatureScope
-class DeviceMapper @Inject constructor() {
+internal class DeviceMapper @Inject constructor() {
     fun convertToEntityModel(device: Device): DeviceEntity {
         return DeviceEntity(
             id = device.id,

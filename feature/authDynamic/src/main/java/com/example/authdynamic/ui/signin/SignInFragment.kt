@@ -47,7 +47,7 @@ import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
-class SignInFragment : Fragment() {
+internal class SignInFragment : Fragment() {
 
     @Inject
     lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>

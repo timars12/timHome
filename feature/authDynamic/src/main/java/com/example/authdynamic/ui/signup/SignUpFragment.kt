@@ -1,3 +1,3 @@
 package com.example.authdynamic.ui.signup
 
-class SignUpFragment
+internal class SignUpFragment

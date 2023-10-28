@@ -20,7 +20,7 @@ import com.example.core.R
 import com.example.core.utils.OnClick
 
 @Composable
-fun DeviceDetailToolbar(
+internal fun DeviceDetailToolbar(
     modifier: Modifier = Modifier,
     calculateOpacity: () -> Float,
     title: String,

@@ -9,7 +9,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 
 @Module
-interface SignInModule {
+internal interface SignInModule {
 
     @Binds
     @IntoMap

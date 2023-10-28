@@ -18,10 +18,10 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.core.ui.theme.LightBlack
 import com.example.core.ui.theme.PrimaryColor
 
-typealias CalculateTextSize = () -> TextUnit
+internal typealias CalculateTextSize = () -> TextUnit
 
 @Composable
-fun DeviceDetailHeader(
+internal fun DeviceDetailHeader(
     modifier: Modifier,
     image: String?,
     title: String,

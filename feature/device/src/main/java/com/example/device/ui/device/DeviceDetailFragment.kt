@@ -20,7 +20,7 @@ import com.example.device.di.InjectDaggerDependency
 import com.example.device.di.InjectDaggerDependencyImpl
 import com.example.device.ui.device.composables.LazyColumnWithParallax
 
-class DeviceDetailFragment : Fragment(), InjectDaggerDependency by InjectDaggerDependencyImpl() {
+internal class DeviceDetailFragment : Fragment(), InjectDaggerDependency by InjectDaggerDependencyImpl() {
     private val viewModel: DeviceDetailViewMode by viewModels { getAbstractFactory() }
 
     override fun onAttach(context: Context) {

@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-class HomeViewModel @AssistedInject constructor(
+internal class HomeViewModel @AssistedInject constructor(
     private val repository: ArduinoRepository,
     private val weatherRepository: WeatherRepository,
     @Assisted private val savedStateHandle: SavedStateHandle

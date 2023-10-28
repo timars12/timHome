@@ -24,7 +24,7 @@ import com.example.core.ui.RatingView
 private const val DIVIDER_FOR_RATING = 10f
 
 @Composable
-fun FavoriteWithRating(modifier: Modifier = Modifier, isFavorite: Boolean, rating: Float) {
+internal fun FavoriteWithRating(modifier: Modifier = Modifier, isFavorite: Boolean, rating: Float) {
     Row(
         modifier = modifier
             .border(

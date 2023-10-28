@@ -11,7 +11,7 @@ import dagger.multibindings.IntoMap
 import retrofit2.Retrofit
 
 @Module
-class HomeModule {
+internal class HomeModule {
 
     @Provides
     @IntoMap

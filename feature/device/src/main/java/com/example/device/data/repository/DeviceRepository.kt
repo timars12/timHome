@@ -5,16 +5,16 @@ import com.example.core.data.AppDatabase
 import com.example.device.data.mappers.DeviceMapper
 import com.example.device.data.mock.GenerateDate
 import com.example.device.data.model.Device
-import com.example.device.data.model.ModuleModel
 import com.example.device.domain.IDeviceRepository
 import com.example.device.domain.models.DeviceModel
+import com.example.device.domain.models.DeviceWithModuleModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class DeviceRepository @Inject constructor(
+internal class DeviceRepository @Inject constructor(
     private val database: AppDatabase,
     private val mapper: DeviceMapper,
     private val mock: GenerateDate
@@ -66,5 +66,3 @@ class DeviceRepository @Inject constructor(
         }
     }
 }
-
-data class DeviceWithModuleModel(val device: DeviceModel, val modules: List<ModuleModel>)

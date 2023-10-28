@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class DeviceDetailViewMode @AssistedInject constructor(
+internal class DeviceDetailViewMode @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val navigationDispatcher: NavigationDispatcher,
     private val repository: IDeviceRepository

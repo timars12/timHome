@@ -9,7 +9,7 @@ import dagger.Provides
 import retrofit2.Retrofit
 
 @Module
-class LoginModule {
+internal class LoginModule {
 
     @Provides
     @FeatureScope

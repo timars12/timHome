@@ -18,7 +18,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-class DeviceListViewModel @AssistedInject constructor(
+internal class DeviceListViewModel @AssistedInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val navigationDispatcher: NavigationDispatcher,
     private val repository: DeviceRepository,

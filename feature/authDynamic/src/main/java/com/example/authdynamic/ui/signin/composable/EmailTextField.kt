@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.core.utils.OnEnterText
 
 @Composable
-fun EmailTextField(text: String?, focusManager: FocusManager, onEnterText: OnEnterText) {
+internal fun EmailTextField(text: String?, focusManager: FocusManager, onEnterText: OnEnterText) {
     TextField(
         value = text ?: "",
         onValueChange = onEnterText,

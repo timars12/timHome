@@ -22,7 +22,7 @@ private const val SIZE_WIDTH_OUT_DOOR_TEMPERATURE = 0.2f
 private const val SIZE_HEIGHT_OUT_DOOR_TEMPERATURE = 0.4f
 
 @Composable
-fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperature: Int) {
+internal fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperature: Int) {
     val offsetBetweenTriangles = remember { 16.dp }
     val fontSize = remember { 66.sp }
     val resources = LocalContext.current.resources

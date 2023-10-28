@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 private const val IP_HOME_ADDRESS_KEY = "ipHomeAddress"
 private const val IS_USE_MOCK_KEY = "isUseMock"
 
-class SettingViewModel @AssistedInject constructor(
+internal class SettingViewModel @AssistedInject constructor(
     private val repository: SettingRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {

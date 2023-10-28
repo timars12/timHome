@@ -26,7 +26,7 @@ import com.example.core.utils.OnClick
 import com.example.core.utils.OnEnterText
 
 @Composable
-fun PasswordTextField(
+internal fun PasswordTextField(
     password: String?,
     focusManager: FocusManager,
     onEnterText: OnEnterText,

@@ -34,7 +34,7 @@ import javax.inject.Inject
 
 private const val CORNER_SHAPE_TEXT_FIELD = 20
 
-class SettingFragment : Fragment() {
+internal class SettingFragment : Fragment() {
     @Inject
     lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
     private val viewModel: SettingViewModel by viewModels { abstractFactory.get() }

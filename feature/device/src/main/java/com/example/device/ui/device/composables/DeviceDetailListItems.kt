@@ -22,7 +22,7 @@ import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.device.data.model.ModuleModel
 
 @Composable
-fun DeviceDetailListItems(
+internal fun DeviceDetailListItems(
     modifier: Modifier,
     item: ModuleModel
 ) {

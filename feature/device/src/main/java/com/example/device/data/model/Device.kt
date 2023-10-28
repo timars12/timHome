@@ -1,6 +1,6 @@
 package com.example.device.data.model
 
-data class Device(
+internal data class Device(
     val id: Int,
     val image: String? = null,
     val ownerName: String,
@@ -13,7 +13,7 @@ data class Device(
     val modules: List<ModuleModel>
 )
 
-data class ModuleModel(
+internal data class ModuleModel(
     val id: Int,
     val image: String? = null,
     val title: String,

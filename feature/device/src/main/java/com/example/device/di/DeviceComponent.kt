@@ -5,9 +5,7 @@ import com.example.core.ModularizationApplication
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
 import com.example.core.utils.viewmodel.ViewModelFactory
-import com.example.device.ui.device.DeviceDetailFragment
 import com.example.device.ui.device.DeviceDetailModel
-import com.example.device.ui.listDevice.DeviceListFragment
 import com.example.device.ui.listDevice.DeviceListModule
 import dagger.Component
 import javax.inject.Inject

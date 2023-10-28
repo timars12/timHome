@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SwitchWithText(
+internal fun SwitchWithText(
     modifier: Modifier = Modifier,
     text: String,
     isUseMock: Boolean,

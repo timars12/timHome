@@ -11,7 +11,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 
-class SignInViewModel @AssistedInject constructor(
+internal class SignInViewModel @AssistedInject constructor(
     private val repository: IAuthorizationRepository,
     private val firebaseAnalytics: FirebaseAnalytics,
     @Assisted private val savedStateHandle: SavedStateHandle

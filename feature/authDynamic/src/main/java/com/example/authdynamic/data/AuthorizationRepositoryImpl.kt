@@ -9,7 +9,7 @@ import com.example.core.utils.CallStatus
 import com.example.core.utils.Constant.CODE_200
 import javax.inject.Inject
 
-class AuthorizationRepositoryImpl @Inject constructor(
+internal class AuthorizationRepositoryImpl @Inject constructor(
     private val apiService: AuthApi,
     private val database: AppDatabase
 ) : IAuthorizationRepository {

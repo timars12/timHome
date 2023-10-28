@@ -30,7 +30,7 @@ private const val OFFSET_INNER_CIRCLE_RATIO = .03F
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun Co2Indicator(modifier: Modifier, co2: Int, isAnimated: Boolean) {
+internal fun Co2Indicator(modifier: Modifier, co2: Int, isAnimated: Boolean) {
     val countOfIteration = remember(co2) { getCountByCO2(co2) }
     val listColors = listOf(
         IndicatorCO2Good,

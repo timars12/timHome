@@ -32,7 +32,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 @Composable
-fun LazyColumnWithParallax(
+internal fun LazyColumnWithParallax(
     modifier: Modifier = Modifier,
     device: DeviceModel,
     modules: ImmutableList<ModuleModel>,

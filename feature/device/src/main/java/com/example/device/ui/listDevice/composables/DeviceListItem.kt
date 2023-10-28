@@ -28,7 +28,7 @@ private const val WEIGHT_IMAGE_DEVICE_LIST = 2f
 private const val WEIGHT_CONTENT_DEVICE_LIST = 8f
 
 @Composable
-fun DeviceListItem(item: DeviceModel, navigateToDetailScreen: OnClick) {
+internal fun DeviceListItem(item: DeviceModel, navigateToDetailScreen: OnClick) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

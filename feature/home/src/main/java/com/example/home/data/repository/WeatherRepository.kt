@@ -7,7 +7,7 @@ import com.example.home.data.api.WeatherApi
 import com.example.home.data.api.response.WeatherResponse
 import javax.inject.Inject
 
-class WeatherRepository @Inject constructor(
+internal class WeatherRepository @Inject constructor(
     private val dataStore: DataStoreManager,
     private val weatherApi: WeatherApi
 ) {

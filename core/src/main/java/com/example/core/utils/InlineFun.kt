@@ -12,7 +12,7 @@ inline fun <T> tryOrNull(f: () -> T) =
         null
     }
 
-//works only on main thread
+// works only on main thread
 suspend inline fun <T> coroutineBlockTrace(label: String, crossinline block: suspend () -> T) {
     val perf = Firebase.performance.newTrace(label)
     perf.start()
@@ -20,7 +20,7 @@ suspend inline fun <T> coroutineBlockTrace(label: String, crossinline block: sus
     perf.stop()
 }
 
-//works only on main thread
+// works only on main thread
 inline fun <T> trace(label: String, crossinline block: () -> T) {
     val perf = Firebase.performance.newTrace(label)
     perf.start()

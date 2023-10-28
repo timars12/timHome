@@ -8,7 +8,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface AuthApi {
+internal interface AuthApi {
 
     @POST("auth/login")
     suspend fun loginByEmail(@Body body: UserLoginRequest): Response<LoginResponse>

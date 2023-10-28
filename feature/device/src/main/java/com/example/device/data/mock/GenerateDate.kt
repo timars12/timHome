@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @FeatureScope
-class GenerateDate @Inject constructor() {
+internal class GenerateDate @Inject constructor() {
 
     @Suppress("LongMethod")
     fun generateItems(): Flow<List<Device>> {

@@ -39,7 +39,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class HomeFragment : Fragment() {
+internal class HomeFragment : Fragment() {
 
     @Inject
     lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>

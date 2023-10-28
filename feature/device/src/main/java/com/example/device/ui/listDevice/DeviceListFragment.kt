@@ -27,7 +27,7 @@ import com.example.device.ui.listDevice.composables.DeviceListItem
 
 const val SELECTED_DEVICE_ID = "selectedDeviceId"
 
-class DeviceListFragment : Fragment(), InjectDaggerDependency by InjectDaggerDependencyImpl() {
+internal class DeviceListFragment : Fragment(), InjectDaggerDependency by InjectDaggerDependencyImpl() {
     private val viewModel: DeviceListViewModel by viewModels { getAbstractFactory() }
 
     override fun onAttach(context: Context) {
@@ -66,7 +66,11 @@ class DeviceListFragment : Fragment(), InjectDaggerDependency by InjectDaggerDep
                             items(items = deviceList, key = DeviceModel::id) { item ->
                                 DeviceListItem(
                                     item = item,
-                                    navigateToDetailScreen = { viewModel.navigateToDetailScreen(item) }
+                                    navigateToDetailScreen = {
+                                        viewModel.navigateToDetailScreen(
+                                            item
+                                        )
+                                    }
                                 )
                             }
                         }

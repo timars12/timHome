@@ -8,7 +8,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 
 @Module
-interface DeviceDetailModel {
+internal interface DeviceDetailModel {
     @Binds
     @IntoMap
     @ViewModelKey(DeviceDetailViewMode::class)
