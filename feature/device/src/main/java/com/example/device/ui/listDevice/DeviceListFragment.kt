@@ -19,12 +19,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.example.core.ui.theme.HomeTheme
+import com.example.core.utils.trace
 import com.example.device.di.InjectDaggerDependency
 import com.example.device.di.InjectDaggerDependencyImpl
 import com.example.device.domain.models.DeviceModel
 import com.example.device.ui.listDevice.composables.DeviceListItem
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.perf.ktx.performance
 
 const val SELECTED_DEVICE_ID = "selectedDeviceId"
 
@@ -48,9 +47,6 @@ class DeviceListFragment : Fragment(), InjectDaggerDependency by InjectDaggerDep
                     val deviceList by viewModel.deviceList.collectAsStateWithLifecycle()
 
                     LaunchedEffect(key1 = Unit) {
-                        val trace = Firebase.performance.newTrace("get_all_devices").also {
-                            it.start()
-                        }
                         viewModel.getAllDevices()
                             .flowWithLifecycle(
                                 viewLifecycleOwner.lifecycle,
@@ -59,7 +55,6 @@ class DeviceListFragment : Fragment(), InjectDaggerDependency by InjectDaggerDep
                             .collect {
                                 viewModel.updateList(it)
                             }
-                        trace.stop()
                     }
 
                     LazyColumn(
@@ -67,11 +62,13 @@ class DeviceListFragment : Fragment(), InjectDaggerDependency by InjectDaggerDep
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(bottom = 90.dp)
                     ) {
-                        items(items = deviceList, key = DeviceModel::id) { item ->
-                            DeviceListItem(
-                                item = item,
-                                navigateToDetailScreen = { viewModel.navigateToDetailScreen(item) }
-                            )
+                        trace("deviceList") {
+                            items(items = deviceList, key = DeviceModel::id) { item ->
+                                DeviceListItem(
+                                    item = item,
+                                    navigateToDetailScreen = { viewModel.navigateToDetailScreen(item) }
+                                )
+                            }
                         }
                     }
                 }

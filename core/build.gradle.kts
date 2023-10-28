@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.datastore)
     implementation(libs.collections.immutable)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.perf)
 
     // for testing process death
     debugImplementation(libs.venom)

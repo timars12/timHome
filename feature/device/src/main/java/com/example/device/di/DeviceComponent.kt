@@ -24,8 +24,6 @@ internal interface DeviceComponent {
     }
 
     fun inject(fragment: InjectDaggerDependencyImpl)
-    fun inject(fragment: DeviceListFragment)
-    fun inject(fragment: DeviceDetailFragment)
 }
 
 interface InjectDaggerDependency {
