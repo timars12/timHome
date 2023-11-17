@@ -1,14 +1,14 @@
 package com.example.core.ui.theme
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val Colors = lightColors(
+private val Colors = lightColorScheme(
     primary = SelectedTabBottomBar
 )
 
 @Composable
 fun HomeTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colors = Colors, typography = Typography, content = content)
+    MaterialTheme(colorScheme = Colors, typography = Typography, content = content)
 }

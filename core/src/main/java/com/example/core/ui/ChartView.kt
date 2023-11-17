@@ -90,8 +90,6 @@ private fun DrawScope.drawAxisLine(
     xLabel: String,
     yLabel: String
 ) {
-    val textAxisOffset = 10f
-
     val xAxisLabel = textMeasure.measure(xLabel, maxLines = 1)
     val yAxisLabel = textMeasure.measure(yLabel, maxLines = 1)
 
@@ -123,8 +121,8 @@ private fun DrawScope.drawAxisLine(
             style = Typography.chartAxisTextStyle,
             maxLines = 1,
             topLeft = Offset(
-                x = size.width - padding - yAxisLabel.size.width + textAxisOffset,
-                y = yAxisLabel.size.height.toFloat() - padding / 2
+                x = size.width - yAxisLabel.size.width - padding / 2,
+                y = yAxisLabel.size.height.toFloat() - yAxisLabel.size.height + padding / 2
             )
         )
     }

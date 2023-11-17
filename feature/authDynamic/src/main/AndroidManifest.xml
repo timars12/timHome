@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:dist="http://schemas.android.com/apk/distribution">
+
+    <dist:module
+        dist:title="@string/title_authdynamic">
+        <dist:delivery>
+<!--            <dist:on-demand />-->
+            <dist:install-time>
+                <dist:removable dist:value="true" />
+            </dist:install-time>
+        </dist:delivery>
+        <dist:fusing dist:include="true" />
+    </dist:module>
+</manifest>

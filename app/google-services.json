@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "417673706630",
+    "project_id": "timhome-618ef",
+    "storage_bucket": "timhome-618ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417673706630:android:7d494fc274ad648e6f6507",
+        "android_client_info": {
+          "package_name": "com.timhome.modularizationtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "417673706630-9qdn3sjgd5is1qno9rs3rrmcq0v3rvnd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm0w2RaPifv1BEiHcZNWPyMlYKApZLYKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "417673706630-9qdn3sjgd5is1qno9rs3rrmcq0v3rvnd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

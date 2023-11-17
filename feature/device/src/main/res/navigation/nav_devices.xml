@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/deviceListFragment">
+
+    <fragment
+        android:id="@+id/deviceListFragment"
+        android:name="com.example.device.ui.listDevice.DeviceListFragment"
+        android:label="DeviceListFragment" />
+
+    <fragment
+        android:id="@+id/deviceDetailFragment"
+        android:name="com.example.device.ui.device.DeviceDetailFragment"
+        android:label="DeviceDetailFragment" />
+</navigation>

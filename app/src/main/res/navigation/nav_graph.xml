@@ -4,11 +4,10 @@
     android:id="@+id/nav_graph.xml"
     app:startDestination="@id/signInFragment">
 
-
     <fragment
         app:moduleName="authDynamic"
         android:id="@+id/signInFragment"
-        android:name="com.example.authdynamic.presentation.signin.SignInFragment"
+        android:name="com.example.authdynamic.ui.signin.SignInFragment"
      />
 
 <!--    https://medium.com/google-developer-experts/exploring-dynamic-feature-navigation-on-android-c803bdbbca9b-->
@@ -21,7 +20,7 @@
     <fragment
         app:moduleName="settings"
         android:id="@+id/settingFragment"
-        android:name="com.example.settings.presentation.SettingFragment"
+        android:name="com.example.settings.ui.SettingFragment"
         />
 
     <include-dynamic
