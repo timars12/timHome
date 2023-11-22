@@ -1,47 +1,43 @@
 package com.example.authdynamic.ui.signin
 
-import androidx.core.os.bundleOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.authdynamic.di.LoginReducer
 import com.example.authdynamic.domain.IAuthorizationRepository
+import com.example.core.utils.mvi.MviViewModel
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
+internal const val LOGIN_VIEW_STATE = "loginViewState"
 internal class SignInViewModel @AssistedInject constructor(
-    private val repository: IAuthorizationRepository,
-    private val firebaseAnalytics: FirebaseAnalytics,
+    repository: IAuthorizationRepository,
+    firebaseAnalytics: FirebaseAnalytics,
     @Assisted private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
-    val events = Channel<SignInEvent>(Channel.UNLIMITED)
+) : ViewModel(), MviViewModel<LoginViewIntent, LoginViewState> {
 
-    val email = savedStateHandle.getStateFlow("email", "")
-    val password = savedStateHandle.getStateFlow("password", "")
+    private val reducer = LoginReducer(firebaseAnalytics, repository, savedStateHandle)
+    override val viewState: StateFlow<LoginViewState> = reducer.state
+        .onEach {
+            savedStateHandle[LOGIN_VIEW_STATE] = it
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, LoginViewState.initial())
 
-    fun onEnterEmail(value: String) {
-        savedStateHandle["email"] = value
-    }
+    override val singleEvent: Channel<LoginViewState>
+        get() = reducer.singleEvent
 
-    fun onEnterPassword(value: String) {
-        savedStateHandle["password"] = value
-    }
-
-    fun onSignInByEmail() {
-        firebaseAnalytics.logEvent(
-            FirebaseAnalytics.Event.LOGIN,
-            bundleOf(Pair(FirebaseAnalytics.Param.METHOD, "sign_in_by_email"))
-        )
-        events.trySend(SignInEvent.GoToHomeScreen)
-//        if (emailValue == null || passwordValue == null) return
-//        viewModelScope.launch {
-//            when (val result = repository.loginByEmail(emailValue!!, passwordValue!!)) {
-//                is CallStatus.Error -> events.trySend(SignInEvent.ShowErrorMessage(result.error ?: "error"))
-//                is CallStatus.Success -> events.trySend(SignInEvent.GoToHomeScreen)
-//            }
-//        }
+    fun sendEvent(event: LoginViewIntent) {
+        viewModelScope.launch {
+            reducer.sendEvent(event)
+        }
     }
 
     @AssistedFactory

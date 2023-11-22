@@ -3,6 +3,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.kapt")
     id("timHome.quality.convention.plugin")
+    id("kotlin-parcelize")
 }
 
 android {

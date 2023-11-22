@@ -11,20 +11,28 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -41,10 +49,17 @@ import com.example.authdynamic.ui.signin.composable.PasswordTextField
 import com.example.core.coreComponent
 import com.example.core.ui.SnackbarMessage
 import com.example.core.ui.theme.HomeTheme
+import com.example.core.utils.mvi.ErrorType
 import com.example.core.utils.viewmodel.ViewModelFactory
 import com.google.android.play.core.splitinstall.SplitInstallSessionState
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class SignInFragment : Fragment() {
@@ -58,6 +73,7 @@ internal class SignInFragment : Fragment() {
         DaggerAuthenticationComponent.factory().create(this.coreComponent()).inject(this)
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,29 +83,20 @@ internal class SignInFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 HomeTheme {
-                    val lifecycleOwner = LocalLifecycleOwner.current
-                    val focusManager = LocalFocusManager.current
+                    val focusRequester = remember { FocusRequester() }
                     val snackbarHostState = remember { SnackbarHostState() }
-                    val email by viewModel.email.collectAsStateWithLifecycle()
-                    val password by viewModel.password.collectAsStateWithLifecycle()
-
-                    val events = remember(viewModel.events, lifecycleOwner) {
-                        viewModel.events.receiveAsFlow().flowWithLifecycle(
-                            lifecycleOwner.lifecycle,
-                            Lifecycle.State.STARTED
-                        )
+                    val keyboardController = LocalSoftwareKeyboardController.current
+                    val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+                    val intentChannel = remember { Channel<LoginViewIntent>(Channel.UNLIMITED) }
+                    val dispatch = remember {
+                        { intent: LoginViewIntent -> intentChannel.trySend(intent).getOrThrow() }
                     }
 
-                    LaunchedEffect(Unit) {
-                        events.collect { event ->
-                            when (event) {
-                                SignInEvent.GoToHomeScreen -> navigateToHome()
-                                is SignInEvent.ShowErrorMessage -> {
-                                    snackbarHostState.showSnackbar(message = event.error)
-                                }
-                            }
-                        }
-                    }
+                    InitSideEffects(
+                        snackbarHostState = snackbarHostState,
+                        intentChannel = intentChannel,
+                        viewState = viewState
+                    )
 
                     Box(
                         modifier = Modifier.fillMaxSize()
@@ -99,15 +106,39 @@ internal class SignInFragment : Fragment() {
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = CenterHorizontally
                         ) {
-                            EmailTextField(email, focusManager, viewModel::onEnterEmail)
-                            PasswordTextField(
-                                password = password,
-                                focusManager = focusManager,
-                                onEnterText = viewModel::onEnterPassword,
-                                onClickDone = viewModel::onSignInByEmail
+                            EmailTextField(
+                                viewState.email,
+                                focusRequester,
+                                onEnterText = { email -> dispatch(LoginViewIntent.EnterEmail(email)) }
                             )
-                            Button(onClick = viewModel::onSignInByEmail) {
-                                Text(stringResource(id = R.string.sign_in))
+                            PasswordTextField(
+                                data = viewState.password,
+                                focusRequester = focusRequester,
+                                onEnterText = { password ->
+                                    dispatch(LoginViewIntent.EnterPassword(password))
+                                },
+                                onClickDone = { dispatch(LoginViewIntent.EmailSignIn) },
+                                keyboardController = keyboardController
+                            )
+                            Button(
+                                modifier = Modifier.align(CenterHorizontally),
+                                enabled = viewState.isLoginBtnEnable,
+                                onClick = {
+                                    keyboardController?.hide()
+                                    dispatch(LoginViewIntent.EmailSignIn)
+                                }
+                            ) {
+                                if (viewState.isLoading) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .align(Alignment.CenterVertically),
+                                        color = MaterialTheme.colorScheme.surfaceVariant,
+                                        trackColor = MaterialTheme.colorScheme.secondary
+                                    )
+                                } else {
+                                    Text(stringResource(id = R.string.sign_in))
+                                }
                             }
                         }
                         SnackbarMessage(
@@ -119,6 +150,48 @@ internal class SignInFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun InitSideEffects(
+        snackbarHostState: SnackbarHostState,
+        intentChannel: Channel<LoginViewIntent>,
+        viewState: LoginViewState
+    ) {
+        val lifecycleOwner = LocalLifecycleOwner.current
+
+        val events = remember(viewModel.singleEvent, lifecycleOwner) {
+            viewModel.singleEvent.receiveAsFlow().flowWithLifecycle(
+                lifecycleOwner.lifecycle,
+                Lifecycle.State.STARTED
+            )
+        }
+
+        LaunchedEffect(Unit) {
+            events.collect { event ->
+                when (event.error!!.type) {
+                    ErrorType.TOAST -> snackbarHostState.showSnackbar(
+                        message = event.error.errorMessage ?: ""
+                    )
+
+                    else -> Unit
+                }
+            }
+        }
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.Main.immediate) {
+                intentChannel
+                    .consumeAsFlow()
+                    .onEach(viewModel::sendEvent)
+                    .flowWithLifecycle(
+                        lifecycleOwner.lifecycle,
+                        Lifecycle.State.STARTED
+                    ).collect()
+            }
+        }
+        SideEffect {
+            if (viewState.isLoginSuccess) navigateToHome()
         }
     }
 
@@ -142,6 +215,7 @@ internal class SignInFragment : Fragment() {
                                     com.example.modularizationtest.R.id.home_navigation
                                 )
                             }
+
                             SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
 //                            SplitInstallManager.startConfirmationDialogForResult(...)
                             }
@@ -149,8 +223,10 @@ internal class SignInFragment : Fragment() {
                             SplitInstallSessionStatus.FAILED -> {
                                 Log.e("0707", value.errorCode().toString())
                             }
+
                             SplitInstallSessionStatus.CANCELED -> {
                             }
+
                             else -> {
                             }
                         }

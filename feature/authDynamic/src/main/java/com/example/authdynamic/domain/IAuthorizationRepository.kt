@@ -1,8 +1,8 @@
 package com.example.authdynamic.domain
 
-import com.example.authdynamic.data.mapper.User
-import com.example.core.utils.CallStatus
+import com.example.authdynamic.ui.signin.LoginViewState
+import kotlinx.coroutines.flow.Flow
 
 internal interface IAuthorizationRepository {
-    suspend fun loginByEmail(email: String, password: String): CallStatus<User>
+    fun loginByEmail(oldState: LoginViewState, email: String, password: String): Flow<LoginViewState>
 }
