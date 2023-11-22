@@ -3,6 +3,7 @@ plugins {
     id("timHome.dynamic-feature")
     id("org.jetbrains.kotlin.kapt")
     id("timHome.quality.convention.plugin")
+    id("kotlin-parcelize")
 }
 android {
     namespace = "com.example.authdynamic"
