@@ -26,12 +26,12 @@ class AuthorizationRepositoryImplTest {
     private val apiService = mockk<AuthApi>()
     private val database = mockk<AppDatabase>()
     private val repository = AuthorizationRepositoryImpl(apiService, database)
+    private val initialState = LoginViewState.initial()
+    private val email = "valid@email.com"
+    private val password = "password"
 
     @Test
     fun `loginByEmail should emit success state when login is successful`() = runTest {
-        val initialState = LoginViewState.initial()
-        val email = "valid@email.com"
-        val password = "password"
         val onStartState = initialState.copy(isLoading = true)
         val expectedState = initialState.copy(
             isLoading = false,
@@ -60,9 +60,6 @@ class AuthorizationRepositoryImplTest {
 
     @Test
     fun `loginByEmail should emit error state when API returns non-200 response code`() = runTest {
-        val initialState = LoginViewState.initial()
-        val email = "invalid@email.com"
-        val password = "password"
         val expectedState = initialState.copy(
             isLoading = false,
             error = MviError(type = ErrorType.TOAST, errorMessage = "loginByEmail")
@@ -84,9 +81,6 @@ class AuthorizationRepositoryImplTest {
 
     @Test
     fun `loginByEmail should emit error state when an exception occurs`() = runTest {
-        val initialState = LoginViewState.initial()
-        val email = "test@email.com"
-        val password = "password"
         val expectedState = initialState.copy(
             isLoading = false,
             error = MviError(type = ErrorType.TOAST, errorMessage = "No Internet connection")
