@@ -1,11 +1,8 @@
-package com.example.authdynamic.di
+package com.example.authdynamic.ui.signin
 
 import androidx.core.os.bundleOf
 import androidx.lifecycle.SavedStateHandle
 import com.example.authdynamic.domain.IAuthorizationRepository
-import com.example.authdynamic.ui.signin.LOGIN_VIEW_STATE
-import com.example.authdynamic.ui.signin.LoginViewIntent
-import com.example.authdynamic.ui.signin.LoginViewState
 import com.example.core.utils.isEmail
 import com.example.core.utils.isPassword
 import com.example.core.utils.mvi.ErrorType

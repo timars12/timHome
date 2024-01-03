@@ -1,41 +1,43 @@
 plugins {
-    id ("com.android.test")
-    id ("org.jetbrains.kotlin.android")
+    id("timHome.android.test")
 }
 
 android {
     namespace = "com.example.benchmark" //TODO
-    compileSdk = 34
 
     defaultConfig {
         minSdk = 29
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
-        create("release") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-        // This benchmark buildType is used for benchmarking, and should function like your
-        // release build (for example, with minification on). It"s signed with a debug key
-        // for easy local/CI testing.
         create("benchmark") {
-            initWith(getByName("release"))
+            // Keep the build type debuggable so we can attach a debugger if needed.
+            isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks.add("release")
         }
+//        create("release") {
+//            isMinifyEnabled = true
+//            isShrinkResources = true
+//            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+//        }
+//        // This benchmark buildType is used for benchmarking, and should function like your
+//        // release build (for example, with minification on). It"s signed with a debug key
+//        // for easy local/CI testing.
+//        create("benchmark") {
+//            initWith(getByName("release"))
+//            signingConfig = signingConfigs.getByName("debug")
+//            matchingFallbacks.add("release")
+//        }
     }
 
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
 }
 
 dependencies {
