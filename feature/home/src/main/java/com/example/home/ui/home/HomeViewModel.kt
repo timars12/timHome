@@ -38,7 +38,7 @@ internal class HomeViewModel @AssistedInject constructor(
         getDate()
     }
 
-    fun getDate() {
+    private fun getDate() {
         viewModelScope.launch(Dispatchers.IO) {
             isRefreshing.update { true }
             val arduino = async { getCO2AndTemperature() }

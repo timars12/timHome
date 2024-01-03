@@ -59,18 +59,10 @@ gradlePlugin {
             id = "timHome.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-//        register("androidLibraryJacoco") {
-//            id = "nowinandroid.android.library.jacoco"
-//            implementationClass = "AndroidLibraryJacocoConventionPlugin"
-//        }
-//        register("androidTest") {
-//            id = "nowinandroid.android.test"
-//            implementationClass = "AndroidTestConventionPlugin"
-//        }
-//        register("androidHilt") {
-//            id = "nowinandroid.android.hilt"
-//            implementationClass = "AndroidHiltConventionPlugin"
-//        }
+        register("androidTestConventionPlugin") {
+            id = "timHome.android.test"
+            implementationClass = "AndroidTestConventionPlugin"
+        }
 //        register("androidRoom") {
 //            id = "nowinandroid.android.room"
 //            implementationClass = "AndroidRoomConventionPlugin"

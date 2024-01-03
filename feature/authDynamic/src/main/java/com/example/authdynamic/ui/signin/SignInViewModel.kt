@@ -3,7 +3,6 @@ package com.example.authdynamic.ui.signin
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.authdynamic.di.LoginReducer
 import com.example.authdynamic.domain.IAuthorizationRepository
 import com.example.core.utils.mvi.MviViewModel
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-internal const val LOGIN_VIEW_STATE = "loginViewState"
+const val LOGIN_VIEW_STATE = "loginViewState"
 internal class SignInViewModel @AssistedInject constructor(
     repository: IAuthorizationRepository,
     firebaseAnalytics: FirebaseAnalytics,
