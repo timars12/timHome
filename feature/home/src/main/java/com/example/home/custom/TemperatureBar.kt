@@ -7,16 +7,20 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.ClipOp.Companion.Intersect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.home.R
 
-private const val SIZE_WIDTH_IN_DOOR_TEMPERATURE = 0.6f
+private const val SIZE_WIDTH_IN_DOOR_TEMPERATURE = 0.2f
 private const val SIZE_HEIGHT_IN_DOOR_TEMPERATURE = 0.7f
 private const val SIZE_WIDTH_OUT_DOOR_TEMPERATURE = 0.2f
 private const val SIZE_HEIGHT_OUT_DOOR_TEMPERATURE = 0.4f
