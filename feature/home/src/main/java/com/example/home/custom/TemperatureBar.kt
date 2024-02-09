@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.home.R
 
-private const val SIZE_WIDTH_IN_DOOR_TEMPERATURE = 0.8f
+private const val SIZE_WIDTH_IN_DOOR_TEMPERATURE = 0.3f
 private const val SIZE_HEIGHT_IN_DOOR_TEMPERATURE = 0.7f
 private const val SIZE_WIDTH_OUT_DOOR_TEMPERATURE = 0.2f
 private const val SIZE_HEIGHT_OUT_DOOR_TEMPERATURE = 0.4f
