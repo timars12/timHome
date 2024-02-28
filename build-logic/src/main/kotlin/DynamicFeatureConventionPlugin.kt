@@ -26,6 +26,7 @@ class DynamicFeatureConventionPlugin : Plugin<Project> {
                 }
             }
             dependencies {
+                add("implementation", libs.findLibrary("collections-immutable").get())
                 add("androidTestImplementation", kotlin("test"))
                 add("testImplementation", kotlin("test"))
                 add("testImplementation", libs.findLibrary("mockk").get())

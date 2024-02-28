@@ -51,6 +51,10 @@ internal class LoginReducer(
                     )
                 )
             }
+
+            LoginViewIntent.SignInWithoutField -> {
+                setState(state.value.copy(isLoginSuccess = true))
+            }
         }
     }
 

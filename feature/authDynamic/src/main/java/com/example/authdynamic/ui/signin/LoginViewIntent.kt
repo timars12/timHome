@@ -7,4 +7,5 @@ sealed interface LoginViewIntent : MviIntent {
     data class EnterEmail(val email: String?) : LoginViewIntent
     data class EnterPassword(val password: String?) : LoginViewIntent
     object EmailSignIn : LoginViewIntent
+    object SignInWithoutField : LoginViewIntent
 }
