@@ -7,7 +7,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,17 +26,17 @@ fun RoundedTabSection(
     tabNameList: PersistentList<String>,
     selectedTab: OnEnterText
 ) {
-    val selectedIndex = remember { mutableStateOf(0) }
+    val selectedIndex = remember { mutableIntStateOf(0) }
 
     TabRow(
-        selectedTabIndex = selectedIndex.value,
+        selectedTabIndex = selectedIndex.intValue,
         containerColor = BackgroundTabColor,
         modifier = modifier.clip(MaterialTheme.cornerRoundedShapes.rounded),
         indicator = { },
         divider = { }
     ) {
         tabNameList.forEachIndexed { index, text ->
-            val selected = selectedIndex.value == index
+            val selected = selectedIndex.intValue == index
             Tab(
                 modifier = Modifier
                     .padding(4.dp)
@@ -47,7 +47,7 @@ fun RoundedTabSection(
                 selected = selected,
                 onClick = {
                     selectedTab(text)
-                    selectedIndex.value = index
+                    selectedIndex.intValue = index
                 },
                 text = {
                     Text(

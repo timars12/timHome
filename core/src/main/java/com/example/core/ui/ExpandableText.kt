@@ -5,7 +5,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextLayoutResult
 import com.example.core.ui.theme.IndicatorCO2Danger
@@ -20,8 +26,8 @@ fun ExpandableText(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val textLines = remember { mutableStateOf(0) }
-    val showButton = textLines.value > maxLines
+    val textLines = remember { mutableIntStateOf(0) }
+    val showButton = textLines.intValue > maxLines
     val textLayoutResultState = remember { mutableStateOf<TextLayoutResult?>(null) }
 
     Column {
@@ -33,7 +39,7 @@ fun ExpandableText(
         )
 
         LaunchedEffect(text) {
-            textLines.value = withContext(Dispatchers.Default) {
+            textLines.intValue = withContext(Dispatchers.Default) {
                 // Use TextLayoutResult to calculate the number of lines
                 val textLayoutResult = textLayoutResultState.value
                 textLayoutResult?.lineCount ?: 0
