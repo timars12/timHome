@@ -8,8 +8,7 @@ import dagger.Reusable
 import javax.inject.Inject
 
 @Reusable
-class
-ViewModelFactory@Inject
+class ViewModelFactory @Inject
     constructor(
         private val factories: Map<
             Class<out ViewModel>,
