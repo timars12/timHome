@@ -21,6 +21,7 @@ internal fun Project.configureKtlint() {
                 "ktlint_standard_value-argument-comment" to "disabled",
                 "max_line_length" to "off",
                 "ktlint_standard_import-ordering" to "disabled",
+                "ktlint_standard_final-newline" to "false",
             )
         )
 //        disabledRules.set(setOf("no-wildcard-imports", "max-line-length", "import-ordering"))
