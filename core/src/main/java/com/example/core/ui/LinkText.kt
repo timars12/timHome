@@ -24,10 +24,14 @@ fun LinkText(text: String) {
         fontSize = 14.sp,
         fontWeight = FontWeight.W400,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
-private fun openBrowser(context: Context, link: String) {
+
+private fun openBrowser(
+    context: Context,
+    link: String,
+) {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
     context.startActivity(intent)
 }

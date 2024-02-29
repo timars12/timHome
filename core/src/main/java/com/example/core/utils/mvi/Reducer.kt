@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.onEach
 
 abstract class Reducer<S : MviViewState, E : MviIntent>(initialVal: S) {
-
     private val _state: MutableStateFlow<S> = MutableStateFlow(initialVal)
     val state: StateFlow<S> get() = _state
     val singleEvent: Channel<S> = Channel(Channel.UNLIMITED)
@@ -20,7 +19,7 @@ abstract class Reducer<S : MviViewState, E : MviIntent>(initialVal: S) {
         _state.emitAll(
             newState.onEach {
                 if (it.error != null) setSingleEvent(newState.last())
-            }
+            },
         )
     }
 
@@ -30,5 +29,8 @@ abstract class Reducer<S : MviViewState, E : MviIntent>(initialVal: S) {
         singleEvent.trySend(event)
     }
 
-    abstract suspend fun reduce(oldState: S, event: E)
+    abstract suspend fun reduce(
+        oldState: S,
+        event: E,
+    )
 }

@@ -17,7 +17,7 @@ internal fun SwitchWithText(
     modifier: Modifier = Modifier,
     text: String,
     isUseMock: Boolean,
-    onSetUseMockClick: (Boolean) -> Unit
+    onSetUseMockClick: (Boolean) -> Unit,
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Text(text)
@@ -33,6 +33,6 @@ fun PreviewChooseUseMockDate() {
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
         text = "Is use mock date:",
         isUseMock = true,
-        onSetUseMockClick = { }
+        onSetUseMockClick = { },
     )
 }

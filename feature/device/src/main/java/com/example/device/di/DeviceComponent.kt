@@ -13,7 +13,7 @@ import javax.inject.Inject
 @FeatureScope
 @Component(
     dependencies = [CoreComponent::class],
-    modules = [DeviceListModule::class, DeviceDetailModel::class]
+    modules = [DeviceListModule::class, DeviceDetailModel::class],
 )
 internal interface DeviceComponent {
     @Component.Factory
@@ -31,9 +31,9 @@ interface InjectDaggerDependency {
 }
 
 internal class InjectDaggerDependencyImpl : InjectDaggerDependency {
-
     @Inject
     lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
+
     override fun inject(context: Context) {
         DaggerDeviceComponent.factory()
             .create(ModularizationApplication.coreComponent(context)).inject(this)

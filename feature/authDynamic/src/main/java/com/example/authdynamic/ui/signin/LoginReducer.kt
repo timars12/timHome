@@ -14,19 +14,23 @@ import kotlinx.coroutines.flow.Flow
 internal class LoginReducer(
     private val firebaseAnalytics: FirebaseAnalytics,
     private val repository: IAuthorizationRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : Reducer<LoginViewState, LoginViewIntent>(
-    savedStateHandle.get<LoginViewState>(LOGIN_VIEW_STATE) ?: LoginViewState.initial()
-) {
-    override suspend fun reduce(oldState: LoginViewState, event: LoginViewIntent) {
+        savedStateHandle.get<LoginViewState>(LOGIN_VIEW_STATE) ?: LoginViewState.initial(),
+    ) {
+    override suspend fun reduce(
+        oldState: LoginViewState,
+        event: LoginViewIntent,
+    ) {
         when (event) {
             is LoginViewIntent.ForgotPassword -> Unit
             is LoginViewIntent.EmailSignIn -> {
-                val state = onSignInByEmail(
-                    oldState,
-                    oldState.email.data!!,
-                    oldState.password.data!!
-                )
+                val state =
+                    onSignInByEmail(
+                        oldState,
+                        oldState.email.data!!,
+                        oldState.password.data!!,
+                    )
                 setState(state)
             }
 
@@ -36,8 +40,8 @@ internal class LoginReducer(
                 setState(
                     oldState.copy(
                         email = state,
-                        isLoginBtnEnable = state.error == null && !oldState.password.data.isNullOrEmpty() && oldState.password.error == null
-                    )
+                        isLoginBtnEnable = state.error == null && !oldState.password.data.isNullOrEmpty() && oldState.password.error == null,
+                    ),
                 )
             }
 
@@ -47,8 +51,8 @@ internal class LoginReducer(
                 setState(
                     oldState.copy(
                         password = state,
-                        isLoginBtnEnable = state.error == null && !oldState.email.data.isNullOrEmpty() && oldState.email.error == null
-                    )
+                        isLoginBtnEnable = state.error == null && !oldState.email.data.isNullOrEmpty() && oldState.email.error == null,
+                    ),
                 )
             }
 
@@ -61,32 +65,39 @@ internal class LoginReducer(
     private fun onSignInByEmail(
         oldState: LoginViewState,
         email: String,
-        password: String
+        password: String,
     ): Flow<LoginViewState> {
         firebaseAnalytics.logEvent(
             FirebaseAnalytics.Event.LOGIN,
-            bundleOf(Pair(FirebaseAnalytics.Param.METHOD, "sign_in_by_email"))
+            bundleOf(Pair(FirebaseAnalytics.Param.METHOD, "sign_in_by_email")),
         )
         return repository.loginByEmail(oldState, email, password)
     }
 
-    private fun checkField(type: LoginFieldType, data: String?): MviError? {
-        val error = when {
-            data.isNullOrEmpty() -> MviError(
-                type = ErrorType.FIELD,
-                errorMessage = "This field could not be empty"
-            )
-            type == LoginFieldType.EMAIL && data.isEmail -> null
-            type == LoginFieldType.PASSWORD && data.isPassword -> null
-            else -> MviError(
-                type = ErrorType.FIELD,
-                errorMessage = "Invalid value"
-            )
-        }
+    private fun checkField(
+        type: LoginFieldType,
+        data: String?,
+    ): MviError? {
+        val error =
+            when {
+                data.isNullOrEmpty() ->
+                    MviError(
+                        type = ErrorType.FIELD,
+                        errorMessage = "This field could not be empty",
+                    )
+                type == LoginFieldType.EMAIL && data.isEmail -> null
+                type == LoginFieldType.PASSWORD && data.isPassword -> null
+                else ->
+                    MviError(
+                        type = ErrorType.FIELD,
+                        errorMessage = "Invalid value",
+                    )
+            }
         return error
     }
 
     private enum class LoginFieldType {
-        EMAIL, PASSWORD
+        EMAIL,
+        PASSWORD,
     }
 }

@@ -18,29 +18,32 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 const val LOGIN_VIEW_STATE = "loginViewState"
-internal class SignInViewModel @AssistedInject constructor(
-    repository: IAuthorizationRepository,
-    firebaseAnalytics: FirebaseAnalytics,
-    @Assisted private val savedStateHandle: SavedStateHandle
-) : ViewModel(), MviViewModel<LoginViewIntent, LoginViewState> {
 
-    private val reducer = LoginReducer(firebaseAnalytics, repository, savedStateHandle)
-    override val viewState: StateFlow<LoginViewState> = reducer.state
-        .onEach {
-            savedStateHandle[LOGIN_VIEW_STATE] = it
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, LoginViewState.initial())
+internal class SignInViewModel
+    @AssistedInject
+    constructor(
+        repository: IAuthorizationRepository,
+        firebaseAnalytics: FirebaseAnalytics,
+        @Assisted private val savedStateHandle: SavedStateHandle,
+    ) : ViewModel(), MviViewModel<LoginViewIntent, LoginViewState> {
+        private val reducer = LoginReducer(firebaseAnalytics, repository, savedStateHandle)
+        override val viewState: StateFlow<LoginViewState> =
+            reducer.state
+                .onEach {
+                    savedStateHandle[LOGIN_VIEW_STATE] = it
+                }.stateIn(viewModelScope, SharingStarted.Eagerly, LoginViewState.initial())
 
-    override val singleEvent: Channel<LoginViewState>
-        get() = reducer.singleEvent
+        override val singleEvent: Channel<LoginViewState>
+            get() = reducer.singleEvent
 
-    fun sendEvent(event: LoginViewIntent) {
-        viewModelScope.launch {
-            reducer.sendEvent(event)
+        fun sendEvent(event: LoginViewIntent) {
+            viewModelScope.launch {
+                reducer.sendEvent(event)
+            }
+        }
+
+        @AssistedFactory
+        interface Factory : ViewModelAssistedFactory<SignInViewModel> {
+            override fun create(handle: SavedStateHandle): SignInViewModel
         }
     }
-
-    @AssistedFactory
-    interface Factory : ViewModelAssistedFactory<SignInViewModel> {
-        override fun create(handle: SavedStateHandle): SignInViewModel
-    }
-}

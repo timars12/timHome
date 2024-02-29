@@ -22,6 +22,5 @@ dependencies {
 
     testImplementation(libs.junit4)
     androidTestImplementation(libs.junit)
-    androidTestImplementation(libs.annotation)
     androidTestImplementation(libs.androidx.test.espresso.core)
 }

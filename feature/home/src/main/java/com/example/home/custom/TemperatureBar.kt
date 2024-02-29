@@ -26,56 +26,66 @@ private const val SIZE_WIDTH_OUT_DOOR_TEMPERATURE = 0.22f
 private const val SIZE_HEIGHT_OUT_DOOR_TEMPERATURE = 0.4f
 
 @Composable
-internal fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorTemperature: Int) {
+internal fun TemperatureBar(
+    modifier: Modifier,
+    outDoorTemperature: Int,
+    inDoorTemperature: Int,
+) {
     val offsetBetweenTriangles = remember { 16.dp }
     val fontSize = remember { 66.sp }
     val resources = LocalContext.current.resources
-    val option = remember {
-        BitmapFactory.Options().apply {
-            inPreferredConfig = Bitmap.Config.RGB_565
+    val option =
+        remember {
+            BitmapFactory.Options().apply {
+                inPreferredConfig = Bitmap.Config.RGB_565
+            }
         }
-    }
-    val outDoorBitmap = remember {
-        BitmapFactory.decodeResource(resources, R.mipmap.ic_sun, option)
-    }
+    val outDoorBitmap =
+        remember {
+            BitmapFactory.decodeResource(resources, R.mipmap.ic_sun, option)
+        }
 
-    val inDoorBitmap = remember {
-        BitmapFactory.decodeResource(resources, R.mipmap.ic_room, option)
-    }
+    val inDoorBitmap =
+        remember {
+            BitmapFactory.decodeResource(resources, R.mipmap.ic_room, option)
+        }
 
-    val paint = Paint().apply {
-        textSize = fontSize.value
-        textAlign = Paint.Align.CENTER
-        color = Color.White.toArgb()
-    }
+    val paint =
+        Paint().apply {
+            textSize = fontSize.value
+            textAlign = Paint.Align.CENTER
+            color = Color.White.toArgb()
+        }
 
     Canvas(
-        modifier = modifier
+        modifier = modifier,
     ) {
         val dimension = size.height.coerceAtMost(size.width).toInt()
 
-        val outDoorTriangle = Path().apply {
-            moveTo(0f, 0f)
-            lineTo(size.width - offsetBetweenTriangles.value, 0f)
-            lineTo(0f, size.height - offsetBetweenTriangles.value)
-            close()
-        }
+        val outDoorTriangle =
+            Path().apply {
+                moveTo(0f, 0f)
+                lineTo(size.width - offsetBetweenTriangles.value, 0f)
+                lineTo(0f, size.height - offsetBetweenTriangles.value)
+                close()
+            }
 
-        val inDoorTriangle = Path().apply {
-            moveTo(size.width, 0f + offsetBetweenTriangles.value)
-            lineTo(size.width, size.height)
-            lineTo(0f + offsetBetweenTriangles.value, size.height)
-            close()
-        }
+        val inDoorTriangle =
+            Path().apply {
+                moveTo(size.width, 0f + offsetBetweenTriangles.value)
+                lineTo(size.width, size.height)
+                lineTo(0f + offsetBetweenTriangles.value, size.height)
+                close()
+            }
 
         drawPath(
             path = outDoorTriangle,
-            color = Color.Transparent
+            color = Color.Transparent,
         )
         clipPath(outDoorTriangle, Intersect) {
             drawImage(
                 image = outDoorBitmap.asImageBitmap(),
-                dstSize = IntSize(dimension, dimension)
+                dstSize = IntSize(dimension, dimension),
             )
         }
 
@@ -83,24 +93,24 @@ internal fun TemperatureBar(modifier: Modifier, outDoorTemperature: Int, inDoorT
             outDoorTemperature.toString(),
             size.width * SIZE_WIDTH_OUT_DOOR_TEMPERATURE,
             size.height * SIZE_HEIGHT_OUT_DOOR_TEMPERATURE,
-            paint
+            paint,
         )
 
         drawPath(
             path = inDoorTriangle,
-            color = Color.Transparent
+            color = Color.Transparent,
         )
         clipPath(inDoorTriangle, Intersect) {
             drawImage(
                 image = inDoorBitmap.asImageBitmap(),
-                dstSize = IntSize(dimension, dimension)
+                dstSize = IntSize(dimension, dimension),
             )
         }
         drawContext.canvas.nativeCanvas.drawText(
             inDoorTemperature.toString(),
             size.width * SIZE_WIDTH_IN_DOOR_TEMPERATURE,
             size.height * SIZE_HEIGHT_IN_DOOR_TEMPERATURE,
-            paint
+            paint,
         )
     }
 }

@@ -39,7 +39,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         register("benchmark") {
@@ -49,12 +49,13 @@ android {
         }
     }
 
-    dynamicFeatures += listOf(
-        ":feature:authDynamic",
-        ":feature:home",
-        ":feature:settings",
-        ":feature:device"
-    )
+    dynamicFeatures +=
+        listOf(
+            ":feature:authDynamic",
+            ":feature:home",
+            ":feature:settings",
+            ":feature:device",
+        )
     namespace = "com.example.modularizationtest"
 }
 

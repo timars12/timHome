@@ -9,7 +9,6 @@ import dagger.multibindings.IntoMap
 
 @Module
 internal interface SettingModule {
-
     @Binds
     @IntoMap
     @ViewModelKey(SettingViewModel::class)

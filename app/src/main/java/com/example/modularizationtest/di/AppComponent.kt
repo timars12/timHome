@@ -15,5 +15,6 @@ internal interface AppComponent {
     }
 
     fun inject(activity: MainActivity)
+
     fun inject(service: CO2JobService)
 }

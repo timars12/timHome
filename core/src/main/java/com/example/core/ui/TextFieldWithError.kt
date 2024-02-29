@@ -26,7 +26,7 @@ fun TextFieldWithError(
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
     onEnterText: OnEnterText,
-    trailingIcon: @Composable (() -> Unit)? = null
+    trailingIcon: @Composable (() -> Unit)? = null,
 ) {
     Column {
         TextField(
@@ -39,16 +39,18 @@ fun TextFieldWithError(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             placeholder = { Text(text = hint) },
-            visualTransformation = visualTransformation
+            visualTransformation = visualTransformation,
         )
         if (data.error != null) {
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                text = data.error.errorMessage
-                    ?: stringResource(id = data.error.errorRes!!),
-                color = MaterialTheme.colorScheme.error
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                text =
+                    data.error.errorMessage
+                        ?: stringResource(id = data.error.errorRes!!),
+                color = MaterialTheme.colorScheme.error,
             )
         }
     }

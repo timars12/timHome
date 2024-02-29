@@ -14,36 +14,38 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-internal class DeviceDetailViewMode @AssistedInject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
-    private val navigationDispatcher: NavigationDispatcher,
-    private val repository: IDeviceRepository
-) : ViewModel() {
-    val device = MutableStateFlow<DeviceModel?>(null)
-    val module = MutableStateFlow(listOf<ModuleModel>().toImmutableList())
+internal class DeviceDetailViewMode
+    @AssistedInject
+    constructor(
+        @Assisted private val savedStateHandle: SavedStateHandle,
+        private val navigationDispatcher: NavigationDispatcher,
+        private val repository: IDeviceRepository,
+    ) : ViewModel() {
+        val device = MutableStateFlow<DeviceModel?>(null)
+        val module = MutableStateFlow(listOf<ModuleModel>().toImmutableList())
 
-    init {
-        val deviceId = savedStateHandle.get<Int>(SELECTED_DEVICE_ID)
-        if (deviceId != null) {
-            getSelectedDeviceById(deviceId)
+        init {
+            val deviceId = savedStateHandle.get<Int>(SELECTED_DEVICE_ID)
+            if (deviceId != null) {
+                getSelectedDeviceById(deviceId)
+            }
+        }
+
+        private fun getSelectedDeviceById(deviceId: Int) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val model = repository.getDeviceWithModuleById(deviceId)
+                device.value = model.device
+                module.value = model.modules.toImmutableList()
+            }
+        }
+
+        fun goBack() = navigationDispatcher.emit { it.popBackStack() }
+
+        @AssistedFactory
+        interface Factory : ViewModelAssistedFactory<DeviceDetailViewMode> {
+            override fun create(handle: SavedStateHandle): DeviceDetailViewMode
         }
     }
-
-    private fun getSelectedDeviceById(deviceId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val model = repository.getDeviceWithModuleById(deviceId)
-            device.value = model.device
-            module.value = model.modules.toImmutableList()
-        }
-    }
-
-    fun goBack() = navigationDispatcher.emit { it.popBackStack() }
-
-    @AssistedFactory
-    interface Factory : ViewModelAssistedFactory<DeviceDetailViewMode> {
-        override fun create(handle: SavedStateHandle): DeviceDetailViewMode
-    }
-}

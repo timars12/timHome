@@ -8,9 +8,9 @@ import com.example.core.utils.NavigationDispatcher
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [NetworkModule::class, AppModule::class])
@@ -25,6 +25,8 @@ interface CoreComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance applicationContext: Context): CoreComponent
+        fun create(
+            @BindsInstance applicationContext: Context,
+        ): CoreComponent
     }
 }

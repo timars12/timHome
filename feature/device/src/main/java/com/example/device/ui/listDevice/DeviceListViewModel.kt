@@ -15,40 +15,44 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-internal class DeviceListViewModel @AssistedInject constructor(
-    @Assisted private val savedStateHandle: SavedStateHandle,
-    private val navigationDispatcher: NavigationDispatcher,
-    private val repository: DeviceRepository,
-    firebaseAnalytics: FirebaseAnalytics
-) : ViewModel() {
-    val deviceList = MutableStateFlow(listOf<DeviceModel>().toImmutableList())
+internal class DeviceListViewModel
+    @AssistedInject
+    constructor(
+        @Assisted private val savedStateHandle: SavedStateHandle,
+        private val navigationDispatcher: NavigationDispatcher,
+        private val repository: DeviceRepository,
+        firebaseAnalytics: FirebaseAnalytics,
+    ) : ViewModel() {
+        val deviceList = MutableStateFlow(listOf<DeviceModel>().toImmutableList())
 
-    init {
-        firebaseAnalytics.logEvent(
-            FirebaseAnalytics.Event.SCREEN_VIEW,
-            bundleOf(Pair(FirebaseAnalytics.Param.SCREEN_NAME, "device_list"))
-        )
-        viewModelScope.launch(Dispatchers.IO) { repository.initAllDevices() }
-    }
-
-    fun getAllDevices() = repository.getAllDevices()
-
-    fun updateList(list: ImmutableList<DeviceModel>) = deviceList.update { list }
-
-    fun navigateToDetailScreen(device: DeviceModel) {
-        navigationDispatcher.emit {
-            it.navigate(
-                R.id.deviceDetailFragment,
-                bundleOf(SELECTED_DEVICE_ID to device.id)
+        init {
+            firebaseAnalytics.logEvent(
+                FirebaseAnalytics.Event.SCREEN_VIEW,
+                bundleOf(Pair(FirebaseAnalytics.Param.SCREEN_NAME, "device_list")),
             )
+            viewModelScope.launch(Dispatchers.IO) { repository.initAllDevices() }
+        }
+
+        fun getAllDevices() = repository.getAllDevices()
+
+        fun updateList(list: ImmutableList<DeviceModel>) = deviceList.update { list }
+
+        fun navigateToDetailScreen(device: DeviceModel) {
+            navigationDispatcher.emit {
+                it.navigate(
+                    R.id.deviceDetailFragment,
+                    bundleOf(SELECTED_DEVICE_ID to device.id),
+                )
+            }
+        }
+
+        @AssistedFactory
+        interface Factory : ViewModelAssistedFactory<DeviceListViewModel> {
+            override fun create(handle: SavedStateHandle): DeviceListViewModel
         }
     }
-
-    @AssistedFactory
-    interface Factory : ViewModelAssistedFactory<DeviceListViewModel> {
-        override fun create(handle: SavedStateHandle): DeviceListViewModel
-    }
-}

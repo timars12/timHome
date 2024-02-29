@@ -62,6 +62,7 @@ import com.example.core.utils.mvi.ErrorType
 import com.example.core.utils.viewmodel.ViewModelFactory
 import com.google.android.play.core.splitinstall.SplitInstallSessionState
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
+import javax.inject.Inject
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -70,10 +71,8 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 internal class SignInFragment : Fragment() {
-
     @Inject
     lateinit var abstractFactory: dagger.Lazy<ViewModelFactory>
     private val viewModel: SignInViewModel by viewModels { abstractFactory.get() }
@@ -87,7 +86,7 @@ internal class SignInFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -100,36 +99,39 @@ internal class SignInFragment : Fragment() {
                     val keyboardController = LocalSoftwareKeyboardController.current
                     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
                     val intentChannel = remember { Channel<LoginViewIntent>(Channel.UNLIMITED) }
-                    val dispatch = remember {
-                        { intent: LoginViewIntent -> intentChannel.trySend(intent).getOrThrow() }
-                    }
+                    val dispatch =
+                        remember {
+                            { intent: LoginViewIntent -> intentChannel.trySend(intent).getOrThrow() }
+                        }
 
                     InitSideEffects(
                         snackbarHostState = snackbarHostState,
                         intentChannel = intentChannel,
-                        viewState = viewState
+                        viewState = viewState,
                     )
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(color = BackgroundColor)
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(color = BackgroundColor),
                     ) {
                         AuthTabSection(
                             tabNameList = tabNameList,
                             selectedTab = {
                                 isLoginTabSelected.value = it == tabNameList.first()
-                            }
+                            },
                         )
                         Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-                                ),
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        color = Color.White,
+                                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                                    ),
                             verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = CenterHorizontally
+                            horizontalAlignment = CenterHorizontally,
                         ) {
                             AnimatedVisibility(visible = isLoginTabSelected.value) {
                                 LoginScreen(viewState, focusRequester, dispatch, keyboardController)
@@ -143,7 +145,7 @@ internal class SignInFragment : Fragment() {
                                         modifier = Modifier.align(CenterHorizontally),
                                         onClick = {
                                             dispatch(LoginViewIntent.SignInWithoutField)
-                                        }
+                                        },
                                     ) {
                                         Text(text = "Go to home page")
                                     }
@@ -152,8 +154,9 @@ internal class SignInFragment : Fragment() {
                         }
                         SnackbarMessage(
                             snackbarHostState,
-                            modifier = Modifier
-                                .navigationBarsPadding()
+                            modifier =
+                                Modifier
+                                    .navigationBarsPadding(),
                         )
                     }
                 }
@@ -167,17 +170,17 @@ internal class SignInFragment : Fragment() {
         viewState: LoginViewState,
         focusRequester: FocusRequester,
         dispatch: (LoginViewIntent) -> Unit,
-        keyboardController: SoftwareKeyboardController?
+        keyboardController: SoftwareKeyboardController?,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = CenterHorizontally
+            horizontalAlignment = CenterHorizontally,
         ) {
             EmailTextField(
                 viewState.email,
                 focusRequester,
-                onEnterText = { email -> dispatch(LoginViewIntent.EnterEmail(email)) }
+                onEnterText = { email -> dispatch(LoginViewIntent.EnterEmail(email)) },
             )
             PasswordTextField(
                 data = viewState.password,
@@ -186,7 +189,7 @@ internal class SignInFragment : Fragment() {
                     dispatch(LoginViewIntent.EnterPassword(password))
                 },
                 onClickDone = { dispatch(LoginViewIntent.EmailSignIn) },
-                keyboardController = keyboardController
+                keyboardController = keyboardController,
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
@@ -195,15 +198,16 @@ internal class SignInFragment : Fragment() {
                 onClick = {
                     keyboardController?.hide()
                     dispatch(LoginViewIntent.EmailSignIn)
-                }
+                },
             ) {
                 if (viewState.isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.CenterVertically),
+                        modifier =
+                            Modifier
+                                .size(24.dp)
+                                .align(Alignment.CenterVertically),
                         color = MaterialTheme.colorScheme.surfaceVariant,
-                        trackColor = MaterialTheme.colorScheme.secondary
+                        trackColor = MaterialTheme.colorScheme.secondary,
                     )
                 } else {
                     Text(stringResource(id = R.string.sign_in))
@@ -216,23 +220,25 @@ internal class SignInFragment : Fragment() {
     private fun InitSideEffects(
         snackbarHostState: SnackbarHostState,
         intentChannel: Channel<LoginViewIntent>,
-        viewState: LoginViewState
+        viewState: LoginViewState,
     ) {
         val lifecycleOwner = LocalLifecycleOwner.current
 
-        val events = remember(viewModel.singleEvent, lifecycleOwner) {
-            viewModel.singleEvent.receiveAsFlow().flowWithLifecycle(
-                lifecycleOwner.lifecycle,
-                Lifecycle.State.STARTED
-            )
-        }
+        val events =
+            remember(viewModel.singleEvent, lifecycleOwner) {
+                viewModel.singleEvent.receiveAsFlow().flowWithLifecycle(
+                    lifecycleOwner.lifecycle,
+                    Lifecycle.State.STARTED,
+                )
+            }
 
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event.error!!.type) {
-                    ErrorType.TOAST -> snackbarHostState.showSnackbar(
-                        message = event.error.errorMessage ?: ""
-                    )
+                    ErrorType.TOAST ->
+                        snackbarHostState.showSnackbar(
+                            message = event.error.errorMessage ?: "",
+                        )
 
                     else -> Unit
                 }
@@ -245,7 +251,7 @@ internal class SignInFragment : Fragment() {
                     .onEach(viewModel::sendEvent)
                     .flowWithLifecycle(
                         lifecycleOwner.lifecycle,
-                        Lifecycle.State.STARTED
+                        Lifecycle.State.STARTED,
                     ).collect()
             }
         }
@@ -260,7 +266,7 @@ internal class SignInFragment : Fragment() {
             com.example.modularizationtest.R.id.home_navigation,
             null,
             null,
-            DynamicExtras(installMonitor)
+            DynamicExtras(installMonitor),
         )
 
         if (installMonitor.isInstallRequired) {
@@ -271,7 +277,7 @@ internal class SignInFragment : Fragment() {
                         when (value.status()) {
                             SplitInstallSessionStatus.INSTALLED -> {
                                 findNavController().navigate(
-                                    com.example.modularizationtest.R.id.home_navigation
+                                    com.example.modularizationtest.R.id.home_navigation,
                                 )
                             }
 
@@ -294,7 +300,7 @@ internal class SignInFragment : Fragment() {
                             installMonitor.status.removeObserver(this)
                         }
                     }
-                }
+                },
             )
         }
     }

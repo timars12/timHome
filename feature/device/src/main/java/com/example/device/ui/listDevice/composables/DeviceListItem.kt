@@ -3,7 +3,13 @@ package com.example.device.ui.listDevice.composables
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,73 +34,81 @@ private const val WEIGHT_IMAGE_DEVICE_LIST = 2f
 private const val WEIGHT_CONTENT_DEVICE_LIST = 8f
 
 @Composable
-internal fun DeviceListItem(item: DeviceModel, navigateToDetailScreen: OnClick) {
+internal fun DeviceListItem(
+    item: DeviceModel,
+    navigateToDetailScreen: OnClick,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = Color.White,
-                shape = MaterialTheme.cornerRoundedShapes.small
-            )
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { navigateToDetailScreen() },
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(
+                    color = Color.White,
+                    shape = MaterialTheme.cornerRoundedShapes.small,
+                )
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .clickable { navigateToDetailScreen() },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            modifier = Modifier
-                .weight(WEIGHT_IMAGE_DEVICE_LIST)
-                .height(80.dp)
-                .clip(MaterialTheme.shapes.small),
+            modifier =
+                Modifier
+                    .weight(WEIGHT_IMAGE_DEVICE_LIST)
+                    .height(80.dp)
+                    .clip(MaterialTheme.shapes.small),
             contentScale = ContentScale.Crop,
             painter = rememberAsyncImagePainter(item.image),
-            contentDescription = null
+            contentDescription = null,
         )
         Column(
-            modifier = Modifier
-                .weight(WEIGHT_CONTENT_DEVICE_LIST)
-                .padding(start = 16.dp)
+            modifier =
+                Modifier
+                    .weight(WEIGHT_CONTENT_DEVICE_LIST)
+                    .padding(start = 16.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp),
                     text = item.title,
                     maxLines = 2,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
                 )
                 Text(
                     text = item.totalPrice,
                     color = PriceColor,
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Right,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
             if (!item.description.isNullOrBlank()) {
                 ExpandableText(text = item.description)
             }
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = item.dateCreated,
                     fontSize = 12.sp,
-                    color = DataCreatedItemColor
+                    color = DataCreatedItemColor,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 FavoriteWithRating(
                     modifier = Modifier.padding(start = 8.dp),
                     isFavorite = item.isFavorite,
-                    rating = item.rating
+                    rating = item.rating,
                 )
             }
         }

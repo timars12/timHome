@@ -5,10 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,11 +54,10 @@ internal class SettingFragment : Fragment() {
         DaggerSettingComponent.factory().create(this.coreComponent()).inject(this)
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -58,80 +67,89 @@ internal class SettingFragment : Fragment() {
                     val isUseMock by viewModel.isUseMock.collectAsStateWithLifecycle()
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 46.dp, bottom = 80.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(top = 46.dp, bottom = 80.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         TextField(
                             value = ipAddress,
                             onValueChange = viewModel::onIpAddressEntered,
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = TextFieldBackgroundColor,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent
-                            ),
-                            keyboardOptions = remember {
-                                KeyboardOptions(
-                                    keyboardType = KeyboardType.Decimal
-                                )
-                            },
+                            colors =
+                                TextFieldDefaults.colors(
+                                    focusedContainerColor = TextFieldBackgroundColor,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    disabledIndicatorColor = Color.Transparent,
+                                ),
+                            keyboardOptions =
+                                remember {
+                                    KeyboardOptions(
+                                        keyboardType = KeyboardType.Decimal,
+                                    )
+                                },
                             shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
                             maxLines = 1,
-                            textStyle = LocalTextStyle.current.copy(
-                                textAlign = TextAlign.Center,
-                                fontSize = 26.sp,
-                                lineHeight = 32.sp
-                            ),
-                            label = { Text(text = stringResource(R.string.ip_address)) }
+                            textStyle =
+                                LocalTextStyle.current.copy(
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 26.sp,
+                                    lineHeight = 32.sp,
+                                ),
+                            label = { Text(text = stringResource(R.string.ip_address)) },
                         )
-                        TextField(
-                            modifier = Modifier.padding(top = 48.dp),
-                            value = "", // TODO
-                            onValueChange = { }, // TODO
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = TextFieldBackgroundColor,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent
-                            ),
-                            keyboardOptions = remember {
-                                KeyboardOptions(
-                                    keyboardType = KeyboardType.Text
-                                )
-                            },
-                            shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
-                            maxLines = 1,
-                            textStyle = LocalTextStyle.current.copy(
-                                textAlign = TextAlign.Center,
-                                fontSize = 26.sp,
-                                lineHeight = 32.sp
-                            ),
-                            label = { Text(text = stringResource(R.string.location)) }
-                        )
+//                        TextField(
+//                            modifier = Modifier.padding(top = 48.dp),
+//                            value = "",
+//                            onValueChange = { },
+//                            colors =
+//                                TextFieldDefaults.colors(
+//                                    focusedContainerColor = TextFieldBackgroundColor,
+//                                    focusedIndicatorColor = Color.Transparent,
+//                                    unfocusedIndicatorColor = Color.Transparent,
+//                                    disabledIndicatorColor = Color.Transparent,
+//                                ),
+//                            keyboardOptions =
+//                                remember {
+//                                    KeyboardOptions(
+//                                        keyboardType = KeyboardType.Text,
+//                                    )
+//                                },
+//                            shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
+//                            maxLines = 1,
+//                            textStyle =
+//                                LocalTextStyle.current.copy(
+//                                    textAlign = TextAlign.Center,
+//                                    fontSize = 26.sp,
+//                                    lineHeight = 32.sp,
+//                                ),
+//                            label = { Text(text = stringResource(R.string.location)) },
+//                        )
                         SwitchWithText(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 32.dp, start = 64.dp, end = 48.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 32.dp, start = 64.dp, end = 48.dp),
                             text = stringResource(R.string.is_use_mock_date),
                             isUseMock = isUseMock,
-                            onSetUseMockClick = viewModel::onSetUseMockClick
+                            onSetUseMockClick = viewModel::onSetUseMockClick,
                         )
 
                         // TODO add select from and to time when we should show notification about co2
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    bottom = 28.dp,
-                                    start = 64.dp,
-                                    end = 64.dp
-                                )
-                                .height(60.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        bottom = 28.dp,
+                                        start = 64.dp,
+                                        end = 64.dp,
+                                    )
+                                    .height(60.dp),
                             shape = remember { RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD) },
-                            onClick = viewModel::onSaveChangClick
+                            onClick = viewModel::onSaveChangClick,
                         ) {
                             Text(text = stringResource(R.string.save), fontSize = 20.sp)
                         }

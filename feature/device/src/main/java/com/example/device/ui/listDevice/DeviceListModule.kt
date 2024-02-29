@@ -11,7 +11,6 @@ import dagger.multibindings.IntoMap
 
 @Module
 internal interface DeviceListModule {
-
     @Binds
     @IntoMap
     @ViewModelKey(DeviceListViewModel::class)

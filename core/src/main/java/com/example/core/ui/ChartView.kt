@@ -10,11 +10,19 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.core.data.db.entity.CarbonDioxideEntity
-import com.example.core.ui.theme.*
+import com.example.core.ui.theme.DeviceDetailForegroundColor
+import com.example.core.ui.theme.IndicatorCO2Bed
+import com.example.core.ui.theme.SelectedTabBottomBar
+import com.example.core.ui.theme.Typography
+import com.example.core.ui.theme.chartAxisTextStyle
+import com.example.core.ui.theme.chartValueTextStyle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -25,7 +33,7 @@ fun ChartView(
     xLabel: String,
     yLabel: String,
     isShouldShowValue: Boolean,
-    list: ImmutableList<CarbonDioxideEntity>?
+    list: ImmutableList<CarbonDioxideEntity>?,
 ) {
     if (list.isNullOrEmpty() || list.size < 2) return
     val textMeasure = rememberTextMeasurer()
@@ -47,7 +55,7 @@ fun ChartView(
             textMeasure = textMeasure,
             padding = padding.value,
             xLabel = xLabel,
-            yLabel = yLabel
+            yLabel = yLabel,
         )
 
         // Draw the line chart
@@ -67,7 +75,7 @@ fun ChartView(
                     text = entity.co2Level.toString(),
                     style = Typography.chartValueTextStyle,
                     maxLines = 1,
-                    topLeft = Offset(0f, y)
+                    topLeft = Offset(0f, y),
                 )
 
                 drawText(
@@ -75,7 +83,7 @@ fun ChartView(
                     text = entity.date,
                     style = Typography.chartValueTextStyle,
                     maxLines = 1,
-                    topLeft = Offset(x - padding.value, size.height - padding.value)
+                    topLeft = Offset(x - padding.value, size.height - padding.value),
                 )
             }
         }
@@ -88,7 +96,7 @@ private fun DrawScope.drawAxisLine(
     textMeasure: TextMeasurer,
     padding: Float,
     xLabel: String,
-    yLabel: String
+    yLabel: String,
 ) {
     val xAxisLabel = textMeasure.measure(xLabel, maxLines = 1)
     val yAxisLabel = textMeasure.measure(yLabel, maxLines = 1)
@@ -97,22 +105,23 @@ private fun DrawScope.drawAxisLine(
     drawLine(
         color = DeviceDetailForegroundColor,
         start = Offset(padding, size.height - padding),
-        end = Offset(size.width - padding, size.height - padding)
+        end = Offset(size.width - padding, size.height - padding),
     )
     drawLine(
         color = DeviceDetailForegroundColor,
         start = Offset(padding, padding),
-        end = Offset(padding, size.height - padding)
+        end = Offset(padding, size.height - padding),
     )
     drawText(
         textMeasurer = textMeasure,
         text = xLabel,
         style = Typography.chartAxisTextStyle,
         maxLines = 1,
-        topLeft = Offset(
-            size.width - padding - xAxisLabel.size.width,
-            size.height - padding
-        )
+        topLeft =
+            Offset(
+                size.width - padding - xAxisLabel.size.width,
+                size.height - padding,
+            ),
     )
     rotate(degrees = 270F) {
         drawText(
@@ -120,10 +129,11 @@ private fun DrawScope.drawAxisLine(
             text = yLabel,
             style = Typography.chartAxisTextStyle,
             maxLines = 1,
-            topLeft = Offset(
-                x = size.width - yAxisLabel.size.width - padding / 2,
-                y = yAxisLabel.size.height.toFloat() - yAxisLabel.size.height + padding / 2
-            )
+            topLeft =
+                Offset(
+                    x = size.width - yAxisLabel.size.width - padding / 2,
+                    y = yAxisLabel.size.height.toFloat() - yAxisLabel.size.height + padding / 2,
+                ),
         )
     }
 }
@@ -136,17 +146,18 @@ fun TestChartView() {
         xLabel = "Time",
         yLabel = "CO2 Level",
         isShouldShowValue = false,
-        list = listOf(
-            CarbonDioxideEntity(co2Level = 400, date = "12:00"),
-            CarbonDioxideEntity(co2Level = 600, date = "12:15"),
-            CarbonDioxideEntity(co2Level = 660, date = "12:30"),
-            CarbonDioxideEntity(co2Level = 700, date = "12:45"),
-            CarbonDioxideEntity(co2Level = 900, date = "13:00"),
-            CarbonDioxideEntity(co2Level = 1200, date = "13:08"),
-            CarbonDioxideEntity(co2Level = 1200, date = "13:15"),
-            CarbonDioxideEntity(co2Level = 1400, date = "13:30"),
-            CarbonDioxideEntity(co2Level = 1600, date = "13:45"),
-            CarbonDioxideEntity(co2Level = 3800, date = "14:00")
-        ).toImmutableList()
+        list =
+            listOf(
+                CarbonDioxideEntity(co2Level = 400, date = "12:00"),
+                CarbonDioxideEntity(co2Level = 600, date = "12:15"),
+                CarbonDioxideEntity(co2Level = 660, date = "12:30"),
+                CarbonDioxideEntity(co2Level = 700, date = "12:45"),
+                CarbonDioxideEntity(co2Level = 900, date = "13:00"),
+                CarbonDioxideEntity(co2Level = 1200, date = "13:08"),
+                CarbonDioxideEntity(co2Level = 1200, date = "13:15"),
+                CarbonDioxideEntity(co2Level = 1400, date = "13:30"),
+                CarbonDioxideEntity(co2Level = 1600, date = "13:45"),
+                CarbonDioxideEntity(co2Level = 3800, date = "14:00"),
+            ).toImmutableList(),
     )
 }

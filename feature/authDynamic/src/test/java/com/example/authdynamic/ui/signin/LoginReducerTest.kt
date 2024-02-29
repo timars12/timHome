@@ -25,65 +25,75 @@ class LoginReducerTest {
     private val reducer = LoginReducer(firebaseAnalytics, repository, savedStateHandle)
 
     @Test
-    fun `reduce should update state with error when email is empty`() = runTest {
-        val initialState = LoginViewState.initial()
-        val event = LoginViewIntent.EnterEmail("")
+    fun `reduce should update state with error when email is empty`() =
+        runTest {
+            val initialState = LoginViewState.initial()
+            val event = LoginViewIntent.EnterEmail("")
 
-        val expectedState = initialState.copy(
-            email = initialState.email.copy(
-                data = "",
-                error = MviError(
-                    ErrorType.FIELD,
-                    "This field could not be empty"
+            val expectedState =
+                initialState.copy(
+                    email =
+                        initialState.email.copy(
+                            data = "",
+                            error =
+                                MviError(
+                                    ErrorType.FIELD,
+                                    "This field could not be empty",
+                                ),
+                        ),
                 )
-            )
-        )
 
-        reducer.reduce(initialState, event)
-        assertEquals(expectedState, reducer.state.value)
-    }
+            reducer.reduce(initialState, event)
+            assertEquals(expectedState, reducer.state.value)
+        }
 
     @Test
-    fun `reduce should update state with error when password is invalid`() = runTest {
-        val initialState = LoginViewState.initial().copy(
-            email = FieldText("valid@email.com", null)
-        )
-        val event = LoginViewIntent.EnterPassword("123")
+    fun `reduce should update state with error when password is invalid`() =
+        runTest {
+            val initialState =
+                LoginViewState.initial().copy(
+                    email = FieldText("valid@email.com", null),
+                )
+            val event = LoginViewIntent.EnterPassword("123")
 
-        val expectedState = initialState.copy(
-            password = initialState.password.copy(
-                data = "123",
-                error = MviError(ErrorType.FIELD, "Invalid value")
-            )
-        )
+            val expectedState =
+                initialState.copy(
+                    password =
+                        initialState.password.copy(
+                            data = "123",
+                            error = MviError(ErrorType.FIELD, "Invalid value"),
+                        ),
+                )
 
-        reducer.reduce(initialState, event)
-        assertEquals(expectedState, reducer.state.value)
-    }
+            reducer.reduce(initialState, event)
+            assertEquals(expectedState, reducer.state.value)
+        }
 
     @Test
     fun `reduce should call repository loginByEmail when EmailSignIn Intent is received`() =
         runTest {
             mockkConstructor(Bundle::class)
-            val initialState = LoginViewState.initial().copy(
-                email = FieldText("valid@email.com", null),
-                password = FieldText("Qwerty12#", null)
-            )
+            val initialState =
+                LoginViewState.initial().copy(
+                    email = FieldText("valid@email.com", null),
+                    password = FieldText("Qwerty12#", null),
+                )
             val event = LoginViewIntent.EmailSignIn
             val expectedState =
                 initialState.copy(isLoading = false, isLoginSuccess = true, error = null)
-            val flow = flowOf(
-                initialState.copy(
-                    isLoading = false,
-                    error = null,
-                    isLoginSuccess = true
+            val flow =
+                flowOf(
+                    initialState.copy(
+                        isLoading = false,
+                        error = null,
+                        isLoginSuccess = true,
+                    ),
                 )
-            )
             coEvery {
                 repository.loginByEmail(
                     initialState,
                     initialState.email.data!!,
-                    initialState.password.data!!
+                    initialState.password.data!!,
                 )
             } returns flow
 
