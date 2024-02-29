@@ -7,9 +7,7 @@ import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -23,7 +21,12 @@ import com.example.core.utils.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
 import com.example.core.utils.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
 import com.example.modularizationtest.R
 import com.example.modularizationtest.di.DaggerAppComponent
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -47,12 +50,12 @@ class CO2JobService : JobService() {
             .inject(this)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartJob(params: JobParameters?): Boolean {
-        job = CoroutineScope(Dispatchers.Default).launch {
-            jobFinished(params, true)
-            if (coroutineContext.isActive) getCO2()
-        }
+        job =
+            CoroutineScope(Dispatchers.Default).launch {
+                jobFinished(params, true)
+                if (coroutineContext.isActive) getCO2()
+            }
         return true // Indicates that the job is still running
     }
 
@@ -62,7 +65,6 @@ class CO2JobService : JobService() {
     }
 
     @Suppress("MagicNumber")
-    @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun getCO2() {
         withContext(Dispatchers.IO) {
             // TODO check if user set baseurl before call
@@ -77,10 +79,11 @@ class CO2JobService : JobService() {
                             sendNotification(
                                 title = getString(R.string.dangerous_levels_of_co2),
                                 text = getString(R.string.value_levels_of_co2, co2),
-                                bigText = getString(
-                                    R.string.notification_message_levels_of_co2,
-                                    co2
-                                )
+                                bigText =
+                                    getString(
+                                        R.string.notification_message_levels_of_co2,
+                                        co2,
+                                    ),
                             )
                         }
                         isDangerCO2LevelsInRoom && co2 < INDICATOR_CO2_ACCEPTABLE_VALUE -> {
@@ -88,10 +91,11 @@ class CO2JobService : JobService() {
                             sendNotification(
                                 title = getString(R.string.air_is_clean),
                                 text = getString(R.string.co2_level_returned_to_normal),
-                                bigText = getString(
-                                    R.string.co2_level_returned_to_normal_long_text,
-                                    co2
-                                )
+                                bigText =
+                                    getString(
+                                        R.string.co2_level_returned_to_normal_long_text,
+                                        co2,
+                                    ),
                             )
                         }
                     }
@@ -104,41 +108,46 @@ class CO2JobService : JobService() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun saveToDataBase(co2: Int) {
         database.carbonDioxideDao().saveCO2LevelToDB(
-            CarbonDioxideEntity(co2Level = co2, date = LocalDateTime.now().toString())
+            CarbonDioxideEntity(co2Level = co2, date = LocalDateTime.now().toString()),
         )
     }
 
-    private fun sendNotification(title: String, text: String, bigText: String) {
+    private fun sendNotification(
+        title: String,
+        text: String,
+        bigText: String,
+    ) {
         val channelId = getString(R.string.notification_channel_id)
         // Create the PendingIntent
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
 
         // Create the notification builder
-        val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, channelId)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .setSmallIcon(com.example.core.R.mipmap.ic_launcher_round)
-            .setContentTitle(title)
-            .setContentText(text)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
+        val builder: NotificationCompat.Builder =
+            NotificationCompat.Builder(this, channelId)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(com.example.core.R.mipmap.ic_launcher_round)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
 
         // Display the notification
         NotificationManagerCompat.from(this).apply {
             if (ActivityCompat.checkSelfPermission(
                     this@CO2JobService,
-                    Manifest.permission.POST_NOTIFICATIONS
+                    Manifest.permission.POST_NOTIFICATIONS,
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 Log.e("0707", "=================sendNotification======================")
@@ -148,7 +157,6 @@ class CO2JobService : JobService() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun isNightPeriod(): Boolean {
         val currentDateTime = LocalDateTime.now()
         val currentHour = currentDateTime.hour

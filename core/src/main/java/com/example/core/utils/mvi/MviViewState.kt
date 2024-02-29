@@ -12,9 +12,11 @@ interface MviViewState {
 data class MviError(
     val type: ErrorType,
     val errorMessage: String? = null,
-    @StringRes val errorRes: Int? = null
+    @StringRes val errorRes: Int? = null,
 ) : Parcelable
 
 enum class ErrorType {
-    TOAST, DIALOG, FIELD
+    TOAST,
+    DIALOG,
+    FIELD,
 }

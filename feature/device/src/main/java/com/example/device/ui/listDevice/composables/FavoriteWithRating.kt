@@ -24,27 +24,33 @@ import com.example.core.ui.RatingView
 private const val DIVIDER_FOR_RATING = 10f
 
 @Composable
-internal fun FavoriteWithRating(modifier: Modifier = Modifier, isFavorite: Boolean, rating: Float) {
+internal fun FavoriteWithRating(
+    modifier: Modifier = Modifier,
+    isFavorite: Boolean,
+    rating: Float,
+) {
     Row(
-        modifier = modifier
-            .border(
-                width = 2.dp,
-                color = Color.DarkGray,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(horizontal = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .border(
+                    width = 2.dp,
+                    color = Color.DarkGray,
+                    shape = RoundedCornerShape(8.dp),
+                )
+                .padding(horizontal = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        val icon = remember(isFavorite) {
-            when {
-                isFavorite -> R.drawable.ic_selected_heart
-                else -> R.drawable.ic_unselected_heart
+        val icon =
+            remember(isFavorite) {
+                when {
+                    isFavorite -> R.drawable.ic_selected_heart
+                    else -> R.drawable.ic_unselected_heart
+                }
             }
-        }
         Icon(
             modifier = Modifier.size(24.dp),
             painter = painterResource(icon),
-            contentDescription = null
+            contentDescription = null,
         )
         Canvas(modifier = Modifier.size(height = 18.dp, width = 9.dp)) {
             val canvasWidth = size.width
@@ -53,7 +59,7 @@ internal fun FavoriteWithRating(modifier: Modifier = Modifier, isFavorite: Boole
                 start = Offset(x = canvasWidth, y = 0f),
                 end = Offset(x = 0f, y = canvasHeight),
                 color = Color.Black,
-                strokeWidth = 5F
+                strokeWidth = 5F,
             )
         }
         RatingView(
@@ -64,7 +70,7 @@ internal fun FavoriteWithRating(modifier: Modifier = Modifier, isFavorite: Boole
             animationEnabled = false,
             gestureEnabled = false,
             itemSize = 20.dp,
-            itemCount = 1
+            itemCount = 1,
         )
         Text(text = rating.toString())
     }

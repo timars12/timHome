@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 fun ExpandableText(
     text: String,
     maxLines: Int = 2,
-    durationMillis: Int = 300
+    durationMillis: Int = 300,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -35,25 +35,27 @@ fun ExpandableText(
             text = text,
             maxLines = if (expanded || !showButton) Int.MAX_VALUE else maxLines,
             modifier = Modifier.animateContentSize(animationSpec = tween(durationMillis)),
-            onTextLayout = { textLayoutResultState.value = it }
+            onTextLayout = { textLayoutResultState.value = it },
         )
 
         LaunchedEffect(text) {
-            textLines.intValue = withContext(Dispatchers.Default) {
-                // Use TextLayoutResult to calculate the number of lines
-                val textLayoutResult = textLayoutResultState.value
-                textLayoutResult?.lineCount ?: 0
-            }
+            textLines.intValue =
+                withContext(Dispatchers.Default) {
+                    // Use TextLayoutResult to calculate the number of lines
+                    val textLayoutResult = textLayoutResultState.value
+                    textLayoutResult?.lineCount ?: 0
+                }
         }
 
         if (showButton) {
             Text(
                 modifier = Modifier.clickable { expanded = !expanded },
-                text = when (expanded) {
-                    true -> "Show less..."
-                    else -> "Show more..."
-                },
-                color = IndicatorCO2Danger
+                text =
+                    when (expanded) {
+                        true -> "Show less..."
+                        else -> "Show more..."
+                    },
+                color = IndicatorCO2Danger,
             )
         }
     }

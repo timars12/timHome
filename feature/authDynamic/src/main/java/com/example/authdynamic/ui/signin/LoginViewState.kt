@@ -13,14 +13,14 @@ data class LoginViewState(
     val isLoading: Boolean,
     val isLoginBtnEnable: Boolean,
     val isLoginSuccess: Boolean = false,
-    override val error: MviError?
+    override val error: MviError?,
 ) : MviViewState, Parcelable {
     companion object {
         fun initial() =
             LoginViewState(
                 isLoading = false,
                 isLoginBtnEnable = false,
-                error = null
+                error = null,
             )
     }
 }

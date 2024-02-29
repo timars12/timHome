@@ -21,20 +21,22 @@ import com.example.core.utils.mvi.MviError
 internal fun EmailTextField(
     data: FieldText,
     focusRequester: FocusRequester,
-    onEnterText: OnEnterText
+    onEnterText: OnEnterText,
 ) {
     TextFieldWithError(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
         data = data,
         hint = "Email",
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
+            ),
         keyboardActions = KeyboardActions(onNext = { focusRequester.requestFocus() }),
-        onEnterText = onEnterText
+        onEnterText = onEnterText,
     )
 }
 
@@ -43,6 +45,6 @@ internal fun EmailTextField(
 fun TestEmailTextField() {
     EmailTextField(
         FieldText("tim@df", MviError(type = ErrorType.FIELD, "Something wrong")),
-        FocusRequester()
+        FocusRequester(),
     ) {}
 }

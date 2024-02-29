@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -38,7 +41,7 @@ internal class DeviceListFragment : Fragment(), InjectDaggerDependency by Inject
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -50,7 +53,7 @@ internal class DeviceListFragment : Fragment(), InjectDaggerDependency by Inject
                         viewModel.getAllDevices()
                             .flowWithLifecycle(
                                 viewLifecycleOwner.lifecycle,
-                                Lifecycle.State.STARTED
+                                Lifecycle.State.STARTED,
                             )
                             .collect {
                                 viewModel.updateList(it)
@@ -60,7 +63,7 @@ internal class DeviceListFragment : Fragment(), InjectDaggerDependency by Inject
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(bottom = 90.dp)
+                        contentPadding = PaddingValues(bottom = 90.dp),
                     ) {
                         trace("deviceList") {
                             items(items = deviceList, key = DeviceModel::id) { item ->
@@ -68,9 +71,9 @@ internal class DeviceListFragment : Fragment(), InjectDaggerDependency by Inject
                                     item = item,
                                     navigateToDetailScreen = {
                                         viewModel.navigateToDetailScreen(
-                                            item
+                                            item,
                                         )
-                                    }
+                                    },
                                 )
                             }
                         }

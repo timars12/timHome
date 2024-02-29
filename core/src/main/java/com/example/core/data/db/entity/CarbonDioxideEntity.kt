@@ -8,5 +8,5 @@ data class CarbonDioxideEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val co2Level: Int,
-    val date: String
+    val date: String,
 )

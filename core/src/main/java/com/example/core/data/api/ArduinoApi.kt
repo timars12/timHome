@@ -6,7 +6,8 @@ import retrofit2.http.GET
 import retrofit2.http.Url
 
 interface ArduinoApi {
-
     @GET
-    suspend fun getCo2AndTemperature(@Url ipAddress: String?): Response<ArduinoResponse>
+    suspend fun getCo2AndTemperature(
+        @Url ipAddress: String?,
+    ): Response<ArduinoResponse>
 }

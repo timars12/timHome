@@ -7,5 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ArduinoRepository {
     suspend fun getCo2AndTemperature(): CallStatus<ArduinoResponse>
+
     fun getCO2ValuesFromDB(): Flow<List<CarbonDioxideEntity>>
 }

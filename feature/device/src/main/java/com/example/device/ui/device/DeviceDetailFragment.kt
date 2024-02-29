@@ -31,7 +31,7 @@ internal class DeviceDetailFragment : Fragment(), InjectDaggerDependency by Inje
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -42,12 +42,13 @@ internal class DeviceDetailFragment : Fragment(), InjectDaggerDependency by Inje
 
                     if (device == null) return@HomeTheme
                     LazyColumnWithParallax(
-                        modifier = Modifier
-                            .background(color = DeviceDetailForegroundColor)
-                            .fillMaxSize(),
+                        modifier =
+                            Modifier
+                                .background(color = DeviceDetailForegroundColor)
+                                .fillMaxSize(),
                         device = device!!,
                         modules = modules,
-                        viewModel::goBack
+                        viewModel::goBack,
                     )
                 }
             }

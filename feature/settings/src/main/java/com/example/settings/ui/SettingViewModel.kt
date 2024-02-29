@@ -13,37 +13,39 @@ import kotlinx.coroutines.launch
 private const val IP_HOME_ADDRESS_KEY = "ipHomeAddress"
 private const val IS_USE_MOCK_KEY = "isUseMock"
 
-internal class SettingViewModel @AssistedInject constructor(
-    private val repository: SettingRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
-    val ipAddress = savedStateHandle.getStateFlow(IP_HOME_ADDRESS_KEY, "")
-    val isUseMock = savedStateHandle.getStateFlow(IS_USE_MOCK_KEY, true)
+internal class SettingViewModel
+    @AssistedInject
+    constructor(
+        private val repository: SettingRepository,
+        @Assisted private val savedStateHandle: SavedStateHandle,
+    ) : ViewModel() {
+        val ipAddress = savedStateHandle.getStateFlow(IP_HOME_ADDRESS_KEY, "")
+        val isUseMock = savedStateHandle.getStateFlow(IS_USE_MOCK_KEY, true)
 
-    init {
-        viewModelScope.launch {
-            savedStateHandle[IP_HOME_ADDRESS_KEY] = repository.getHomeIpAddress() ?: ""
-            savedStateHandle[IS_USE_MOCK_KEY] = repository.checkIsUseMock()
+        init {
+            viewModelScope.launch {
+                savedStateHandle[IP_HOME_ADDRESS_KEY] = repository.getHomeIpAddress() ?: ""
+                savedStateHandle[IS_USE_MOCK_KEY] = repository.checkIsUseMock()
+            }
+        }
+
+        fun onIpAddressEntered(value: String) {
+            savedStateHandle[IP_HOME_ADDRESS_KEY] = value
+        }
+
+        fun onSetUseMockClick(isUseMock: Boolean) {
+            savedStateHandle[IS_USE_MOCK_KEY] = isUseMock
+        }
+
+        fun onSaveChangClick() {
+            viewModelScope.launch {
+                repository.setHomeIpAddress(ipAddress.value)
+                repository.setUseMock(isUseMock.value)
+            }
+        }
+
+        @AssistedFactory
+        interface Factory : ViewModelAssistedFactory<SettingViewModel> {
+            override fun create(handle: SavedStateHandle): SettingViewModel
         }
     }
-
-    fun onIpAddressEntered(value: String) {
-        savedStateHandle[IP_HOME_ADDRESS_KEY] = value
-    }
-
-    fun onSetUseMockClick(isUseMock: Boolean) {
-        savedStateHandle[IS_USE_MOCK_KEY] = isUseMock
-    }
-
-    fun onSaveChangClick() {
-        viewModelScope.launch {
-            repository.setHomeIpAddress(ipAddress.value)
-            repository.setUseMock(isUseMock.value)
-        }
-    }
-
-    @AssistedFactory
-    interface Factory : ViewModelAssistedFactory<SettingViewModel> {
-        override fun create(handle: SavedStateHandle): SettingViewModel
-    }
-}

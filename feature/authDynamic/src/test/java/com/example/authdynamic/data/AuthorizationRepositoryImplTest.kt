@@ -14,13 +14,13 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import java.io.IOException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import retrofit2.Response
-import java.io.IOException
 
 class AuthorizationRepositoryImplTest {
     private val apiService = mockk<AuthApi>()
@@ -31,68 +31,75 @@ class AuthorizationRepositoryImplTest {
     private val password = "password"
 
     @Test
-    fun `loginByEmail should emit success state when login is successful`() = runTest {
-        val onStartState = initialState.copy(isLoading = true)
-        val expectedState = initialState.copy(
-            isLoading = false,
-            error = null,
-            isLoginSuccess = true
-        )
+    fun `loginByEmail should emit success state when login is successful`() =
+        runTest {
+            val onStartState = initialState.copy(isLoading = true)
+            val expectedState =
+                initialState.copy(
+                    isLoading = false,
+                    error = null,
+                    isLoginSuccess = true,
+                )
 
-        val response = mockk<Response<LoginResponse>>()
-        coEvery { apiService.loginByEmail(any()) } returns response
-        coEvery { response.code() } returns CODE_200
-        coEvery { response.body() } returns LoginResponse(
-            code = 20,
-            user = UserResponse("username", "token", "", "")
-        )
-        coEvery { database.userDao().saveUserToDB(any()) } just Runs
+            val response = mockk<Response<LoginResponse>>()
+            coEvery { apiService.loginByEmail(any()) } returns response
+            coEvery { response.code() } returns CODE_200
+            coEvery { response.body() } returns
+                LoginResponse(
+                    code = 20,
+                    user = UserResponse("username", "token", "", ""),
+                )
+            coEvery { database.userDao().saveUserToDB(any()) } just Runs
 
-        val flow = repository.loginByEmail(initialState, email, password)
-        val firstState = flow.first()
-        assertEquals(onStartState, firstState)
-        val finalState = flow.last()
-        assertEquals(expectedState, finalState)
+            val flow = repository.loginByEmail(initialState, email, password)
+            val firstState = flow.first()
+            assertEquals(onStartState, firstState)
+            val finalState = flow.last()
+            assertEquals(expectedState, finalState)
 
-        coVerify(exactly = 1) { apiService.loginByEmail(any()) }
-        coVerify(exactly = 1) { database.userDao().saveUserToDB(any()) }
-    }
-
-    @Test
-    fun `loginByEmail should emit error state when API returns non-200 response code`() = runTest {
-        val expectedState = initialState.copy(
-            isLoading = false,
-            error = MviError(type = ErrorType.TOAST, errorMessage = "loginByEmail")
-        )
-
-        val response = mockk<Response<LoginResponse>>()
-        coEvery { apiService.loginByEmail(any()) } returns response
-        coEvery { response.code() } returns 401
-        coEvery { database.userDao().saveUserToDB(any()) } just Runs
-
-        val flow = repository.loginByEmail(initialState, email, password)
-
-        val actualState = flow.last()
-
-        assertEquals(expectedState, actualState)
-        coVerify { apiService.loginByEmail(any()) }
-        coVerify { database.userDao() wasNot Called }
-    }
+            coVerify(exactly = 1) { apiService.loginByEmail(any()) }
+            coVerify(exactly = 1) { database.userDao().saveUserToDB(any()) }
+        }
 
     @Test
-    fun `loginByEmail should emit error state when an exception occurs`() = runTest {
-        val expectedState = initialState.copy(
-            isLoading = false,
-            error = MviError(type = ErrorType.TOAST, errorMessage = "No Internet connection")
-        )
+    fun `loginByEmail should emit error state when API returns non-200 response code`() =
+        runTest {
+            val expectedState =
+                initialState.copy(
+                    isLoading = false,
+                    error = MviError(type = ErrorType.TOAST, errorMessage = "loginByEmail"),
+                )
 
-        coEvery { apiService.loginByEmail(any()) } throws IOException("No Internet connection")
+            val response = mockk<Response<LoginResponse>>()
+            coEvery { apiService.loginByEmail(any()) } returns response
+            coEvery { response.code() } returns 401
+            coEvery { database.userDao().saveUserToDB(any()) } just Runs
 
-        val flow = repository.loginByEmail(initialState, email, password)
-        val actualState = flow.last()
+            val flow = repository.loginByEmail(initialState, email, password)
 
-        assertEquals(expectedState, actualState)
-        coVerify { apiService.loginByEmail(any()) }
-        coVerify { database.userDao() wasNot Called }
-    }
+            val actualState = flow.last()
+
+            assertEquals(expectedState, actualState)
+            coVerify { apiService.loginByEmail(any()) }
+            coVerify { database.userDao() wasNot Called }
+        }
+
+    @Test
+    fun `loginByEmail should emit error state when an exception occurs`() =
+        runTest {
+            val expectedState =
+                initialState.copy(
+                    isLoading = false,
+                    error = MviError(type = ErrorType.TOAST, errorMessage = "No Internet connection"),
+                )
+
+            coEvery { apiService.loginByEmail(any()) } throws IOException("No Internet connection")
+
+            val flow = repository.loginByEmail(initialState, email, password)
+            val actualState = flow.last()
+
+            assertEquals(expectedState, actualState)
+            coVerify { apiService.loginByEmail(any()) }
+            coVerify { database.userDao() wasNot Called }
+        }
 }

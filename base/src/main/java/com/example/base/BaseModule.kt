@@ -10,13 +10,12 @@ import dagger.Provides
 
 @Module
 class BaseModule {
-
     @FeatureScope
     @Provides
     fun provideArduinoRepository(
         dataStore: DataStoreManager,
         mockRepository: MockArduinoRepositoryImpl,
-        repository: ArduinoRepositoryImpl
+        repository: ArduinoRepositoryImpl,
     ): ArduinoRepository {
         return when {
             dataStore.isUseMockDate() -> mockRepository

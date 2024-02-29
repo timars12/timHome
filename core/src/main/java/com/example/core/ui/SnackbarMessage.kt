@@ -11,20 +11,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SnackbarMessage(snackbarHostState: SnackbarHostState, modifier: Modifier = Modifier) {
+fun SnackbarMessage(
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+) {
     SnackbarHost(
         hostState = snackbarHostState,
         snackbar = { data ->
             Snackbar(
                 modifier = Modifier.padding(16.dp),
-                contentColor = Color.Black
+                contentColor = Color.Black,
             ) {
                 Text(
                     text = data.visuals.message,
-                    color = Color.White
+                    color = Color.White,
                 )
             }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }

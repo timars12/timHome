@@ -1,7 +1,11 @@
 package com.example.core.data.db.entity
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "modules",
@@ -10,10 +14,10 @@ import androidx.room.ForeignKey.Companion.CASCADE
             entity = DeviceEntity::class,
             childColumns = ["device_id"],
             parentColumns = ["id"],
-            onDelete = CASCADE
-        )
+            onDelete = CASCADE,
+        ),
     ],
-    indices = [Index(value = ["device_id"])]
+    indices = [Index(value = ["device_id"])],
 )
 data class ModuleEntity(
     @PrimaryKey
@@ -22,5 +26,5 @@ data class ModuleEntity(
     val image: String?,
     val title: String,
     val price: String,
-    val link: String
+    val link: String,
 )

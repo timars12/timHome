@@ -16,9 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -37,7 +40,7 @@ fun RatingView(
     gestureEnabled: Boolean = true,
     itemCount: Int = 5,
     space: Dp = 0.dp,
-    onRatingChange: ((Float) -> Unit)? = null
+    onRatingChange: ((Float) -> Unit)? = null,
 ) {
     val intrinsicWidth = imageEmpty.width.toFloat()
     val intrinsicHeight = imageEmpty.height.toFloat()
@@ -58,10 +61,10 @@ fun RatingView(
                 itemCount = itemCount,
                 imageEmpty = imageEmpty,
                 imageFilled = imageFilled,
-                space = spaceBetween
+                space = spaceBetween,
             )
         },
-        onRatingChange = onRatingChange
+        onRatingChange = onRatingChange,
     )
 }
 
@@ -80,23 +83,26 @@ private fun RatingViewImpl(
     space: Dp = 0.dp,
     block: DrawScope.(
         rating: Float,
-        space: Float
+        space: Float,
     ) -> Unit,
-    onRatingChange: ((Float) -> Unit)? = null
+    onRatingChange: ((Float) -> Unit)? = null,
 ) {
     Box(modifier) {
-        val height: Dp = when {
-            itemSize != Dp.Unspecified -> itemSize
-            else -> LocalDensity.current.run { intrinsicHeight.toDp() }
-        }
+        val height: Dp =
+            when {
+                itemSize != Dp.Unspecified -> itemSize
+                else -> LocalDensity.current.run { intrinsicHeight.toDp() }
+            }
         val spacePx: Float = LocalDensity.current.run { space.toPx() }
-        val itemWidthPx: Float = when {
-            itemSize != Dp.Unspecified -> LocalDensity.current.run { itemSize.toPx() }
-            else -> intrinsicWidth
-        }
-        val totalWidth: Dp = LocalDensity.current.run {
-            itemWidthPx.toDp() * itemCount + space * (itemCount - 1)
-        }
+        val itemWidthPx: Float =
+            when {
+                itemSize != Dp.Unspecified -> LocalDensity.current.run { itemSize.toPx() }
+                else -> intrinsicWidth
+            }
+        val totalWidth: Dp =
+            LocalDensity.current.run {
+                itemWidthPx.toDp() * itemCount + space * (itemCount - 1)
+            }
         val itemIntervals = remember { ratingItemPositions(itemWidthPx, spacePx, itemCount) }
         val coerced = rating.coerceIn(0f, itemCount.toFloat())
         val coroutineScope = rememberCoroutineScope()
@@ -106,72 +112,71 @@ private fun RatingViewImpl(
             if (animationEnabled) {
                 animatableRating.animateTo(
                     targetValue = coerced,
-                    animationSpec = tween(DURATION_RATING, easing = LinearEasing)
-
+                    animationSpec = tween(DURATION_RATING, easing = LinearEasing),
                 )
             } else {
                 animatableRating.snapTo(coerced)
             }
         }
 
-        val gestureModifier = Modifier
-            .pointerInput(Unit) {
-                val ratingBarWidth = size.width.toFloat()
-                detectDragGestures { change, _ ->
-
-                    val x = change.position.x
-                    val newRating = getRatingFromTouchPosition(
-                        x = x,
-                        itemIntervals = itemIntervals,
-                        ratingBarDimension = ratingBarWidth,
-                        space = spacePx,
-                        totalCount = itemCount
-                    )
-
-                    coroutineScope.launch {
-                        animatableRating.snapTo(newRating)
-                        onRatingChange?.invoke(animatableRating.value)
-                    }
-                }
-            }
-            .pointerInput(Unit) {
-                val ratingBarWidth = size.width.toFloat()
-
-                detectTapGestures { change ->
-                    val x = change.x
-                    val newRating = getRatingFromTouchPosition(
-                        x = x,
-                        itemIntervals = itemIntervals,
-                        ratingBarDimension = ratingBarWidth,
-                        space = spacePx,
-                        totalCount = itemCount
-                    )
-
-                    coroutineScope.launch {
-                        if (animationEnabled) {
-                            animatableRating.animateTo(
-                                targetValue = newRating,
-                                animationSpec = tween(300, easing = LinearEasing)
+        val gestureModifier =
+            Modifier
+                .pointerInput(Unit) {
+                    val ratingBarWidth = size.width.toFloat()
+                    detectDragGestures { change, _ ->
+                        val x = change.position.x
+                        val newRating =
+                            getRatingFromTouchPosition(
+                                x = x,
+                                itemIntervals = itemIntervals,
+                                ratingBarDimension = ratingBarWidth,
+                                space = spacePx,
+                                totalCount = itemCount,
                             )
-                        } else {
+
+                        coroutineScope.launch {
                             animatableRating.snapTo(newRating)
+                            onRatingChange?.invoke(animatableRating.value)
                         }
-                        onRatingChange?.invoke(animatableRating.value)
                     }
                 }
-            }
+                .pointerInput(Unit) {
+                    val ratingBarWidth = size.width.toFloat()
+
+                    detectTapGestures { change ->
+                        val x = change.x
+                        val newRating =
+                            getRatingFromTouchPosition(
+                                x = x,
+                                itemIntervals = itemIntervals,
+                                ratingBarDimension = ratingBarWidth,
+                                space = spacePx,
+                                totalCount = itemCount,
+                            )
+
+                        coroutineScope.launch {
+                            if (animationEnabled) {
+                                animatableRating.animateTo(
+                                    targetValue = newRating,
+                                    animationSpec = tween(300, easing = LinearEasing),
+                                )
+                            } else {
+                                animatableRating.snapTo(newRating)
+                            }
+                            onRatingChange?.invoke(animatableRating.value)
+                        }
+                    }
+                }
 
         Box(
-            modifier = Modifier
-                .then(if (gestureEnabled) gestureModifier else Modifier)
-                .width(totalWidth)
-                .height(height)
-                .drawBehind {
-                    block(
-                        animatableRating.value,
-                        spacePx
-                    )
-                }
+            modifier =
+                Modifier
+                    .then(if (gestureEnabled) gestureModifier else Modifier)
+                    .width(totalWidth)
+                    .height(height)
+                    .drawBehind {
+                        block(animatableRating.value, spacePx)
+                    },
         )
     }
 }
@@ -181,7 +186,7 @@ private fun DrawScope.drawRatingImages(
     itemCount: Int,
     imageEmpty: ImageBitmap,
     imageFilled: ImageBitmap,
-    space: Float
+    space: Float,
 ) {
     val imageHeight = size.height
     val ratingInt = rating.toInt()
@@ -194,7 +199,7 @@ private fun DrawScope.drawRatingImages(
             translate(left = start, top = 0f) {
                 drawImage(
                     image = imageFilled,
-                    dstSize = IntSize(size.width.toInt(), imageHeight.toInt())
+                    dstSize = IntSize(size.width.toInt(), imageHeight.toInt()),
                 )
             }
         }
@@ -210,14 +215,14 @@ private fun DrawScope.drawRatingImages(
             Color.Transparent,
             topLeft = Offset(endOfFilledItems, 0f),
             size = Size(rectWidth, height = size.height),
-            blendMode = BlendMode.SrcIn
+            blendMode = BlendMode.SrcIn,
         )
 
         for (i in 0 until itemCount) {
             translate(left = imageHeight * i + space * i, top = 0f) {
                 drawImage(
                     image = imageEmpty,
-                    dstSize = IntSize(size.width.toInt(), imageHeight.toInt())
+                    dstSize = IntSize(size.width.toInt(), imageHeight.toInt()),
                 )
             }
         }
@@ -235,7 +240,7 @@ private fun DrawScope.drawWithLayer(block: DrawScope.() -> Unit) {
 private fun ratingItemPositions(
     itemSize: Float,
     space: Float,
-    totalCount: Int
+    totalCount: Int,
 ): List<ClosedFloatingPointRange<Float>> {
     val list = mutableListOf<ClosedFloatingPointRange<Float>>()
     for (i in 0 until totalCount) {
@@ -250,7 +255,7 @@ private fun getRatingFromTouchPosition(
     itemIntervals: List<ClosedFloatingPointRange<Float>>,
     ratingBarDimension: Float,
     space: Float,
-    totalCount: Int
+    totalCount: Int,
 ): Float {
     val ratingBarItemSize = (ratingBarDimension - space * (totalCount - 1)) / totalCount
     val ratingInterval = ratingBarItemSize + space
@@ -264,10 +269,11 @@ private fun getRatingFromTouchPosition(
         }
     }
 
-    rating = when {
-        !isInInterval -> (1 + x / ratingInterval).toInt().coerceAtMost(totalCount).toFloat()
-        else -> rating
-    }
+    rating =
+        when {
+            !isInInterval -> (1 + x / ratingInterval).toInt().coerceAtMost(totalCount).toFloat()
+            else -> rating
+        }
 
     return rating.coerceIn(0f, totalCount.toFloat())
 }

@@ -10,7 +10,6 @@ import retrofit2.Retrofit
 
 @Module
 internal class LoginModule {
-
     @Provides
     @FeatureScope
     fun provideApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)

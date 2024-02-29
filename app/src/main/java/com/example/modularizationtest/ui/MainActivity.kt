@@ -45,14 +45,15 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var navigationDispatcher: NavigationDispatcher
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        when {
-            isGranted -> createNotificationChannel()
-            else -> explainWhyWeNeedToUseNotification()
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { isGranted: Boolean ->
+            when {
+                isGranted -> createNotificationChannel()
+                else -> explainWhyWeNeedToUseNotification()
+            }
         }
-    }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
@@ -77,12 +78,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
         onBackPressedDispatcher.addCallback(
-            this /* lifecycle owner */,
+            this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (!navController.popBackStack()) finish()
                 }
-            }
+            },
         )
         navController.addOnDestinationChangedListener { controller, _, _ ->
             if (controller.currentDestination?.id != R.id.signInFragment) { // TODO change signInFragment to graph
@@ -113,10 +114,11 @@ class MainActivity : AppCompatActivity() {
         val jobs = jobScheduler.allPendingJobs.singleOrNull { jobInfo -> jobInfo.id == jobId }
 
         if (jobs == null) {
-            val jobInfo = JobInfo.Builder(jobId, ComponentName(this, CO2JobService::class.java))
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // Requires a network connection
-                .setPeriodic(AlarmManager.INTERVAL_FIFTEEN_MINUTES) // Sets the job to repeat every 5 minutes
-                .build()
+            val jobInfo =
+                JobInfo.Builder(jobId, ComponentName(this, CO2JobService::class.java))
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // Requires a network connection
+                    .setPeriodic(AlarmManager.INTERVAL_FIFTEEN_MINUTES) // Sets the job to repeat every 5 minutes
+                    .build()
 
             jobScheduler.schedule(jobInfo)
         }
@@ -150,7 +152,7 @@ class MainActivity : AppCompatActivity() {
     private fun initNavigation() {
         NavigationUI.setupWithNavController(
             findViewById<BottomNavigationView>(R.id.bottomNavigationView),
-            navController
+            navController,
         )
     }
 

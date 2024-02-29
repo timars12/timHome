@@ -14,5 +14,5 @@ data class DeviceEntity(
     val totalPrice: String,
     val rating: Float = 0f,
     val isFavorite: Boolean,
-    val dateCreated: String
+    val dateCreated: String,
 )

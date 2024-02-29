@@ -12,7 +12,6 @@ import retrofit2.Retrofit
 
 @Module
 internal class HomeModule {
-
     @Provides
     @IntoMap
     @ViewModelKey(HomeViewModel::class)

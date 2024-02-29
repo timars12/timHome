@@ -36,27 +36,29 @@ internal fun PasswordTextField(
     focusRequester: FocusRequester,
     onEnterText: OnEnterText,
     onClickDone: OnClick,
-    keyboardController: SoftwareKeyboardController?
+    keyboardController: SoftwareKeyboardController?,
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     TextFieldWithError(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .focusRequester(focusRequester),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .focusRequester(focusRequester),
         data = data,
         hint = "Password",
         singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        keyboardActions = remember {
-            KeyboardActions(onDone = {
-                keyboardController?.hide()
-                focusRequester.freeFocus()
-                onClickDone()
-            })
-        },
+        keyboardActions =
+            remember {
+                KeyboardActions(onDone = {
+                    keyboardController?.hide()
+                    focusRequester.freeFocus()
+                    onClickDone()
+                })
+            },
         onEnterText = onEnterText,
         trailingIcon = {
             val image: Int
@@ -77,6 +79,6 @@ internal fun PasswordTextField(
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                 Icon(imageVector = ImageVector.vectorResource(id = image), description)
             }
-        }
+        },
     )
 }

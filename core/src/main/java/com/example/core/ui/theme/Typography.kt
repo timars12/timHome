@@ -7,18 +7,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
-val Typography = Typography(
-    headlineLarge = TextStyle(
-        fontSize = 26.sp,
-        lineHeight = 26.sp,
-        fontWeight = FontWeight.Bold
-    ),
-    headlineMedium = TextStyle(
-        fontSize = 22.sp,
-        lineHeight = 22.sp,
-        fontWeight = FontWeight.Bold
-    ),
-//    subtitle1 = TextStyle(
+val Typography =
+    Typography(
+        headlineLarge =
+            TextStyle(
+                fontSize = 26.sp,
+                lineHeight = 26.sp,
+                fontWeight = FontWeight.Bold,
+            ),
+        headlineMedium =
+            TextStyle(
+                fontSize = 22.sp,
+                lineHeight = 22.sp,
+                fontWeight = FontWeight.Bold,
+            ),
+        //    subtitle1 = TextStyle(
 //        fontFamily = ptSansFontFamily,
 //        fontSize = FONT_16.sp,
 //        lineHeight = FONT_24.sp,
@@ -29,11 +32,12 @@ val Typography = Typography(
 //        fontSize = FONT_16.sp,
 //        lineHeight = FONT_24.sp
 //    ),
-    titleMedium = TextStyle(
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        letterSpacing = 0.15.sp
-    )
+        titleMedium =
+            TextStyle(
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                letterSpacing = 0.15.sp,
+            ),
 //    button = TextStyle(
 //        fontFamily = ptSansFontFamily,
 //        fontSize = FONT_16.sp,
@@ -52,7 +56,7 @@ val Typography = Typography(
 //        lineHeight = FONT_18.sp,
 //        fontWeight = FontWeight.Bold
 //    )
-)
+    )
 
 // val Typography.caption2: TextStyle
 //    get() = TextStyle(
@@ -62,15 +66,17 @@ val Typography = Typography(
 //    )
 
 val Typography.chartAxisTextStyle: TextStyle
-    get() = TextStyle(
-        fontSize = 14.sp,
-        color = Color.Black,
-        textAlign = TextAlign.Center
-    )
+    get() =
+        TextStyle(
+            fontSize = 14.sp,
+            color = Color.Black,
+            textAlign = TextAlign.Center,
+        )
 
 val Typography.chartValueTextStyle: TextStyle
-    get() = TextStyle(
-        fontSize = 10.sp,
-        color = Color.Black,
-        textAlign = TextAlign.Center
-    )
+    get() =
+        TextStyle(
+            fontSize = 10.sp,
+            color = Color.Black,
+            textAlign = TextAlign.Center,
+        )

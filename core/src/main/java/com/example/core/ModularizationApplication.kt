@@ -12,7 +12,6 @@ import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.android.play.core.splitcompat.SplitCompatApplication
 
 class ModularizationApplication : SplitCompatApplication() {
-
     private val coreComponent = DaggerCoreComponent.factory().create(this)
 
     override fun attachBaseContext(base: Context?) {
@@ -38,5 +37,7 @@ class ModularizationApplication : SplitCompatApplication() {
 }
 
 fun Service.coreComponent() = ModularizationApplication.coreComponent(this)
+
 fun Activity.coreComponent() = ModularizationApplication.coreComponent(this)
+
 fun Fragment.coreComponent() = ModularizationApplication.coreComponent(requireContext())

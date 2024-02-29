@@ -10,7 +10,7 @@ internal data class Device(
     val rating: Float = 0f,
     val isFavorite: Boolean = false,
     val dateCreated: String,
-    val modules: List<ModuleModel>
+    val modules: List<ModuleModel>,
 )
 
 internal data class ModuleModel(
@@ -19,5 +19,5 @@ internal data class ModuleModel(
     val title: String,
     val description: String? = null,
     val price: String,
-    val link: String
+    val link: String,
 )

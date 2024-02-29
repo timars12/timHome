@@ -24,7 +24,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun RoundedTabSection(
     modifier: Modifier = Modifier,
     tabNameList: PersistentList<String>,
-    selectedTab: OnEnterText
+    selectedTab: OnEnterText,
 ) {
     val selectedIndex = remember { mutableIntStateOf(0) }
 
@@ -33,17 +33,18 @@ fun RoundedTabSection(
         containerColor = BackgroundTabColor,
         modifier = modifier.clip(MaterialTheme.cornerRoundedShapes.rounded),
         indicator = { },
-        divider = { }
+        divider = { },
     ) {
         tabNameList.forEachIndexed { index, text ->
             val selected = selectedIndex.intValue == index
             Tab(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .background(
-                        color = if (selected) Color.White else Color.Transparent,
-                        shape = MaterialTheme.cornerRoundedShapes.rounded
-                    ),
+                modifier =
+                    Modifier
+                        .padding(4.dp)
+                        .background(
+                            color = if (selected) Color.White else Color.Transparent,
+                            shape = MaterialTheme.cornerRoundedShapes.rounded,
+                        ),
                 selected = selected,
                 onClick = {
                     selectedTab(text)
@@ -52,9 +53,9 @@ fun RoundedTabSection(
                 text = {
                     Text(
                         text = text,
-                        color = if (selected) Color.Black else Color.White
+                        color = if (selected) Color.Black else Color.White,
                     )
-                }
+                },
             )
         }
     }

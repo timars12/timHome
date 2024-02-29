@@ -18,19 +18,21 @@ import com.example.core.utils.Constant.APP_DATABASE
         UserEntity::class,
         DeviceEntity::class,
         ModuleEntity::class,
-        CarbonDioxideEntity::class
+        CarbonDioxideEntity::class,
     ],
     version = 4,
-    exportSchema = false
+    exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun userDao(): UserDao
+
     abstract fun deviceDao(): DeviceDao
+
     abstract fun carbonDioxideDao(): CarbonDioxideDao
 
     companion object {
         @Volatile
+        @Suppress("PropertyName")
         private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase =
@@ -42,7 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
             return Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
-                APP_DATABASE
+                APP_DATABASE,
             )
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()

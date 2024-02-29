@@ -9,7 +9,7 @@ import dagger.Component
 @FeatureScope
 @Component(
     dependencies = [CoreComponent::class],
-    modules = [LoginModule::class, SignInModule::class]
+    modules = [LoginModule::class, SignInModule::class],
 )
 internal interface AuthenticationComponent {
     @Component.Factory

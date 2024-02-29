@@ -16,11 +16,13 @@ fun rememberImeState(): State<Boolean> {
     val view = LocalView.current
 
     DisposableEffect(key1 = view) {
-        val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            val isKeyboardIsOpen = ViewCompat.getRootWindowInsets(view)
-                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
-            imeState.value = isKeyboardIsOpen
-        }
+        val listener =
+            ViewTreeObserver.OnGlobalLayoutListener {
+                val isKeyboardIsOpen =
+                    ViewCompat.getRootWindowInsets(view)
+                        ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
+                imeState.value = isKeyboardIsOpen
+            }
 
         view.viewTreeObserver.addOnGlobalLayoutListener(listener)
 

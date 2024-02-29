@@ -7,7 +7,7 @@ data class DeviceWithModule(
     @Embedded val device: DeviceEntity,
     @Relation(
         parentColumn = "id",
-        entityColumn = "device_id"
+        entityColumn = "device_id",
     )
-    val module: List<ModuleEntity>
+    val module: List<ModuleEntity>,
 )
