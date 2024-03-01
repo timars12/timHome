@@ -1,3 +1,6 @@
+Project for measuring the temperature and carbon dioxide level indoor and outdoor.
+This project can be used to improve indoor air quality. High level of carbon dioxide can cause headache, fatigue, and decreased productivity. The project consists of an Arduino module, BMP-280 temperature and humidity sensor, MH-Z19B carbon dioxide sensor, and NRF24L01 Wi-Fi module. The Arduino Uno collects data from sensors and transmits it to the Wi-Fi module. The Wi-Fi module then transmits the data to an Android device. The program on the Android device can display the data on the screen and notify the user if there is a need to open a window for ventilation.
+
 # Continuous integration & pull requests
 - Template already has a few GitHub Actions workflows included. Please run commands in the IDE terminal, or setup a github hook. Commands are: `./gradlew ktlintFormat`, `./gradlew detektDebug`.
 
