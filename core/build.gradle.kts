@@ -1,7 +1,6 @@
 plugins {
     id("timHome.android.library")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.kapt")
     id("timHome.quality.convention.plugin")
     id("kotlin-parcelize")
 }
@@ -24,7 +23,7 @@ dependencies {
 
     implementation(libs.feature.delivery.ktx)
     implementation(libs.dagger)
-    kapt(libs.dagger.compiler)
+    ksp(libs.dagger.compiler)
 
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
