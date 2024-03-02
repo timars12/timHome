@@ -5,7 +5,7 @@
      <td>Device Detail Screen</td>
   </tr>
   <tr>
-    <td><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDRjMmo2NXhvNHFxc3ZrcDVzc3lmcjhzcGExM2d3dG1kYTBiMzJyaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lVanTLY0fjDxMJpz7v/giphy.gif" width="300"></td>
+    <td><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3VhZm83YmcydGtoZWVldXVtbDRtd28xeTdkeHM1MjgwcTN3c2ZkbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/BUiDBip9q6m4vJPACI/giphy.gif" width="300"></td>
     <td><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaTdqbmVrZHFlb241bmc1OHZpa2I1OTl2d3RkZnU0MzRyejc2cTNyciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1Td8UxgHzww3FJwVKB/giphy.gif" width="300"></td>
 <td><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGZnNDZkOXVoYmUwcWtpMHVsMjQ2aWk0OHRpMGZ5anpuMDV2cGJ6aCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/OJ9eOskh6lgdalW21K/giphy.gif" width="300"></td>
   </tr>
