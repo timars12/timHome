@@ -1,3 +1,16 @@
+<table>
+  <tr>
+    <td>Login Screen</td>
+     <td>Home Screen</td>
+     <td>Device Detail Screen</td>
+  </tr>
+  <tr>
+    <td><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDRjMmo2NXhvNHFxc3ZrcDVzc3lmcjhzcGExM2d3dG1kYTBiMzJyaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lVanTLY0fjDxMJpz7v/giphy.gif" width="300"></td>
+    <td><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaTdqbmVrZHFlb241bmc1OHZpa2I1OTl2d3RkZnU0MzRyejc2cTNyciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1Td8UxgHzww3FJwVKB/giphy.gif" width="300"></td>
+<td><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGZnNDZkOXVoYmUwcWtpMHVsMjQ2aWk0OHRpMGZ5anpuMDV2cGJ6aCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/OJ9eOskh6lgdalW21K/giphy.gif" width="300"></td>
+  </tr>
+ </table>
+
 Project for measuring the temperature and carbon dioxide level indoor and outdoor.
 This project can be used to improve indoor air quality. High level of carbon dioxide can cause headache, fatigue, and decreased productivity. The project consists of an Arduino module, BMP-280 temperature and humidity sensor, MH-Z19B carbon dioxide sensor, and NRF24L01 Wi-Fi module. The Arduino Uno collects data from sensors and transmits it to the Wi-Fi module. The Wi-Fi module then transmits the data to an Android device. The program on the Android device can display the data on the screen and notify the user if there is a need to open a window for ventilation.
 
