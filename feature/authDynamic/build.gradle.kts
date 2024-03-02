@@ -1,7 +1,7 @@
 plugins {
     id("timHome.dynamic-feature.compose")
     id("timHome.dynamic-feature")
-    id("org.jetbrains.kotlin.kapt")
+    id("com.google.devtools.ksp")
     id("timHome.quality.convention.plugin")
     id("kotlin-parcelize")
 }
@@ -19,5 +19,5 @@ dependencies {
     implementation(libs.bundles.room)
     implementation(libs.dagger)
     implementation(libs.firebase.analytics)
-    kapt(libs.dagger.compiler)
+    ksp(libs.dagger.compiler)
 }

@@ -1,7 +1,7 @@
 plugins {
     id("timHome.android.application")
     id("timHome.application.compose")
-    id("org.jetbrains.kotlin.kapt")
+    id("com.google.devtools.ksp")
     id("timHome.quality.convention.plugin")
     id("com.google.gms.google-services")
     id("com.google.firebase.firebase-perf")
@@ -68,5 +68,5 @@ dependencies {
     implementation(libs.bundles.room)
     implementation(libs.dagger)
     implementation(libs.bundles.firebase)
-    kapt(libs.dagger.compiler)
+    ksp(libs.dagger.compiler)
 }

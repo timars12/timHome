@@ -1,6 +1,6 @@
 plugins {
     id("timHome.android.library")
-    id("org.jetbrains.kotlin.kapt")
+    id("com.google.devtools.ksp")
     id("timHome.quality.convention.plugin")
 }
 
@@ -15,5 +15,5 @@ dependencies {
     implementation(libs.bundles.room)
     implementation(libs.dagger)
     implementation(libs.firebase.analytics)
-    kapt(libs.dagger.compiler)
+    ksp(libs.dagger.compiler)
 }

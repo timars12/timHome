@@ -1,7 +1,7 @@
 plugins {
     id("timHome.dynamic-feature.compose")
     id("timHome.dynamic-feature")
-    id("org.jetbrains.kotlin.kapt")
+    id("com.google.devtools.ksp")
     id("timHome.quality.convention.plugin")
 }
 android {
@@ -20,5 +20,5 @@ dependencies {
     implementation(libs.collections.immutable)
     implementation(libs.dagger)
     implementation(libs.firebase.analytics)
-    kapt(libs.dagger.compiler)
+    ksp(libs.dagger.compiler)
 }
