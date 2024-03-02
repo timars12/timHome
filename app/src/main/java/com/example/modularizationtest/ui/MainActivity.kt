@@ -21,8 +21,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -34,6 +34,7 @@ import com.example.modularizationtest.di.DaggerAppComponent
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.google.firebase.perf.metrics.AddTrace
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -73,9 +74,7 @@ class MainActivity : AppCompatActivity() {
 
         initNavigation()
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                observeNavigationCommands()
-            }
+            observeNavigationCommands()
         }
         onBackPressedDispatcher.addCallback(
             this,
@@ -157,9 +156,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun observeNavigationCommands() {
-        for (command in navigationDispatcher.navigationEmitter) {
-            command.invoke(navController)
-        }
+        navigationDispatcher.navigationEmitter.receiveAsFlow()
+            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+            .collect { command ->
+                command.invoke(navController)
+            }
     }
 
     override fun onSupportNavigateUp(): Boolean {

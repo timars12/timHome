@@ -62,15 +62,14 @@ import com.example.core.utils.mvi.ErrorType
 import com.example.core.utils.viewmodel.ViewModelFactory
 import com.google.android.play.core.splitinstall.SplitInstallSessionState
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
-import javax.inject.Inject
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class SignInFragment : Fragment() {
     @Inject
@@ -247,7 +246,7 @@ internal class SignInFragment : Fragment() {
         LaunchedEffect(Unit) {
             withContext(Dispatchers.Main.immediate) {
                 intentChannel
-                    .consumeAsFlow()
+                    .receiveAsFlow()
                     .onEach(viewModel::sendEvent)
                     .flowWithLifecycle(
                         lifecycleOwner.lifecycle,

@@ -26,6 +26,9 @@ import com.example.core.ui.theme.chartValueTextStyle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+private const val TOP_PADDING_X_LINE = 4f
+private const val TOP_PADDING_Y_LINE = 8f
+
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun ChartView(
@@ -38,7 +41,7 @@ fun ChartView(
     if (list.isNullOrEmpty() || list.size < 2) return
     val textMeasure = rememberTextMeasurer()
     // Define the x and y axis labels and the chart's padding
-    val padding = 50.dp
+    val padding = 60.dp
 
     // Determine the min and max values of x and y
     val xMin = 0f
@@ -120,7 +123,7 @@ private fun DrawScope.drawAxisLine(
         topLeft =
             Offset(
                 size.width - padding - xAxisLabel.size.width,
-                size.height - padding,
+                size.height - padding + TOP_PADDING_X_LINE,
             ),
     )
     rotate(degrees = 270F) {
@@ -132,7 +135,7 @@ private fun DrawScope.drawAxisLine(
             topLeft =
                 Offset(
                     x = size.width - yAxisLabel.size.width - padding / 2,
-                    y = yAxisLabel.size.height.toFloat() - yAxisLabel.size.height + padding / 2,
+                    y = yAxisLabel.size.height.toFloat() - yAxisLabel.size.height + padding / 2 + TOP_PADDING_Y_LINE,
                 ),
         )
     }

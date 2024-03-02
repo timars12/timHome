@@ -41,8 +41,8 @@ import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
 import com.example.core.data.db.entity.CarbonDioxideEntity
 import com.example.core.ui.ChartView
+import com.example.core.ui.theme.CO2BackgroundColor
 import com.example.core.ui.theme.DataCreatedItemColor
-import com.example.core.ui.theme.LightBlack
 import com.example.core.utils.viewmodel.ViewModelFactory
 import com.example.home.R
 import com.example.home.custom.Co2Indicator
@@ -192,7 +192,7 @@ internal class HomeFragment : Fragment() {
                         .size(200.dp)
                         .padding(10.dp)
                         .clip(MaterialTheme.shapes.medium)
-                        .background(LightBlack),
+                        .background(CO2BackgroundColor),
             ) {
                 ChartView(
                     modifier = Modifier.fillMaxSize(),
