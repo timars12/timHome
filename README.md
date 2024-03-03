@@ -14,9 +14,10 @@
 Project for measuring the temperature and carbon dioxide level indoor and outdoor.
 This project can be used to improve indoor air quality. High level of carbon dioxide can cause headache, fatigue, and decreased productivity. The project consists of an Arduino module, BMP-280 temperature and humidity sensor, MH-Z19B carbon dioxide sensor, and NRF24L01 Wi-Fi module. The Arduino Uno collects data from sensors and transmits it to the Wi-Fi module. The Wi-Fi module then transmits the data to an Android device. The program on the Android device can display the data on the screen and notify the user if there is a need to open a window for ventilation.
 
+<a href="https://play.google.com/store/apps/details?id=com.timhome.modularizationtest" rel="nofollow"><img src="https://camo.githubusercontent.com/bf5c3d9991f2bc80b5500c332c9b00244661511938bb78626a30f06664d495fb/68747470733a2f2f706c61792e676f6f676c652e636f6d2f696e746c2f656e5f75732f6261646765732f7374617469632f696d616765732f6261646765732f656e5f62616467655f7765625f67656e657269632e706e67" height="70" data-canonical-src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" style="max-width: 100%;"></a>
+
 # Continuous integration & pull requests
 - Template already has a few GitHub Actions workflows included. Please run commands in the IDE terminal, or setup a github hook. Commands are: `./gradlew ktlintFormat`, `./gradlew detektDebug`.
-
 
 ## 🌐 Socials:
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/https://www.linkedin.com/in/ruslan-timkov-165255189/) 
