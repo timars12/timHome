@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -112,5 +113,37 @@ internal fun DeviceListItem(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewDeviceListItem() {
+    Column(
+        Modifier.background(color = Color.Blue).padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        DeviceListItem(
+            item =
+                DeviceModel(
+                    id = 0,
+                    image = "",
+                    title = "Test Title",
+                    description = "Test Description",
+                    totalPrice = "12.2",
+                    dateCreated = "24.12.22",
+                ),
+        ) {}
+        DeviceListItem(
+            item =
+                DeviceModel(
+                    id = 0,
+                    image = "",
+                    title = "Test Title",
+                    description = "Test Description",
+                    totalPrice = "12.2",
+                    dateCreated = "24.12.22",
+                ),
+        ) {}
     }
 }

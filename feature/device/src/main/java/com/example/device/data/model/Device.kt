@@ -20,4 +20,5 @@ internal data class ModuleModel(
     val description: String? = null,
     val price: String,
     val link: String,
+    val isSelectToBuy: Boolean = false,
 )

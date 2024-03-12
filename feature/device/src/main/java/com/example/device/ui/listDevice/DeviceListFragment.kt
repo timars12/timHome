@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -18,9 +17,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.flowWithLifecycle
 import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.trace
 import com.example.device.di.InjectDaggerDependency
@@ -48,17 +45,6 @@ internal class DeviceListFragment : Fragment(), InjectDaggerDependency by Inject
             setContent {
                 HomeTheme {
                     val deviceList by viewModel.deviceList.collectAsStateWithLifecycle()
-
-                    LaunchedEffect(key1 = Unit) {
-                        viewModel.getAllDevices()
-                            .flowWithLifecycle(
-                                viewLifecycleOwner.lifecycle,
-                                Lifecycle.State.STARTED,
-                            )
-                            .collect {
-                                viewModel.updateList(it)
-                            }
-                    }
 
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),

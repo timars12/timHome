@@ -27,4 +27,5 @@ data class ModuleEntity(
     val title: String,
     val price: String,
     val link: String,
+    val isSelectToBuy: Boolean,
 )
