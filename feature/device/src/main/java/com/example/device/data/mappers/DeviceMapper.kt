@@ -37,6 +37,7 @@ internal class DeviceMapper
                 title = model.title,
                 price = model.price,
                 link = model.link,
+                isSelectToBuy = model.isSelectToBuy,
             )
         }
 
@@ -60,6 +61,7 @@ internal class DeviceMapper
                 title = entity.title,
                 price = entity.price,
                 link = entity.link,
+                isSelectToBuy = entity.isSelectToBuy,
             )
         }
     }

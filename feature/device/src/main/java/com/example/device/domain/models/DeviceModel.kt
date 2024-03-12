@@ -1,7 +1,5 @@
 package com.example.device.domain.models
 
-import com.example.device.data.model.ModuleModel
-
 internal data class DeviceModel(
     val id: Int,
     val image: String? = null,
@@ -12,5 +10,3 @@ internal data class DeviceModel(
     val isFavorite: Boolean = false,
     val dateCreated: String,
 )
-
-internal data class DeviceWithModuleModel(val device: DeviceModel, val modules: List<ModuleModel>)

@@ -32,9 +32,11 @@ import com.example.core.utils.OnClick
 import com.example.device.R
 import com.example.device.data.model.ModuleModel
 import com.example.device.domain.models.DeviceModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.max
 import kotlin.math.min
-import kotlinx.collections.immutable.ImmutableList
+
+internal typealias SelectModuleToBuyClick = (ModuleModel) -> Unit
 
 @Composable
 internal fun LazyColumnWithParallax(
@@ -42,6 +44,7 @@ internal fun LazyColumnWithParallax(
     device: DeviceModel,
     modules: ImmutableList<ModuleModel>,
     onBackClick: OnClick,
+    onSelectModuleToBuy: SelectModuleToBuyClick,
 ) {
     val scrollState = rememberLazyListState()
     val isShowTextOnToolbar = remember { mutableStateOf(false) }
@@ -56,6 +59,7 @@ internal fun LazyColumnWithParallax(
                             val scrollOffset = scrollState.firstVisibleItemScrollOffset + 200
                             scrollOffset / imageSize.toFloat()
                         }
+
                         else -> 1f
                     }
 
@@ -72,12 +76,6 @@ internal fun LazyColumnWithParallax(
                 max(22f, min(48f, 48f - calculateTextSize)).sp
             }
         }
-    val modifierItem =
-        Modifier
-            .fillMaxWidth()
-            .height(112.dp)
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
-
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -104,7 +102,14 @@ internal fun LazyColumnWithParallax(
                 )
             }
             items(modules, key = { item -> item.id }) { item ->
-                DeviceDetailListItems(modifierItem, item)
+                DeviceDetailListItems(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(112.dp)
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                    item,
+                    onSelectModuleToBuy,
+                )
             }
         }
 

@@ -13,10 +13,10 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -35,12 +35,13 @@ internal class DeviceListViewModel
                 FirebaseAnalytics.Event.SCREEN_VIEW,
                 bundleOf(Pair(FirebaseAnalytics.Param.SCREEN_NAME, "device_list")),
             )
-            viewModelScope.launch(Dispatchers.IO) { repository.initAllDevices() }
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.getAllDevices().stateIn(viewModelScope).collect { list ->
+                    if (list.isEmpty()) repository.initAllDevices()
+                    deviceList.update { list }
+                }
+            }
         }
-
-        fun getAllDevices() = repository.getAllDevices()
-
-        fun updateList(list: ImmutableList<DeviceModel>) = deviceList.update { list }
 
         fun navigateToDetailScreen(device: DeviceModel) {
             navigationDispatcher.emit {

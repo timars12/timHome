@@ -15,6 +15,8 @@ import dagger.assisted.AssistedInject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 internal class DeviceDetailViewMode
@@ -30,15 +32,26 @@ internal class DeviceDetailViewMode
         init {
             val deviceId = savedStateHandle.get<Int>(SELECTED_DEVICE_ID)
             if (deviceId != null) {
-                getSelectedDeviceById(deviceId)
+                viewModelScope.launch(Dispatchers.IO) {
+                    getSelectedDeviceById(deviceId)
+                }
             }
         }
 
-        private fun getSelectedDeviceById(deviceId: Int) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val model = repository.getDeviceWithModuleById(deviceId)
-                device.value = model.device
-                module.value = model.modules.toImmutableList()
+        private suspend fun getSelectedDeviceById(deviceId: Int) {
+            device.update {
+                repository.getDeviceById(deviceId)
+            }
+            repository.getModuleToBuyByDeviceId(deviceId).stateIn(viewModelScope).collect { modules ->
+                module.update {
+                    modules.toImmutableList()
+                }
+            }
+        }
+
+        fun selectModuleToBuy(item: ModuleModel) {
+            viewModelScope.launch {
+                repository.selectModuleToBuy(item)
             }
         }
 

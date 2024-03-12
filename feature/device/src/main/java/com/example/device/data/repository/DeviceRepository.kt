@@ -5,14 +5,14 @@ import com.example.core.data.AppDatabase
 import com.example.device.data.mappers.DeviceMapper
 import com.example.device.data.mock.GenerateDate
 import com.example.device.data.model.Device
+import com.example.device.data.model.ModuleModel
 import com.example.device.domain.IDeviceRepository
 import com.example.device.domain.models.DeviceModel
-import com.example.device.domain.models.DeviceWithModuleModel
-import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 internal class DeviceRepository
     @Inject
@@ -57,14 +57,21 @@ internal class DeviceRepository
             }
         }
 
-        override suspend fun getDeviceWithModuleById(deviceId: Int): DeviceWithModuleModel {
-            return database.deviceDao().getDeviceWithModuleById(deviceId).let { modelEntity ->
-                val device = mapper.convertEntityToModel(modelEntity.device)
-                val module =
-                    modelEntity.module.map {
-                        mapper.convertModuleEntityToModel(it)
-                    }
-                DeviceWithModuleModel(device, module)
+        override suspend fun getDeviceById(deviceId: Int): DeviceModel {
+            return database.deviceDao().getDeviceById(deviceId).let {
+                mapper.convertEntityToModel(it)
+            }
+        }
+
+        override suspend fun selectModuleToBuy(module: ModuleModel) {
+            database.deviceDao().updateModuleInDB(!module.isSelectToBuy, module.id)
+        }
+
+        override fun getModuleToBuyByDeviceId(deviceId: Int): Flow<List<ModuleModel>> {
+            return database.deviceDao().getModuleByDeviceId(deviceId).map { list ->
+                list.map {
+                    mapper.convertModuleEntityToModel(it)
+                }
             }
         }
     }
