@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 private val Colors =
     lightColorScheme(
         primary = SelectedTabBottomBar,
+        secondary = Black,
     )
 
 @Composable

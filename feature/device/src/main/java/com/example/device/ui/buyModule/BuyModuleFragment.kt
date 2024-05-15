@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.core.ui.theme.AuthTabSectionBackgroundColor
 import com.example.core.ui.theme.DeviceDetailForegroundColor
 import com.example.core.ui.theme.HomeTheme
 import com.example.device.R
@@ -86,11 +87,14 @@ internal class BuyModuleFragment :
                             TopAppBar(
                                 colors =
                                     TopAppBarDefaults.topAppBarColors(
-                                        containerColor = Color.White,
+                                        containerColor = AuthTabSectionBackgroundColor,
                                         titleContentColor = MaterialTheme.colorScheme.secondary,
                                     ),
                                 title = {
-                                    Text(stringResource(R.string.order_summary))
+                                    Text(
+                                        stringResource(R.string.order_summary),
+                                        style = MaterialTheme.typography.headlineMedium,
+                                    )
                                 },
                                 navigationIcon = {
                                     IconButton(onClick = remember { viewModel::goBack }) {
@@ -123,15 +127,15 @@ internal class BuyModuleFragment :
         val scrollState = rememberLazyListState()
         Box(
             modifier =
-            modifier
-                .fillMaxSize()
-                .background(color = DeviceDetailForegroundColor),
+                modifier
+                    .fillMaxSize()
+                    .background(color = DeviceDetailForegroundColor),
         ) {
             LazyColumn(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(BUY_LIST_FRACTION),
+                    Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(BUY_LIST_FRACTION),
                 state = scrollState,
                 contentPadding = PaddingValues(vertical = 18.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -139,14 +143,14 @@ internal class BuyModuleFragment :
                 items(modules, key = { item -> item.id }) { item ->
                     Row(
                         modifier =
-                        Modifier
-                            .clickable {
-                                viewModel.removeModule(item)
-                            }
-                            .padding(horizontal = 8.dp)
-                            .background(color = Color.White, shape = MaterialTheme.shapes.medium)
-                            .heightIn(min = 70.dp)
-                            .padding(8.dp),
+                            Modifier
+                                .clickable {
+                                    viewModel.removeModule(item)
+                                }
+                                .padding(horizontal = 8.dp)
+                                .background(color = Color.White, shape = MaterialTheme.shapes.medium)
+                                .heightIn(min = 70.dp)
+                                .padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         DeviceDetailImage(item.image)

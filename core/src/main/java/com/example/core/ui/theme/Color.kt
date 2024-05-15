@@ -2,6 +2,7 @@ package com.example.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val Black = Color(0xFF1A1A1A)
 val LightBlack = Color(0xFF575656)
 val SelectedTabBottomBar = Color(0xFF4C7FE3)
 val TextColorCO2 = Color(0xff9B9B9B)

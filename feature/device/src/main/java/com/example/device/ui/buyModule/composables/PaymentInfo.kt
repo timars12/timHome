@@ -65,10 +65,10 @@ internal fun BoxScope.PaymentInfo(totalPrice: BigDecimal) {
 
     Column(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(BUY_SECTION_FRACTION)
-            .align(Alignment.BottomCenter),
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(BUY_SECTION_FRACTION)
+                .align(Alignment.BottomCenter),
     ) {
         HorizontalDivider(
             thickness = 1.dp,
@@ -81,9 +81,9 @@ internal fun BoxScope.PaymentInfo(totalPrice: BigDecimal) {
         )
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
@@ -101,14 +101,14 @@ internal fun BoxScope.PaymentInfo(totalPrice: BigDecimal) {
         }
         Button(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = 28.dp,
-                    start = 16.dp,
-                    end = 16.dp,
-                )
-                .height(60.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 28.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                    )
+                    .height(60.dp),
             shape = MaterialTheme.shapes.medium,
             onClick = {},
         ) {

@@ -118,7 +118,7 @@ internal fun LazyColumnWithParallax(
                 Modifier
                     .align(Alignment.TopStart)
                     .fillMaxWidth()
-                    .height(60.dp),
+                    .height(64.dp),
             calculateOpacity = { calculateOpacity.value },
             title = device.title,
             isShowTextOnToolbar = { isShowTextOnToolbar.value },
