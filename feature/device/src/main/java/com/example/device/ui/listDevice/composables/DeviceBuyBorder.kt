@@ -33,6 +33,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.core.ui.theme.CO2BackgroundColor
+import com.example.core.ui.theme.TextColorCO2
 import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.core.utils.OnClick
 import com.example.device.R
@@ -53,7 +55,7 @@ fun DeviceBuyBorder(
     val style = remember { TextStyle(fontSize = 10.sp, color = Color.Black) }
     val unselectedText = remember(isSelected) { textMeasurer.measure(textUnselect, style) }
     val selectedText = remember(isSelected) { textMeasurer.measure(textSelect, style) }
-    val colorSelect = remember(isSelected) { if (isSelected) Color.Blue else Color.Red }
+    val colorSelect = remember(isSelected) { if (isSelected) CO2BackgroundColor else TextColorCO2 }
 
     Row(
         modifier =

@@ -5,21 +5,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.core.R
 import com.example.core.ui.theme.AuthTabSectionBackgroundColor
 import com.example.core.utils.OnClick
@@ -33,10 +28,7 @@ internal fun DeviceDetailToolbar(
     onBackClick: OnClick,
 ) {
     Box(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .height(60.dp),
+        modifier = modifier,
         contentAlignment = Alignment.CenterStart,
     ) {
         TextToolbar(
@@ -51,7 +43,7 @@ internal fun DeviceDetailToolbar(
             modifier =
                 Modifier
                     .clickable { onBackClick() }
-                    .padding(start = 8.dp),
+                    .padding(start = 16.dp),
             painter = painterResource(id = R.drawable.ic_arrow_back),
             contentDescription = null,
         )
@@ -73,17 +65,14 @@ fun TextToolbar(
                     alpha = calculateOpacity()
                 }
                 .background(AuthTabSectionBackgroundColor),
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.CenterStart,
     ) {
         if (isShowTextOnToolbar()) {
             Text(
+                modifier = Modifier.padding(start = 58.dp),
                 text = title,
-                style =
-                    TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.W900,
-                        color = Color.White,
-                    ),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.secondary,
                 maxLines = 1,
             )
         }
