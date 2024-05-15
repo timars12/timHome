@@ -35,4 +35,10 @@ interface DeviceDao {
 
     @Query("select * from modules where modules.device_id =:deviceId")
     fun getModuleByDeviceId(deviceId: Int): Flow<List<ModuleEntity>>
+
+    @Query("select * from modules where modules.device_id =:deviceId AND modules.isSelectToBuy = 1")
+    fun getSelectedModuleToBuyByDeviceId(deviceId: Int): Flow<List<ModuleEntity>>
+
+    @Query("select * from modules where modules.isSelectToBuy = 1")
+    fun getSelectedModuleToBuy(): Flow<List<ModuleEntity>>
 }

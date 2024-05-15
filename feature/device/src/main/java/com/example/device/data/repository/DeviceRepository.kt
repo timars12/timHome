@@ -74,4 +74,20 @@ internal class DeviceRepository
                 }
             }
         }
+
+        override fun getSelectedModuleToBuyByDeviceId(deviceId: Int): Flow<List<ModuleModel>> {
+            return database.deviceDao().getSelectedModuleToBuyByDeviceId(deviceId).map { list ->
+                list.map {
+                    mapper.convertModuleEntityToModel(it)
+                }
+            }
+        }
+
+        override fun getSelectedModuleToBuy(): Flow<List<ModuleModel>> {
+            return database.deviceDao().getSelectedModuleToBuy().map { list ->
+                list.map {
+                    mapper.convertModuleEntityToModel(it)
+                }
+            }
+        }
     }

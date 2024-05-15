@@ -2,6 +2,7 @@ package com.example.device.ui.device.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,11 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
 import com.example.core.ui.LinkText
 import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.device.data.model.ModuleModel
@@ -37,40 +41,53 @@ internal fun DeviceDetailListItems(
         },
     ) {
         DeviceDetailImage(item.image)
-
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp),
-        ) {
-            Text(
-                text = item.title,
-                color = Color.Black,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.W700,
-            )
-            LinkText(text = item.link)
-        }
-        Text(
-            text = item.price,
-            color = Color.Blue,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W700,
-        )
+        ModuleItemContent(item)
     }
 }
 
 @Composable
-fun DeviceDetailImage(image: String?) {
+internal fun DeviceDetailImage(image: String?) {
     Image(
         modifier =
             Modifier
                 .width(74.dp)
                 .clip(shape = MaterialTheme.cornerRoundedShapes.micro),
-        painter = rememberAsyncImagePainter(model = image),
+        painter =
+            rememberAsyncImagePainter(
+                model =
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(image)
+                        .size(Size.ORIGINAL)
+                        .build(),
+            ),
         contentDescription = null,
         contentScale = ContentScale.Fit,
+    )
+}
+
+@Composable
+internal fun RowScope.ModuleItemContent(
+    item: ModuleModel,
+) {
+    Column(
+        modifier =
+            Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+    ) {
+        Text(
+            text = item.title,
+            color = Color.Black,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.W700,
+        )
+        LinkText(text = item.link)
+    }
+    Text(
+        text = item.price,
+        color = Color.Blue,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.W700,
     )
 }
 
