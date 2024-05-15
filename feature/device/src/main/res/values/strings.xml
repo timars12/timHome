@@ -3,4 +3,7 @@
     <string name="elements">Elements:</string>
     <string name="buy">Buy</string>
     <string name="added">Added</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="estimated_total">Estimated total:</string>
+    <string name="confirm_order">Confirm order</string>
 </resources>

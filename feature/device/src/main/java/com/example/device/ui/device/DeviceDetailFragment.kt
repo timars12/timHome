@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -36,7 +37,7 @@ import com.example.device.ui.device.composables.LazyColumnWithParallax
 internal class DeviceDetailFragment :
     Fragment(),
     InjectDaggerDependency by InjectDaggerDependencyImpl() {
-    private val viewModel: DeviceDetailViewMode by viewModels { getAbstractFactory() }
+    private val viewModel: DeviceDetailViewModel by viewModels { getAbstractFactory() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -63,7 +64,7 @@ internal class DeviceDetailFragment :
                                     modifier =
                                         Modifier
                                             .padding(bottom = 80.dp, end = 24.dp),
-                                    onClick = { },
+                                    onClick = remember { viewModel::buyModules },
                                     shape = MaterialTheme.cornerRoundedShapes.rounded,
                                 ) {
                                     Icon(

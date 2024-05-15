@@ -57,166 +57,166 @@ fun DeviceBuyBorder(
 
     Row(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .background(
-                color = Color.White,
-                shape = MaterialTheme.cornerRoundedShapes.small,
-            )
-            .drawBehind {
-                drawPath(
-                    Path().apply {
-                        moveTo(size.width.times(.78f), size.height.times(-0.1f))
-                        cubicTo(
-                            x1 = size.width.times(.78f),
-                            y1 = size.height.times(-0.1f),
-                            x2 = size.width.times(.75f),
-                            y2 = size.height.times(-0.1f),
-                            x3 = size.width.times(.75f),
-                            y3 = 0f,
-                        )
-                        cubicTo(
-                            x1 = size.width.times(.75f),
-                            y1 = 0f,
-                            x2 = size.width.times(.75f),
-                            y2 = size.height.times(.1f),
-                            x3 = size.width.times(.78f),
-                            y3 = size.height.times(.1f),
-                        )
-                        lineTo(size.width.times(.88f), size.height.times(.1f))
-                        cubicTo(
-                            x1 = size.width.times(.88f),
-                            y1 = size.height.times(.1f),
-                            x2 = size.width.times(.9f),
-                            y2 = size.height.times(.1f),
-                            x3 = size.width.times(.9f),
-                            y3 = size.height.times(0f),
-                        )
-                        cubicTo(
-                            x1 = size.width.times(.9f),
-                            y1 = 0f,
-                            x2 = size.width.times(.9f),
-                            y2 = size.height.times(-0.1f),
-                            x3 = size.width.times(.87f),
-                            y3 = size.height.times(-0.1f),
-                        )
-                        close()
-                    },
-                    style = Fill,
+            modifier
+                .fillMaxWidth()
+                .background(
                     color = Color.White,
+                    shape = MaterialTheme.cornerRoundedShapes.small,
                 )
-                drawPath(
-                    Path().apply {
-                        moveTo(size.width.times(.78f), size.height.times(-0.1f))
-                        cubicTo(
-                            x1 = size.width.times(.78f),
-                            y1 = size.height.times(-0.1f),
-                            x2 = size.width.times(.75f),
-                            y2 = size.height.times(-0.1f),
-                            x3 = size.width.times(.75f),
-                            y3 = 0f,
-                        )
-                        cubicTo(
-                            x1 = size.width.times(.75f),
-                            y1 = 0f,
-                            x2 = size.width.times(.75f),
-                            y2 = size.height.times(.1f),
-                            x3 = size.width.times(.78f),
-                            y3 = size.height.times(.1f),
-                        )
-                        lineTo(size.width.times(.88f), size.height.times(.1f))
-                        cubicTo(
-                            x1 = size.width.times(.88f),
-                            y1 = size.height.times(.1f),
-                            x2 = size.width.times(.9f),
-                            y2 = size.height.times(.1f),
-                            x3 = size.width.times(.9f),
-                            y3 = size.height.times(0f),
-                        )
-                        cubicTo(
-                            x1 = size.width.times(.9f),
-                            y1 = 0f,
-                            x2 = size.width.times(.9f),
-                            y2 = size.height.times(-0.1f),
-                            x3 = size.width.times(.87f),
-                            y3 = size.height.times(-0.1f),
-                        )
-                        close()
-                    },
-                    style =
-                    if (isSelected) {
-                        Fill
-                    } else {
-                        Stroke(
-                            width = STROKE_WIDTH,
-                            cap = StrokeCap.Round,
-                        )
-                    },
-                    color = colorSelect,
-                )
+                .drawBehind {
+                    drawPath(
+                        Path().apply {
+                            moveTo(size.width.times(.78f), size.height.times(-0.1f))
+                            cubicTo(
+                                x1 = size.width.times(.78f),
+                                y1 = size.height.times(-0.1f),
+                                x2 = size.width.times(.75f),
+                                y2 = size.height.times(-0.1f),
+                                x3 = size.width.times(.75f),
+                                y3 = 0f,
+                            )
+                            cubicTo(
+                                x1 = size.width.times(.75f),
+                                y1 = 0f,
+                                x2 = size.width.times(.75f),
+                                y2 = size.height.times(.1f),
+                                x3 = size.width.times(.78f),
+                                y3 = size.height.times(.1f),
+                            )
+                            lineTo(size.width.times(.88f), size.height.times(.1f))
+                            cubicTo(
+                                x1 = size.width.times(.88f),
+                                y1 = size.height.times(.1f),
+                                x2 = size.width.times(.9f),
+                                y2 = size.height.times(.1f),
+                                x3 = size.width.times(.9f),
+                                y3 = size.height.times(0f),
+                            )
+                            cubicTo(
+                                x1 = size.width.times(.9f),
+                                y1 = 0f,
+                                x2 = size.width.times(.9f),
+                                y2 = size.height.times(-0.1f),
+                                x3 = size.width.times(.87f),
+                                y3 = size.height.times(-0.1f),
+                            )
+                            close()
+                        },
+                        style = Fill,
+                        color = Color.White,
+                    )
+                    drawPath(
+                        Path().apply {
+                            moveTo(size.width.times(.78f), size.height.times(-0.1f))
+                            cubicTo(
+                                x1 = size.width.times(.78f),
+                                y1 = size.height.times(-0.1f),
+                                x2 = size.width.times(.75f),
+                                y2 = size.height.times(-0.1f),
+                                x3 = size.width.times(.75f),
+                                y3 = 0f,
+                            )
+                            cubicTo(
+                                x1 = size.width.times(.75f),
+                                y1 = 0f,
+                                x2 = size.width.times(.75f),
+                                y2 = size.height.times(.1f),
+                                x3 = size.width.times(.78f),
+                                y3 = size.height.times(.1f),
+                            )
+                            lineTo(size.width.times(.88f), size.height.times(.1f))
+                            cubicTo(
+                                x1 = size.width.times(.88f),
+                                y1 = size.height.times(.1f),
+                                x2 = size.width.times(.9f),
+                                y2 = size.height.times(.1f),
+                                x3 = size.width.times(.9f),
+                                y3 = size.height.times(0f),
+                            )
+                            cubicTo(
+                                x1 = size.width.times(.9f),
+                                y1 = 0f,
+                                x2 = size.width.times(.9f),
+                                y2 = size.height.times(-0.1f),
+                                x3 = size.width.times(.87f),
+                                y3 = size.height.times(-0.1f),
+                            )
+                            close()
+                        },
+                        style =
+                            if (isSelected) {
+                                Fill
+                            } else {
+                                Stroke(
+                                    width = STROKE_WIDTH,
+                                    cap = StrokeCap.Round,
+                                )
+                            },
+                        color = colorSelect,
+                    )
 
-                drawPath(
-                    Path().apply {
-                        moveTo(size.width.times(.9f), 0f)
-                        lineTo(size.width.times(.97f), 0f)
-                        cubicTo(
-                            x1 = size.width.times(.97f),
-                            y1 = 0f,
-                            x2 = size.width,
-                            y2 = 0f,
-                            x3 = size.width,
-                            y3 = size.height.times(.1f),
-                        )
-                        lineTo(size.width, size.height.times(.9f))
-                        cubicTo(
-                            x1 = size.width,
-                            y1 = size.height.times(.9f),
-                            x2 = size.width,
-                            y2 = size.height,
-                            x3 = size.width.times(.97f),
-                            y3 = size.height,
-                        )
-                        lineTo(size.width.times(.03f), size.height)
-                        cubicTo(
-                            x1 = size.width.times(.03f),
-                            y1 = size.height,
-                            x2 = 0f,
-                            y2 = size.height,
-                            x3 = 0f,
-                            y3 = size.height.times(.9f),
-                        )
-                        lineTo(0f, size.height.times(.1f))
-                        cubicTo(
-                            x1 = 0f,
-                            y1 = size.height.times(.1f),
-                            x2 = 0f,
-                            y2 = 0f,
-                            x3 = size.width.times(.03f),
-                            y3 = 0f,
-                        )
-                        lineTo(size.width.times(.75f), 0f)
-                    },
-                    style = Stroke(width = STROKE_WIDTH, cap = StrokeCap.Round),
-                    color = colorSelect,
-                )
+                    drawPath(
+                        Path().apply {
+                            moveTo(size.width.times(.9f), 0f)
+                            lineTo(size.width.times(.97f), 0f)
+                            cubicTo(
+                                x1 = size.width.times(.97f),
+                                y1 = 0f,
+                                x2 = size.width,
+                                y2 = 0f,
+                                x3 = size.width,
+                                y3 = size.height.times(.1f),
+                            )
+                            lineTo(size.width, size.height.times(.9f))
+                            cubicTo(
+                                x1 = size.width,
+                                y1 = size.height.times(.9f),
+                                x2 = size.width,
+                                y2 = size.height,
+                                x3 = size.width.times(.97f),
+                                y3 = size.height,
+                            )
+                            lineTo(size.width.times(.03f), size.height)
+                            cubicTo(
+                                x1 = size.width.times(.03f),
+                                y1 = size.height,
+                                x2 = 0f,
+                                y2 = size.height,
+                                x3 = 0f,
+                                y3 = size.height.times(.9f),
+                            )
+                            lineTo(0f, size.height.times(.1f))
+                            cubicTo(
+                                x1 = 0f,
+                                y1 = size.height.times(.1f),
+                                x2 = 0f,
+                                y2 = 0f,
+                                x3 = size.width.times(.03f),
+                                y3 = 0f,
+                            )
+                            lineTo(size.width.times(.75f), 0f)
+                        },
+                        style = Stroke(width = STROKE_WIDTH, cap = StrokeCap.Round),
+                        color = colorSelect,
+                    )
 
-                val textOffset = if (isSelected) selectedText else unselectedText
-                drawText(
-                    textLayoutResult = textOffset,
-                    color = if (isSelected) Color.White else Color.Black,
-                    topLeft =
-                    Offset(
-                        x = size.width.times(.825f) - textOffset.size.width.div(2),
-                        y = 0f - textOffset.size.height.div(2),
-                    ),
+                    val textOffset = if (isSelected) selectedText else unselectedText
+                    drawText(
+                        textLayoutResult = textOffset,
+                        color = if (isSelected) Color.White else Color.Black,
+                        topLeft =
+                            Offset(
+                                x = size.width.times(.825f) - textOffset.size.width.div(2),
+                                y = 0f - textOffset.size.height.div(2),
+                            ),
+                    )
+                }
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onClick,
                 )
-            }
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick
-            )
-            .padding(16.dp),
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         content()
@@ -233,9 +233,9 @@ fun PreviewDeviceBuyBorder() {
 
     DeviceBuyBorder(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         isSelected = isSelected.value,
         onClick = {
             isSelected.value = !isSelected.value
@@ -244,16 +244,16 @@ fun PreviewDeviceBuyBorder() {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier =
-                Modifier
-                    .size(74.dp)
-                    .clip(shape = MaterialTheme.cornerRoundedShapes.micro)
-                    .background(color = Color.Gray),
+                    Modifier
+                        .size(74.dp)
+                        .clip(shape = MaterialTheme.cornerRoundedShapes.micro)
+                        .background(color = Color.Gray),
             )
             Column(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp),
+                    Modifier
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
             ) {
                 Text(
                     text = "title",

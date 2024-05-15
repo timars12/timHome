@@ -1,4 +1,4 @@
-package com.example.device.ui.device
+package com.example.device.ui.buyModule
 
 import androidx.lifecycle.ViewModel
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
@@ -8,9 +8,9 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 
 @Module
-internal interface DeviceDetailModel {
+internal interface BuyModule {
     @Binds
     @IntoMap
-    @ViewModelKey(DeviceDetailViewMode::class)
-    fun bindVMFactory(f: DeviceDetailViewMode.Factory): ViewModelAssistedFactory<out ViewModel>
+    @ViewModelKey(BuyModuleViewModel::class)
+    fun bindVMFactory(f: BuyModuleViewModel.Factory): ViewModelAssistedFactory<out ViewModel>
 }

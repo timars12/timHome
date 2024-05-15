@@ -5,7 +5,8 @@ import com.example.core.ModularizationApplication
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
 import com.example.core.utils.viewmodel.ViewModelFactory
-import com.example.device.ui.device.DeviceDetailModel
+import com.example.device.ui.buyModule.BuyModule
+import com.example.device.ui.device.DeviceDetailModule
 import com.example.device.ui.listDevice.DeviceListModule
 import dagger.Component
 import javax.inject.Inject
@@ -13,7 +14,7 @@ import javax.inject.Inject
 @FeatureScope
 @Component(
     dependencies = [CoreComponent::class],
-    modules = [DeviceListModule::class, DeviceDetailModel::class],
+    modules = [DeviceListModule::class, DeviceDetailModule::class, BuyModule::class],
 )
 internal interface DeviceComponent {
     @Component.Factory

@@ -15,5 +15,9 @@ internal interface IDeviceRepository {
 
     fun getModuleToBuyByDeviceId(deviceId: Int): Flow<List<ModuleModel>>
 
+    fun getSelectedModuleToBuy(): Flow<List<ModuleModel>>
+
+    fun getSelectedModuleToBuyByDeviceId(deviceId: Int): Flow<List<ModuleModel>>
+
     suspend fun selectModuleToBuy(module: ModuleModel)
 }
