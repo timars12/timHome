@@ -15,8 +15,8 @@ android {
     signingConfigs {
         create("release") {
             keyAlias = "key0admin"
-            keyPassword = "mrwata02"
-            storePassword = "mrwata02"
+            keyPassword = ""
+            storePassword = ""
             storeFile = file("/Users/ruslan/Downloads/adminTimApp.jks")
 //            storeFile = file("C:\\Users\\user\\Desktop\\AndroidTim\\adminTimApp.jks")
         }
@@ -77,4 +77,3 @@ dependencies {
 
     baselineProfile(project(":benchmark"))
 }
-
