@@ -6,6 +6,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.firebase-perf")
     id("com.google.firebase.crashlytics")
+    id("androidx.baselineprofile")
 }
 
 android {
@@ -14,8 +15,8 @@ android {
     signingConfigs {
         create("release") {
             keyAlias = "key0admin"
-            keyPassword = ""
-            storePassword = ""
+            keyPassword = "mrwata02"
+            storePassword = "mrwata02"
             storeFile = file("/Users/ruslan/Downloads/adminTimApp.jks")
 //            storeFile = file("C:\\Users\\user\\Desktop\\AndroidTim\\adminTimApp.jks")
         }
@@ -41,6 +42,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // Ensure Baseline Profile is fresh for release builds.
+            baselineProfile.automaticGenerationDuringBuild = true
+            baselineProfile.dexLayoutOptimization = true
         }
         register("benchmark") {
             initWith(release)
@@ -68,5 +72,9 @@ dependencies {
     implementation(libs.bundles.room)
     implementation(libs.dagger)
     implementation(libs.bundles.firebase)
+    implementation(libs.profileinstaller)
     ksp(libs.dagger.compiler)
+
+    baselineProfile(project(":benchmark"))
 }
+

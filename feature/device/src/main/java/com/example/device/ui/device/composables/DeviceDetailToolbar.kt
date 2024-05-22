@@ -6,9 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.CompositingStrategy
@@ -22,9 +26,8 @@ import com.example.core.utils.OnClick
 @Composable
 internal fun DeviceDetailToolbar(
     modifier: Modifier = Modifier,
-    calculateOpacity: () -> Float,
+    scrollState: () -> LazyListState,
     title: String,
-    isShowTextOnToolbar: () -> Boolean,
     onBackClick: OnClick,
 ) {
     Box(
@@ -36,8 +39,7 @@ internal fun DeviceDetailToolbar(
                 Modifier
                     .fillMaxSize(),
             title = title,
-            calculateOpacity = calculateOpacity,
-            isShowTextOnToolbar = isShowTextOnToolbar,
+            scrollState = scrollState,
         )
         Image(
             modifier =
@@ -54,20 +56,38 @@ internal fun DeviceDetailToolbar(
 fun TextToolbar(
     modifier: Modifier,
     title: String,
-    calculateOpacity: () -> Float,
-    isShowTextOnToolbar: () -> Boolean,
+    scrollState: () -> LazyListState,
 ) {
+    val isShowTextOnToolbar = remember { mutableStateOf(false) }
+
     Box(
         modifier =
             modifier
                 .graphicsLayer {
+                    val calculatedOpacity =
+                        derivedStateOf {
+                            val calculateOpacity =
+                                when {
+                                    scrollState().firstVisibleItemScrollOffset == 0 -> 0f
+                                    scrollState().layoutInfo.visibleItemsInfo.isNotEmpty() && scrollState().firstVisibleItemIndex == 0 -> {
+                                        val imageSize = scrollState().layoutInfo.visibleItemsInfo[0].size
+                                        val scrollOffset = scrollState().firstVisibleItemScrollOffset + 200
+                                        scrollOffset / imageSize.toFloat()
+                                    }
+
+                                    else -> 1f
+                                }
+
+                            isShowTextOnToolbar.value = calculateOpacity >= 0.96f
+                            calculateOpacity
+                        }
                     compositingStrategy = CompositingStrategy.ModulateAlpha
-                    alpha = calculateOpacity()
+                    alpha = calculatedOpacity.value
                 }
                 .background(AuthTabSectionBackgroundColor),
         contentAlignment = Alignment.CenterStart,
     ) {
-        if (isShowTextOnToolbar()) {
+        if (isShowTextOnToolbar.value) {
             Text(
                 modifier = Modifier.padding(start = 58.dp),
                 text = title,

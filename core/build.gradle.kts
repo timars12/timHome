@@ -16,6 +16,8 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.androidx.compose.bom))
+
     implementation(libs.bundles.retrofit)
     implementation(libs.retrofit.scalars)
     implementation(libs.okhttp)

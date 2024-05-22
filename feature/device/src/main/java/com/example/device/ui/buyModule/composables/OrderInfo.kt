@@ -28,13 +28,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.device.R
 import com.example.device.ui.buyModule.BUY_SECTION_FRACTION
+import com.example.device.R
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Composable
-internal fun BoxScope.PaymentInfo(totalPrice: BigDecimal) {
+internal fun BoxScope.OrderInfo(totalPrice: BigDecimal) {
     val animSize by animateValueAsState(
         totalPrice,
         TwoWayConverter(

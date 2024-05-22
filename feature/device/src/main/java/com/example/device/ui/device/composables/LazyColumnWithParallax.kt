@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,26 +46,7 @@ internal fun LazyColumnWithParallax(
     onSelectModuleToBuy: SelectModuleToBuyClick,
 ) {
     val scrollState = rememberLazyListState()
-    val isShowTextOnToolbar = remember { mutableStateOf(false) }
-    val calculateOpacity =
-        remember {
-            derivedStateOf {
-                val calculateOpacity =
-                    when {
-                        scrollState.firstVisibleItemScrollOffset == 0 -> 0f
-                        scrollState.layoutInfo.visibleItemsInfo.isNotEmpty() && scrollState.firstVisibleItemIndex == 0 -> {
-                            val imageSize = scrollState.layoutInfo.visibleItemsInfo[0].size
-                            val scrollOffset = scrollState.firstVisibleItemScrollOffset + 200
-                            scrollOffset / imageSize.toFloat()
-                        }
 
-                        else -> 1f
-                    }
-
-                isShowTextOnToolbar.value = calculateOpacity >= 0.96f
-                calculateOpacity
-            }
-        }
     val density = LocalDensity.current.density
     val calculateTextSize =
         remember {
@@ -119,9 +99,8 @@ internal fun LazyColumnWithParallax(
                     .align(Alignment.TopStart)
                     .fillMaxWidth()
                     .height(64.dp),
-            calculateOpacity = { calculateOpacity.value },
+            scrollState = { scrollState },
             title = device.title,
-            isShowTextOnToolbar = { isShowTextOnToolbar.value },
             onBackClick = onBackClick,
         )
     }
