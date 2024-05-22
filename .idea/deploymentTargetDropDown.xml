@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="deploymentTargetDropDown">
+    <value>
+      <entry key="PreviewDeviceBuyBorder">
+        <State />
+      </entry>
+      <entry key="PreviewDeviceListItem">
+        <State />
+      </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="benchmark">
+        <State />
+      </entry>
+      <entry key="profile app start">
+        <State />
+      </entry>
+      <entry key="timHome.ModularizationTest.app">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/Pixel_4_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-03-06T13:18:37.611871Z" />
+        </State>
+      </entry>
+    </value>
+  </component>
+</project>

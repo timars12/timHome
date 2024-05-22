@@ -61,7 +61,6 @@ private fun TextFontChengDynamically(
                 brush = Brush.verticalGradient(listOf(Color.Transparent, LightBlack)),
             ),
     ) {
-        // TODO use graphicsLayer https://developer.android.com/jetpack/compose/animation/quick-guide#animate-text-scale
         Text(
             modifier = Modifier.padding(24.dp),
             text = title,

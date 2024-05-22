@@ -12,12 +12,6 @@ android {
 dependencies {
     implementation(project(":app"))
     implementation(project(":core"))
-    implementation(libs.bundles.compose)
-    implementation(libs.bundles.lifecycle)
-    implementation(libs.bundles.navigation)
-    implementation(libs.bundles.retrofit)
-    implementation(libs.bundles.room)
-    implementation(libs.dagger)
     implementation(libs.firebase.analytics)
-    ksp(libs.dagger.compiler)
+    implementation(libs.androidx.material3.android)
 }

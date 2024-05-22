@@ -1,4 +1,5 @@
 plugins {
+    id("androidx.baselineprofile")
     id("timHome.android.test")
 }
 
@@ -8,47 +9,38 @@ android {
     defaultConfig {
         minSdk = 29
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
     }
 
     buildFeatures {
         buildConfig = true
     }
 
-    buildTypes {
-        create("benchmark") {
-            // Keep the build type debuggable so we can attach a debugger if needed.
-            isDebuggable = true
-            signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks.add("release")
+    testOptions.managedDevices.devices {
+        create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel3Api33") {
+            device = "Pixel 3"
+            apiLevel = 33
+            systemImageSource = "aosp"
         }
-//        create("release") {
-//            isMinifyEnabled = true
-//            isShrinkResources = true
-//            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-//        }
-//        // This benchmark buildType is used for benchmarking, and should function like your
-//        // release build (for example, with minification on). It"s signed with a debug key
-//        // for easy local/CI testing.
-//        create("benchmark") {
-//            initWith(getByName("release"))
-//            signingConfig = signingConfigs.getByName("debug")
-//            matchingFallbacks.add("release")
-//        }
     }
 
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 
-dependencies {
-    implementation(libs.junit4)
-    implementation(libs.androidx.benchmark.macro)
-    implementation(libs.androidx.test.uiautomator)
-    implementation(libs.androidx.test.espresso.core)
+baselineProfile {
+    managedDevices += "pixel3Api33"
+    // Enables using connected devices to generate profiles. The default is
+    // `true`. When using connected devices, they must be rooted or API 33 and
+    // higher.
+    useConnectedDevices = false
 }
 
-androidComponents {
-    beforeVariants {
-        it.enable = it.buildType == "benchmark"
-    }
+dependencies {
+    implementation(libs.androidx.benchmark.macro)
+    implementation(libs.androidx.test.core)
+    implementation(libs.androidx.test.espresso.core)
+    implementation(libs.androidx.test.ext)
+    implementation(libs.androidx.test.rules)
+    implementation(libs.androidx.test.runner)
 }

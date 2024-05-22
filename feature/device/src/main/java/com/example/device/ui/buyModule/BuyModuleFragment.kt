@@ -50,7 +50,7 @@ import com.example.device.R
 import com.example.device.data.model.ModuleModel
 import com.example.device.di.InjectDaggerDependency
 import com.example.device.di.InjectDaggerDependencyImpl
-import com.example.device.ui.buyModule.composables.PaymentInfo
+import com.example.device.ui.buyModule.composables.OrderInfo
 import com.example.device.ui.device.composables.DeviceDetailImage
 import com.example.device.ui.device.composables.ModuleItemContent
 import kotlinx.collections.immutable.ImmutableList
@@ -158,7 +158,7 @@ internal class BuyModuleFragment :
                     }
                 }
             }
-            PaymentInfo(totalPrice = totalPrice)
+            OrderInfo(totalPrice = totalPrice)
         }
     }
 }
