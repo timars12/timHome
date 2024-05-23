@@ -13,5 +13,4 @@ dependencies {
     implementation(project(":app"))
     implementation(project(":core"))
     implementation(libs.firebase.analytics)
-    implementation(libs.androidx.material3.android)
 }
