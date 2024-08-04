@@ -25,8 +25,8 @@ android {
     defaultConfig {
         applicationId = "com.timhome.modularizationtest"
 
-        versionCode = 14
-        versionName = "1.3.1"
+        versionCode = 15
+        versionName = "1.3.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
@@ -55,7 +55,7 @@ android {
 
     dynamicFeatures +=
         listOf(
-            ":feature:authDynamic",
+//            ":feature:authDynamic",
             ":feature:home",
             ":feature:settings",
             ":feature:device",
@@ -66,6 +66,7 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":base"))
+    implementation(project(":feature:authDynamic"))
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
     implementation(libs.bundles.retrofit)
@@ -74,6 +75,8 @@ dependencies {
     implementation(libs.bundles.firebase)
     implementation(libs.profileinstaller)
     ksp(libs.dagger.compiler)
+
+    implementation(libs.androidx.navigation.compose)
 
     baselineProfile(project(":benchmark"))
 }

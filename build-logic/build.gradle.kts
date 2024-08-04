@@ -63,6 +63,10 @@ gradlePlugin {
             id = "timHome.android.test"
             implementationClass = "AndroidTestConventionPlugin"
         }
+        register("androidLibraryComposeConventionPlugin") {
+            id = "timHome.android.libraryCompose"
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
 //        register("androidRoom") {
 //            id = "nowinandroid.android.room"
 //            implementationClass = "AndroidRoomConventionPlugin"

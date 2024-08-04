@@ -13,19 +13,23 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.example.authdynamic.ui.signin.navigation.signInScreen
 import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
 import com.example.core.utils.NavigationDispatcher
@@ -84,12 +88,23 @@ class MainActivity : AppCompatActivity() {
                 }
             },
         )
-        navController.addOnDestinationChangedListener { controller, _, _ ->
-            if (controller.currentDestination?.id != R.id.signInFragment) { // TODO change signInFragment to graph
-                findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
-                    if (visibility == View.GONE) visibility = View.VISIBLE
+        findViewById<ComposeView>(R.id.compose_view).apply {
+            setContent {
+                val navController: NavHostController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "signInScreen",
+                ) {
+                    signInScreen()
                 }
             }
+        }
+        navController.addOnDestinationChangedListener { controller, _, _ ->
+//            if (controller.currentDestination?.id != R.id.signInFragment) { // TODO change signInFragment to graph
+//                findViewById<BottomNavigationView>(R.id.bottomNavigationView).apply {
+//                    if (visibility == View.GONE) visibility = View.VISIBLE
+//                }
+//            }
         }
     }
 
@@ -167,36 +182,4 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp()
     }
 
-//    private fun navigateWhenDownloadModule() {
-//        val installMonitor = DynamicInstallMonitor()
-//        navController.navigate(
-//            R.id.signInFragment,
-//            null,
-//            null,
-//            DynamicExtras(installMonitor)
-//        )
-//
-//        if (installMonitor.isInstallRequired) {
-//            installMonitor.status.observe(this, object : Observer<SplitInstallSessionState> {
-//                override fun onChanged(sessionState: SplitInstallSessionState) {
-//                    when (sessionState.status()) {
-//                        SplitInstallSessionStatus.INSTALLED -> {
-//                            navController.navigate(R.id.signInFragment)
-//                        }
-//                        SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
-// //                            SplitInstallManager.startConfirmationDialogForResult(...)
-//                        }
-//                        // Handle all remaining states:
-//                        SplitInstallSessionStatus.FAILED -> {}
-//                        SplitInstallSessionStatus.CANCELED -> {}
-//                        else -> {}
-//                    }
-//
-//                    if (sessionState.hasTerminalStatus()) {
-//                        installMonitor.status.removeObserver(this)
-//                    }
-//                }
-//            })
-//        }
-//    }
 }
