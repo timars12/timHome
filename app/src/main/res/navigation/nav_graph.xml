@@ -2,13 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/signInFragment">
-
-    <fragment
-        app:moduleName="authDynamic"
-        android:id="@+id/signInFragment"
-        android:name="com.example.authdynamic.ui.signin.SignInFragment"
-     />
+    app:startDestination="@id/home_navigation">
 
 <!--    https://medium.com/google-developer-experts/exploring-dynamic-feature-navigation-on-android-c803bdbbca9b-->
     <include-dynamic

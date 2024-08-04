@@ -1,6 +1,6 @@
 package com.example.authdynamic.di
 
-import com.example.authdynamic.ui.signin.SignInFragment
+import com.example.authdynamic.ui.signin.di.SignInContainer
 import com.example.authdynamic.ui.signin.di.SignInModule
 import com.example.core.di.CoreComponent
 import com.example.core.di.scope.FeatureScope
@@ -17,5 +17,5 @@ internal interface AuthenticationComponent {
         fun create(coreComponent: CoreComponent): AuthenticationComponent
     }
 
-    fun inject(fragment: SignInFragment)
+    fun inject(сontainer: SignInContainer)
 }

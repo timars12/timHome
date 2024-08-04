@@ -11,6 +11,14 @@
         android:name="androidx.navigation.dynamicfeatures.fragment.DynamicNavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:navGraph="@navigation/nav_graph"
+        android:visibility="gone"/>
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/compose_view"
+        android:name="androidx.navigation.dynamicfeatures.fragment.DynamicNavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:navGraph="@navigation/nav_graph" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
