@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -56,7 +55,7 @@ import kotlinx.coroutines.withContext
 @Composable
 internal fun SignInScreen(
     abstractFactory: dagger.Lazy<ViewModelFactory>,
-    viewModel: SignInViewModel = viewModel(factory = abstractFactory.get())
+    viewModel: SignInViewModel = viewModel(factory = abstractFactory.get()),
 ) {
     HomeTheme {
         val focusRequester = remember { FocusRequester() }
@@ -80,9 +79,9 @@ internal fun SignInScreen(
 
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .background(color = BackgroundColor),
+                Modifier
+                    .fillMaxSize()
+                    .background(color = BackgroundColor),
         ) {
             AuthTabSection(
                 tabNameList = tabNameList,
@@ -92,12 +91,12 @@ internal fun SignInScreen(
             )
             Column(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                    ),
+                    Modifier
+                        .fillMaxSize()
+                        .background(
+                            color = Color.White,
+                            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                        ),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -123,12 +122,13 @@ internal fun SignInScreen(
             SnackbarMessage(
                 snackbarHostState,
                 modifier =
-                Modifier
-                    .navigationBarsPadding(),
+                    Modifier
+                        .navigationBarsPadding(),
             )
         }
     }
 }
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun LoginScreen(
@@ -168,9 +168,9 @@ private fun LoginScreen(
             if (viewState.isLoading) {
                 CircularProgressIndicator(
                     modifier =
-                    Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterVertically),
+                        Modifier
+                            .size(24.dp)
+                            .align(Alignment.CenterVertically),
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     trackColor = MaterialTheme.colorScheme.secondary,
                 )
@@ -228,9 +228,9 @@ private fun InitSideEffects(
 
 private fun navigateToHome() {
 //        findNavController().navigate(
-////            com.example.modularizationtest.R.id.home_navigation,
-////            null,
-////            null,
-////            DynamicExtras(installMonitor),
+// //            com.example.modularizationtest.R.id.home_navigation,
+// //            null,
+// //            null,
+// //            DynamicExtras(installMonitor),
 //        )
 }

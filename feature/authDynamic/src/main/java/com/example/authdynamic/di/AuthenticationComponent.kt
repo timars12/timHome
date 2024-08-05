@@ -1,8 +1,8 @@
 package com.example.authdynamic.di
 
-import com.example.authdynamic.ui.signin.di.SignInContainer
 import com.example.authdynamic.ui.signin.di.SignInModule
 import com.example.core.di.CoreComponent
+import com.example.core.di.ViewModelFactoryContainer
 import com.example.core.di.scope.FeatureScope
 import dagger.Component
 
@@ -17,5 +17,5 @@ internal interface AuthenticationComponent {
         fun create(coreComponent: CoreComponent): AuthenticationComponent
     }
 
-    fun inject(сontainer: SignInContainer)
+    fun inject(container: ViewModelFactoryContainer)
 }
