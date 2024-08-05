@@ -56,7 +56,7 @@ android {
     dynamicFeatures +=
         listOf(
 //            ":feature:authDynamic",
-            ":feature:home",
+//            ":feature:home",
             ":feature:settings",
             ":feature:device",
         )
@@ -67,6 +67,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":base"))
     implementation(project(":feature:authDynamic"))
+    implementation(project(":feature:home"))
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
     implementation(libs.bundles.retrofit)

@@ -2,8 +2,7 @@ package com.example.home.di
 
 import com.example.base.BaseComponent
 import com.example.base.BaseScope
-import com.example.home.ui.HomeFragment
-import com.example.home.ui.home.HomeModule
+import com.example.core.di.ViewModelFactoryContainer
 import dagger.Component
 
 @BaseScope
@@ -14,5 +13,5 @@ internal interface HomeComponent {
         fun create(baseComponent: BaseComponent): HomeComponent
     }
 
-    fun inject(fragment: HomeFragment)
+    fun inject(container: ViewModelFactoryContainer)
 }

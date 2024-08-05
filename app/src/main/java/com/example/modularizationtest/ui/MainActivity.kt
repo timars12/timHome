@@ -33,6 +33,7 @@ import com.example.authdynamic.ui.signin.navigation.signInScreen
 import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
 import com.example.core.utils.NavigationDispatcher
+import com.example.home.ui.navigation.homeScreen
 import com.example.modularizationtest.R
 import com.example.modularizationtest.di.DaggerAppComponent
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -93,9 +94,10 @@ class MainActivity : AppCompatActivity() {
                 val navController: NavHostController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = "signInScreen",
+                    startDestination = "homeScreen",
                 ) {
                     signInScreen()
+                    homeScreen()
                 }
             }
         }
@@ -181,5 +183,4 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp()
     }
-
 }
