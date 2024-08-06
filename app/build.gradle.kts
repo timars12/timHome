@@ -58,7 +58,7 @@ android {
 //            ":feature:authDynamic",
 //            ":feature:home",
             ":feature:settings",
-            ":feature:device",
+//            ":feature:device",
         )
     namespace = "com.example.modularizationtest"
 }
@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":base"))
     implementation(project(":feature:authDynamic"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:device"))
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.navigation)
     implementation(libs.bundles.retrofit)

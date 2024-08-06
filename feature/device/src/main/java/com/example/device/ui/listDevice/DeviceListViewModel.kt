@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.utils.NavigationDispatcher
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
-import com.example.device.R
 import com.example.device.data.repository.DeviceRepository
 import com.example.device.domain.models.DeviceModel
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -45,10 +44,7 @@ internal class DeviceListViewModel
 
         fun navigateToDetailScreen(device: DeviceModel) {
             navigationDispatcher.emit {
-                it.navigate(
-                    R.id.deviceDetailFragment,
-                    bundleOf(SELECTED_DEVICE_ID to device.id),
-                )
+                it.navigate("deviceDetailScreen/${device.id}")
             }
         }
 
