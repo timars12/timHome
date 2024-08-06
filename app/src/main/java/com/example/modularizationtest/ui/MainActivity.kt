@@ -18,11 +18,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -33,6 +33,7 @@ import com.example.authdynamic.ui.signin.navigation.signInScreen
 import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
 import com.example.core.utils.NavigationDispatcher
+import com.example.device.ui.navigation.deviceRoute
 import com.example.home.ui.navigation.homeScreen
 import com.example.modularizationtest.R
 import com.example.modularizationtest.di.DaggerAppComponent
@@ -78,9 +79,9 @@ class MainActivity : AppCompatActivity() {
         checkNotificationPermission()
 
         initNavigation()
-        lifecycleScope.launch {
-            observeNavigationCommands()
-        }
+//        lifecycleScope.launch {
+//            observeNavigationCommands()
+//        }
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
@@ -92,12 +93,16 @@ class MainActivity : AppCompatActivity() {
         findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
                 val navController: NavHostController = rememberNavController()
+                LaunchedEffect(Unit) {
+                    observeNavigationCommands(navController)
+                }
                 NavHost(
                     navController = navController,
-                    startDestination = "homeScreen",
+                    startDestination = "devicesScreen",
                 ) {
                     signInScreen()
                     homeScreen()
+                    deviceRoute()
                 }
             }
         }
@@ -172,7 +177,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private suspend fun observeNavigationCommands() {
+    private suspend fun observeNavigationCommands(navController: NavHostController) {
         navigationDispatcher.navigationEmitter.receiveAsFlow()
             .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
             .collect { command ->

@@ -1,7 +1,6 @@
 plugins {
-    id("timHome.dynamic-feature.compose")
-    id("timHome.dynamic-feature")
-    id("com.google.devtools.ksp")
+    id("timHome.android.library")
+    id("timHome.android.libraryCompose")
     id("timHome.quality.convention.plugin")
 }
 android {
@@ -9,7 +8,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":app"))
     implementation(project(":core"))
     implementation(libs.firebase.perf)
     implementation(libs.firebase.analytics)

@@ -1,12 +1,10 @@
 package com.example.device.ui.device
 
-import androidx.core.os.bundleOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.utils.NavigationDispatcher
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
-import com.example.device.R
 import com.example.device.data.model.ModuleModel
 import com.example.device.domain.IDeviceRepository
 import com.example.device.domain.models.DeviceModel
@@ -59,7 +57,7 @@ internal class DeviceDetailViewModel
 
         fun buyModules() {
             navigationDispatcher.emit {
-                it.navigate(R.id.buyModuleFragment, bundleOf(SELECTED_DEVICE_ID to deviceId))
+                it.navigate("buyModuleScreen/$deviceId")
             }
         }
 
