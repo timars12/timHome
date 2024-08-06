@@ -1,8 +1,8 @@
 package com.example.settings.di
 
 import com.example.core.di.CoreComponent
+import com.example.core.di.ViewModelFactoryContainer
 import com.example.core.di.scope.FeatureScope
-import com.example.settings.ui.SettingFragment
 import com.example.settings.ui.SettingModule
 import dagger.Component
 
@@ -14,5 +14,5 @@ internal interface SettingComponent {
         fun create(coreComponent: CoreComponent): SettingComponent
     }
 
-    fun inject(fragment: SettingFragment)
+    fun inject(container: ViewModelFactoryContainer)
 }
