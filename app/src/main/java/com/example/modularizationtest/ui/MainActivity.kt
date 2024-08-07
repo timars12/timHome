@@ -8,17 +8,13 @@ import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -38,7 +34,7 @@ import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationDispatcher: NavigationDispatcher
 
@@ -63,25 +59,21 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         checkNotificationPermission()
 
-        findViewById<ComposeView>(R.id.compose_view).apply {
-            setContent {
-                val navController: NavHostController = rememberNavController()
-                LaunchedEffect(Unit) {
-                    observeNavigationCommands(navController)
-                }
-                NavHost(
-                    navController = navController,
-                    startDestination = "settingScreen",
-                ) {
-                    signInScreen()
-                    homeScreen()
-                    deviceRoute()
-                    settingRoute()
-                }
+        setContent {
+            val navController: NavHostController = rememberNavController()
+            LaunchedEffect(Unit) {
+                observeNavigationCommands(navController)
+            }
+            NavHost(
+                navController = navController,
+                startDestination = "devicesScreen",
+            ) {
+                signInScreen()
+                homeScreen()
+                deviceRoute()
+                settingRoute()
             }
         }
     }
@@ -127,16 +119,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun explainWhyWeNeedToUseNotification() {
-        AlertDialog.Builder(this).apply {
-            setTitle(getString(R.string.enable_notifications))
-            setMessage(getString(R.string.explain_why_we_should_enable_notification))
-            setPositiveButton(getString(R.string.go_to_settings)) { _, _ ->
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.data = Uri.fromParts("package", packageName, null)
-                startActivity(intent)
-            }
-            create()
-        }.show()
+//        AlertDialog.Builder(this).apply {
+//            setTitle(getString(R.string.enable_notifications))
+//            setMessage(getString(R.string.explain_why_we_should_enable_notification))
+//            setPositiveButton(getString(R.string.go_to_settings)) { _, _ ->
+//                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+//                intent.data = Uri.fromParts("package", packageName, null)
+//                startActivity(intent)
+//            }
+//            create()
+//        }.show()
     }
 
     private suspend fun observeNavigationCommands(navController: NavHostController) {

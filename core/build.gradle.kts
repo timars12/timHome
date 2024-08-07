@@ -20,8 +20,6 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
 
-    implementation(libs.feature.delivery.ktx)
-
     implementation(libs.bundles.compose)
 
     implementation(libs.datastore)

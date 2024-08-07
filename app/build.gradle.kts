@@ -64,7 +64,6 @@ dependencies {
     implementation(project(":feature:device"))
     implementation(project(":feature:settings"))
     implementation(libs.bundles.lifecycle)
-    implementation(libs.bundles.navigation)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.room)
     implementation(libs.dagger)
