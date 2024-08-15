@@ -23,16 +23,16 @@ fun slideOutOfContainer(): ExitTransition {
 
 fun scaleIntoContainer(): EnterTransition {
     return fadeIn(animationSpec = tween(ANIMATION_DURATION_MILLS, delayMillis = ANIMATION_DELAY_MILLS)) +
-            scaleIn(
-                animationSpec = tween(ANIMATION_DURATION_MILLS, delayMillis = ANIMATION_DELAY_MILLS),
-                initialScale = 1.1f,
-            )
+        scaleIn(
+            animationSpec = tween(ANIMATION_DURATION_MILLS, delayMillis = ANIMATION_DELAY_MILLS),
+            initialScale = 1.1f,
+        )
 }
 
 fun scaleOutOfContainer(): ExitTransition {
     return fadeOut(tween(delayMillis = ANIMATION_DELAY_MILLS)) +
-            scaleOut(
-                animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLS, delayMillis = ANIMATION_DELAY_MILLS),
-                targetScale = 1.1f,
-            )
+        scaleOut(
+            animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLS, delayMillis = ANIMATION_DELAY_MILLS),
+            targetScale = 1.1f,
+        )
 }

@@ -10,7 +10,7 @@ repositories {
     mavenCentral()
 }
 
-group = "com.google.samples.apps.nowinandroid.buildlogic"
+group = "com.example.tim.buildlogic"
 
 // Configure the build-logic plugins to target JDK 17
 // This matches the JDK used to build the project, and is not related to what is running on device.
@@ -35,14 +35,6 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        register("androidDynamicFeatureCompose") {
-            id = "timHome.dynamic-feature.compose"
-            implementationClass = "DynamicFeatureComposeConventionPlugin"
-        }
-        register("androidDynamicFeatureConventionPlugin") {
-            id = "timHome.dynamic-feature"
-            implementationClass = "DynamicFeatureConventionPlugin"
-        }
         register("androidDynamicFeatureQuality") {
             id = "timHome.quality.convention.plugin"
             implementationClass = "QualityConventionPlugin"
@@ -67,21 +59,5 @@ gradlePlugin {
             id = "timHome.android.libraryCompose"
             implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
-//        register("androidRoom") {
-//            id = "nowinandroid.android.room"
-//            implementationClass = "AndroidRoomConventionPlugin"
-//        }
-//        register("androidFirebase") {
-//            id = "nowinandroid.android.application.firebase"
-//            implementationClass = "AndroidApplicationFirebaseConventionPlugin"
-//        }
-//        register("androidFlavors") {
-//            id = "nowinandroid.android.application.flavors"
-//            implementationClass = "AndroidApplicationFlavorsConventionPlugin"
-//        }
-//        register("jvmLibrary") {
-//            id = "nowinandroid.jvm.library"
-//            implementationClass = "JvmLibraryConventionPlugin"
-//        }
     }
 }
