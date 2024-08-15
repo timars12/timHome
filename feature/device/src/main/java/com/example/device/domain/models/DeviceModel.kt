@@ -1,8 +1,10 @@
 package com.example.device.domain.models
 
+import androidx.annotation.DrawableRes
+
 internal data class DeviceModel(
     val id: Int,
-    val image: String? = null,
+    @DrawableRes val image: Int,
     val title: String,
     val description: String? = null,
     val totalPrice: String,

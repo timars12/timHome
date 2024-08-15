@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.core.ui.theme.AuthTabSectionBackgroundColor
-import com.example.core.ui.theme.DeviceDetailForegroundColor
+import com.example.core.ui.theme.BackgroundColorLight
 import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.viewmodel.ViewModelFactory
 import com.example.device.R
@@ -109,7 +109,7 @@ private fun BuyModuleContent(
         modifier =
             modifier
                 .fillMaxSize()
-                .background(color = DeviceDetailForegroundColor),
+                .background(color = BackgroundColorLight),
     ) {
         LazyColumn(
             modifier =

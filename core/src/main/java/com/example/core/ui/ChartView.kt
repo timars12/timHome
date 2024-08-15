@@ -17,7 +17,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.core.data.db.entity.CarbonDioxideEntity
-import com.example.core.ui.theme.DeviceDetailForegroundColor
+import com.example.core.ui.theme.BackgroundColorLight
 import com.example.core.ui.theme.IndicatorCO2Bed
 import com.example.core.ui.theme.SelectedTabBottomBar
 import com.example.core.ui.theme.Typography
@@ -106,12 +106,12 @@ private fun DrawScope.drawAxisLine(
 
     // Draw the x and y axes and labels
     drawLine(
-        color = DeviceDetailForegroundColor,
+        color = BackgroundColorLight,
         start = Offset(padding, size.height - padding),
         end = Offset(size.width - padding, size.height - padding),
     )
     drawLine(
-        color = DeviceDetailForegroundColor,
+        color = BackgroundColorLight,
         start = Offset(padding, padding),
         end = Offset(padding, size.height - padding),
     )

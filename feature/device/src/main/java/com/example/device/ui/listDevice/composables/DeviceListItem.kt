@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import com.example.core.ui.ExpandableText
+import com.example.core.ui.theme.Black
 import com.example.core.ui.theme.DataCreatedItemColor
 import com.example.core.ui.theme.PriceColor
 import com.example.core.ui.theme.cornerRoundedShapes
@@ -80,6 +80,7 @@ internal fun DeviceListItem(
                     maxLines = 2,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
+                    color = Color.Black,
                     style = MaterialTheme.typography.headlineMedium,
                 )
                 Text(
@@ -91,7 +92,12 @@ internal fun DeviceListItem(
                 )
             }
             if (!item.description.isNullOrBlank()) {
-                ExpandableText(text = item.description)
+                Text(
+                    text = item.description,
+                    maxLines = 2,
+                    color = Black,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
             Row(
                 modifier =
@@ -127,7 +133,7 @@ fun PreviewDeviceListItem() {
             item =
                 DeviceModel(
                     id = 0,
-                    image = "",
+                    image = 0,
                     title = "Test Title",
                     description = "Test Description",
                     totalPrice = "12.2",
@@ -138,7 +144,7 @@ fun PreviewDeviceListItem() {
             item =
                 DeviceModel(
                     id = 0,
-                    image = "",
+                    image = 0,
                     title = "Test Title",
                     description = "Test Description",
                     totalPrice = "12.2",

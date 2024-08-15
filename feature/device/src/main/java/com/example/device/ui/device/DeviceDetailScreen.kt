@@ -3,11 +3,13 @@ package com.example.device.ui.device
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -18,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.core.ui.theme.DeviceDetailForegroundColor
+import com.example.core.ui.theme.BackgroundColorLight
 import com.example.core.ui.theme.HomeTheme
 import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.core.utils.viewmodel.ViewModelFactory
@@ -40,22 +42,21 @@ internal fun DeviceDetailScreen(
                     FloatingActionButton(
                         modifier =
                             Modifier
-                                .padding(bottom = 80.dp, end = 24.dp),
+                                .padding(24.dp),
                         onClick = remember { viewModel::buyModules },
                         shape = MaterialTheme.cornerRoundedShapes.rounded,
                     ) {
-//                                    Icon(
-//                                        painter = painterResource(com.example.modularizationtest.R.drawable.ic_home_bottom_menu),
-//                                        contentDescription = null,
-//                                    )
+                        Icon(
+                            Icons.Rounded.ShoppingCart,
+                            contentDescription = null,
+                        )
                     }
                 }
             },
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .statusBarsPadding()
-                    .navigationBarsPadding(),
+                    .statusBarsPadding(),
             floatingActionButtonPosition = FabPosition.End,
         ) { padding ->
             Surface(
@@ -64,7 +65,7 @@ internal fun DeviceDetailScreen(
                 LazyColumnWithParallax(
                     modifier =
                         Modifier
-                            .background(color = DeviceDetailForegroundColor)
+                            .background(color = BackgroundColorLight)
                             .fillMaxSize(),
                     device = device!!,
                     modules = modules,

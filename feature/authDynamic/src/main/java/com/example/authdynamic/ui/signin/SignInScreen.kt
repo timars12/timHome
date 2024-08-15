@@ -17,12 +17,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -43,7 +41,6 @@ import com.example.core.ui.SnackbarMessage
 import com.example.core.ui.theme.BackgroundColor
 import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.mvi.ErrorType
-import com.example.core.utils.viewmodel.ViewModelFactory
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -54,8 +51,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 internal fun SignInScreen(
-    abstractFactory: dagger.Lazy<ViewModelFactory>,
-    viewModel: SignInViewModel = viewModel(factory = abstractFactory.get()),
+    viewModel: SignInViewModel,
 ) {
     HomeTheme {
         val focusRequester = remember { FocusRequester() }
@@ -74,7 +70,6 @@ internal fun SignInScreen(
             viewModel = viewModel,
             snackbarHostState = snackbarHostState,
             intentChannel = intentChannel,
-            viewState = viewState,
         )
 
         Column(
@@ -129,7 +124,6 @@ internal fun SignInScreen(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun LoginScreen(
     viewState: LoginViewState,
@@ -186,9 +180,8 @@ private fun InitSideEffects(
     viewModel: SignInViewModel,
     snackbarHostState: SnackbarHostState,
     intentChannel: Channel<LoginViewIntent>,
-    viewState: LoginViewState,
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     val events =
         remember(viewModel.singleEvent, lifecycleOwner) {
@@ -221,16 +214,4 @@ private fun InitSideEffects(
                 ).collect()
         }
     }
-    SideEffect {
-        if (viewState.isLoginSuccess) navigateToHome()
-    }
-}
-
-private fun navigateToHome() {
-//        findNavController().navigate(
-// //            com.example.modularizationtest.R.id.home_navigation,
-// //            null,
-// //            null,
-// //            DynamicExtras(installMonitor),
-//        )
 }

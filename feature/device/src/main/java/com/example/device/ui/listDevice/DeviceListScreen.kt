@@ -30,7 +30,7 @@ internal fun DeviceListScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(bottom = 90.dp),
+            contentPadding = PaddingValues(16.dp),
         ) {
             trace("deviceList") {
                 items(items = deviceList, key = DeviceModel::id) { item ->

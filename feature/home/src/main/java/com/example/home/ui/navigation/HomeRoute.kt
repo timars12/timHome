@@ -7,11 +7,17 @@ import androidx.navigation.compose.composable
 import com.example.base.DaggerBaseComponent
 import com.example.core.ModularizationApplication
 import com.example.core.di.ViewModelFactoryContainer
+import com.example.core.ui.slideIntoContainer
+import com.example.core.ui.slideOutOfContainer
 import com.example.home.di.DaggerHomeComponent
 import com.example.home.ui.HomeScreen
 
 fun NavGraphBuilder.homeScreen() {
-    composable(route = "homeScreen") {
+    composable(
+        route = "homeScreen",
+        enterTransition = { slideIntoContainer() },
+        exitTransition = { slideOutOfContainer() },
+    ) {
         val context = LocalContext.current
         val viewModelFactory =
             remember {
