@@ -27,7 +27,7 @@ internal typealias CalculateTextSize = () -> TextUnit
 @Composable
 internal fun DeviceDetailHeader(
     modifier: Modifier,
-    image: String?,
+    image: Int,
     title: String,
     calculateTextSize: CalculateTextSize,
 ) {

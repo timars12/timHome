@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextLayoutResult
+import com.example.core.ui.theme.Black
 import com.example.core.ui.theme.IndicatorCO2Danger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -36,6 +37,7 @@ fun ExpandableText(
             maxLines = if (expanded || !showButton) Int.MAX_VALUE else maxLines,
             modifier = Modifier.animateContentSize(animationSpec = tween(durationMillis)),
             onTextLayout = { textLayoutResultState.value = it },
+            color = Black,
         )
 
         LaunchedEffect(text) {

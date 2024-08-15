@@ -10,7 +10,11 @@ import com.example.settings.di.DaggerSettingComponent
 import com.example.settings.ui.SettingScreen
 
 fun NavGraphBuilder.settingRoute() {
-    composable(route = "settingScreen") {
+    composable(
+        route = "settingScreen",
+        enterTransition = { com.example.core.ui.scaleIntoContainer() },
+        exitTransition = { com.example.core.ui.scaleOutOfContainer() },
+    ) {
         val context = LocalContext.current
         val viewModelFactory =
             remember {

@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.core.R
 import com.example.core.ui.RatingView
+import com.example.core.ui.theme.Black
 
 private const val DIVIDER_FOR_RATING = 10f
 
@@ -51,6 +52,7 @@ internal fun FavoriteWithRating(
             modifier = Modifier.size(24.dp),
             painter = painterResource(icon),
             contentDescription = null,
+            tint = Color.Black,
         )
         Canvas(modifier = Modifier.size(height = 18.dp, width = 9.dp)) {
             val canvasWidth = size.width
@@ -72,6 +74,6 @@ internal fun FavoriteWithRating(
             itemSize = 20.dp,
             itemCount = 1,
         )
-        Text(text = rating.toString())
+        Text(text = rating.toString(), color = Black)
     }
 }

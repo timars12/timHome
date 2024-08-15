@@ -16,18 +16,19 @@ internal class GenerateDate
         @Suppress("LongMethod")
         fun generateItems(): Flow<List<Device>> {
             val list = mutableListOf<Device>()
+            val date =
+                LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
             return flow {
                 val item1 =
                     Device(
                         id = 0,
-                        image = "https://cdn.lifehacker.ru/wp-content/uploads/2020/09/CHto-takoe-Arduino-i-pochemu-vam-nado-ego-kupit_1600809645.jpg",
+                        image = "proj_1",
                         ownerName = "Ruslan Timkov",
                         title = "Arduino main home module",
                         totalPrice = "18.81$",
                         description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
-                        dateCreated =
-                            LocalDateTime.now()
-                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
+                        dateCreated = date,
                         isFavorite = true,
                         rating = 10f,
                         modules =
@@ -72,14 +73,12 @@ internal class GenerateDate
                 val item2 =
                     Device(
                         id = 1,
-                        image = "https://knowhow.distrelec.com/wp-content/uploads/2021/06/iStock-1169550547-1-1920x800.jpg",
+                        image = "proj_2",
                         ownerName = "Ruslan Timkov",
                         title = "Arduino measure module",
                         totalPrice = "10.21$",
                         description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
-                        dateCreated =
-                            LocalDateTime.now()
-                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
+                        dateCreated = date,
                         isFavorite = false,
                         rating = 5.9f,
                         modules = emptyList(),
@@ -87,27 +86,23 @@ internal class GenerateDate
                 val item3 =
                     Device(
                         id = 2,
-                        image = "https://content1.rozetka.com.ua/goods/images/big/300749078.png",
+                        image = "proj_3",
                         ownerName = "Ruslan Timkov",
                         title = "Arduino test module",
                         totalPrice = "9.81$",
                         description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
-                        dateCreated =
-                            LocalDateTime.now()
-                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
+                        dateCreated = date,
                         modules = emptyList(),
                     )
                 val item4 =
                     Device(
                         id = 3,
-                        image = "https://cdn.lifehacker.ru/wp-content/uploads/2020/09/CHto-takoe-Arduino-i-pochemu-vam-nado-ego-kupit_1600809645.jpg",
+                        image = "proj_1",
                         ownerName = "Ruslan Timkov",
                         title = "Arduino main home module",
                         totalPrice = "18.81$",
                         description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
-                        dateCreated =
-                            LocalDateTime.now()
-                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
+                        dateCreated = date,
                         isFavorite = true,
                         rating = 10f,
                         modules = emptyList(),
@@ -115,14 +110,12 @@ internal class GenerateDate
                 val item5 =
                     Device(
                         id = 4,
-                        image = "https://knowhow.distrelec.com/wp-content/uploads/2021/06/iStock-1169550547-1-1920x800.jpg",
+                        image = "proj_2",
                         ownerName = "Ruslan Timkov",
                         title = "Arduino measure module",
                         totalPrice = "10.21$",
                         description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
-                        dateCreated =
-                            LocalDateTime.now()
-                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
+                        dateCreated = date,
                         isFavorite = false,
                         rating = 5.9f,
                         modules = emptyList(),
@@ -130,14 +123,12 @@ internal class GenerateDate
                 val item6 =
                     Device(
                         id = 5,
-                        image = "https://content1.rozetka.com.ua/goods/images/big/300749078.png",
+                        image = "proj_3",
                         ownerName = "Ruslan Timkov",
                         title = "Arduino test module",
                         totalPrice = "9.81$",
                         description = "Arduino project that can measure temperature, co2 and pass this value between some other module by wi-fy",
-                        dateCreated =
-                            LocalDateTime.now()
-                                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")),
+                        dateCreated = date,
                         modules = emptyList(),
                     )
                 list.apply {

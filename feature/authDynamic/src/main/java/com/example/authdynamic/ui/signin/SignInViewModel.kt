@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.authdynamic.domain.IAuthorizationRepository
+import com.example.core.utils.NavigationDispatcher
 import com.example.core.utils.mvi.MviViewModel
 import com.example.core.utils.viewmodel.ViewModelAssistedFactory
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -24,14 +25,16 @@ internal class SignInViewModel
     constructor(
         repository: IAuthorizationRepository,
         firebaseAnalytics: FirebaseAnalytics,
+        private val navigationDispatcher: NavigationDispatcher,
         @Assisted private val savedStateHandle: SavedStateHandle,
     ) : ViewModel(), MviViewModel<LoginViewIntent, LoginViewState> {
         private val reducer = LoginReducer(firebaseAnalytics, repository, savedStateHandle)
         override val viewState: StateFlow<LoginViewState> =
             reducer.state
                 .onEach {
-                    savedStateHandle[LOGIN_VIEW_STATE] = it
-                }.stateIn(viewModelScope, SharingStarted.Eagerly, LoginViewState.initial())
+                    if (it.isLoginSuccess) goHomeScreen() else savedStateHandle[LOGIN_VIEW_STATE] = it
+                }
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), LoginViewState.initial())
 
         override val singleEvent: Channel<LoginViewState>
             get() = reducer.singleEvent
@@ -39,6 +42,14 @@ internal class SignInViewModel
         fun sendEvent(event: LoginViewIntent) {
             viewModelScope.launch {
                 reducer.sendEvent(event)
+            }
+        }
+
+        private fun goHomeScreen() {
+            navigationDispatcher.emit {
+                it.navigate("homeScreen") {
+                    popUpTo("signInScreen") { inclusive = true }
+                }
             }
         }
 

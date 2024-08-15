@@ -14,12 +14,48 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.authdynamic.ui.signin.navigation.signInScreen
 import com.example.base.DaggerBaseComponent
@@ -28,10 +64,13 @@ import com.example.core.utils.NavigationDispatcher
 import com.example.device.ui.navigation.deviceRoute
 import com.example.home.ui.navigation.homeScreen
 import com.example.modularizationtest.R
+import com.example.modularizationtest.data.BottomNavigationMenuItem
 import com.example.modularizationtest.di.DaggerAppComponent
 import com.example.settings.ui.navigation.settingRoute
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import okhttp3.internal.immutableListOf
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
@@ -63,17 +102,62 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController: NavHostController = rememberNavController()
+            val isShowBottomMenu = remember { mutableStateOf(false) }
+
             LaunchedEffect(Unit) {
                 observeNavigationCommands(navController)
             }
-            NavHost(
-                navController = navController,
-                startDestination = "devicesScreen",
-            ) {
-                signInScreen()
-                homeScreen()
-                deviceRoute()
-                settingRoute()
+            DisposableEffect(Unit) {
+                val destinationChangedListener =
+                    NavController.OnDestinationChangedListener { _, destination, _ ->
+                        lifecycleScope.launch {
+                            isShowBottomMenu.value =
+                                !destination.route.isNullOrEmpty() && destination.route != "signInScreen"
+                        }
+                    }
+                navController.addOnDestinationChangedListener(destinationChangedListener)
+                onDispose {
+                    navController.removeOnDestinationChangedListener(destinationChangedListener)
+                }
+            }
+
+            Scaffold(
+                modifier = Modifier.navigationBarsPadding().fillMaxSize(),
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = Color.Transparent,
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                bottomBar = {
+                    AnimatedVisibility(
+                        visible = isShowBottomMenu.value,
+                        enter =
+                            slideInVertically(
+                                initialOffsetY = { y -> y },
+                                animationSpec =
+                                    tween(
+                                        durationMillis = 400,
+                                        delayMillis = 100,
+                                        easing = LinearEasing,
+                                    ),
+                            ) + expandVertically(expandFrom = Alignment.Bottom),
+                        exit =
+                            slideOutVertically(
+                                animationSpec = tween(durationMillis = 300),
+                            ),
+                    ) {
+                        if (isShowBottomMenu.value) BottomNavigationBar(navController)
+                    }
+                },
+            ) { padding ->
+                NavHost(
+                    modifier = Modifier.padding(padding),
+                    navController = navController,
+                    startDestination = "signInScreen",
+                ) {
+                    signInScreen()
+                    homeScreen()
+                    deviceRoute()
+                    settingRoute()
+                }
             }
         }
     }
@@ -137,5 +221,64 @@ class MainActivity : ComponentActivity() {
             .collect { command ->
                 command.invoke(navController)
             }
+    }
+}
+
+@Composable
+fun BottomNavigationBar(navController: NavHostController) {
+    val shape = remember { RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp) }
+    val menuItems =
+        remember {
+            immutableListOf(
+                BottomNavigationMenuItem(
+                    destinationName = "homeScreen",
+                    label = R.string.home,
+                    icon = R.drawable.ic_home_bottom_menu,
+                ),
+                BottomNavigationMenuItem(
+                    destinationName = "devicesScreen",
+                    label = R.string.device,
+                    icon = R.drawable.ic_device_bottom_menu,
+                ),
+                BottomNavigationMenuItem(
+                    destinationName = "settingScreen",
+                    label = R.string.setting,
+                    icon = R.drawable.ic_setting_bottom_menu,
+                ),
+            )
+        }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    NavigationBar(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .padding(horizontal = 8.dp)
+                .clip(shape),
+    ) {
+        menuItems.forEach { item ->
+            NavigationBarItem(
+                selected = currentDestination?.hierarchy?.any { it.route == item.destinationName } == true,
+                onClick = {
+                    navController.navigate(item.destinationName) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(item.icon),
+                        contentDescription = stringResource(item.label),
+                    )
+                },
+                label = { Text(text = stringResource(item.label)) },
+                alwaysShowLabel = true,
+            )
+        }
     }
 }

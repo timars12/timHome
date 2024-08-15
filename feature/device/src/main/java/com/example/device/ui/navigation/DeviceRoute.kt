@@ -14,7 +14,11 @@ import com.example.device.ui.device.DeviceDetailScreen
 import com.example.device.ui.listDevice.DeviceListScreen
 
 fun NavGraphBuilder.deviceRoute() {
-    composable(route = "devicesScreen") {
+    composable(
+        route = "devicesScreen",
+        enterTransition = { com.example.core.ui.scaleIntoContainer() },
+        exitTransition = { com.example.core.ui.scaleOutOfContainer() },
+    ) {
         val context = LocalContext.current
         val viewModelFactory =
             remember {
