@@ -1,5 +1,6 @@
 package com.example.authdynamic.ui.signin
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,11 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,7 +39,7 @@ import com.example.authdynamic.ui.signin.composable.AuthTabSection
 import com.example.authdynamic.ui.signin.composable.EmailTextField
 import com.example.authdynamic.ui.signin.composable.PasswordTextField
 import com.example.core.ui.SnackbarMessage
-import com.example.core.ui.theme.BackgroundColor
+import com.example.core.ui.theme.AuthTabSectionBackgroundColor
 import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.mvi.ErrorType
 import kotlinx.collections.immutable.persistentListOf
@@ -73,10 +74,7 @@ internal fun SignInScreen(
         )
 
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(color = BackgroundColor),
+            modifier = Modifier.fillMaxSize(),
         ) {
             AuthTabSection(
                 tabNameList = tabNameList,
@@ -89,7 +87,7 @@ internal fun SignInScreen(
                     Modifier
                         .fillMaxSize()
                         .background(
-                            color = Color.White,
+                            color = AuthTabSectionBackgroundColor,
                             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                         ),
                 verticalArrangement = Arrangement.Center,
@@ -214,4 +212,26 @@ private fun InitSideEffects(
                 ).collect()
         }
     }
+}
+
+@Preview(name = "Light Mode")
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(
+        viewState = LoginViewState.initial(),
+        focusRequester = FocusRequester(),
+        dispatch = {},
+        keyboardController = null,
+    )
+}
+
+@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun LoginScreenPreviewDark() {
+    LoginScreen(
+        viewState = LoginViewState.initial(),
+        focusRequester = FocusRequester(),
+        dispatch = {},
+        keyboardController = null,
+    )
 }

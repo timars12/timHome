@@ -28,6 +28,7 @@ dependencies {
 
     // for testing process death
     debugImplementation(libs.venom)
+    debugImplementation(libs.androidx.ui.tooling)
     releaseImplementation(libs.venom.no.op)
 
     debugImplementation(libs.leakcanary)

@@ -1,5 +1,6 @@
 package com.example.home.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,8 +44,8 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 internal fun HomeScreen(
-    abstractFactory: dagger.Lazy<ViewModelFactory>,
-    viewModel: HomeViewModel = viewModel(factory = abstractFactory.get()),
+    abstractFactory: ViewModelFactory,
+    viewModel: HomeViewModel = viewModel(factory = abstractFactory),
 ) {
     HomeTheme {
         val temperatureInside by viewModel.temperatureInside.collectAsStateWithLifecycle()
@@ -59,55 +62,73 @@ internal fun HomeScreen(
             }
         }
 
-        Column(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
+        HomeContent(
+            temperatureInside = temperatureInside,
+            temperatureOutside = temperatureOutside,
+            co2 = co2,
+            chartCO2 = chartCO2,
+            isAnimated = isAnimated,
+        )
+    }
+}
+
+@Composable
+private fun HomeContent(
+    temperatureOutside: Int,
+    temperatureInside: Int,
+    co2: Int,
+    chartCO2: ImmutableList<CarbonDioxideEntity>,
+    isAnimated: State<Boolean>,
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .height(180.dp)
+                    .fillMaxWidth(),
+            horizontalArrangement =
+                Arrangement.spacedBy(
+                    24.dp,
+                    alignment = Alignment.CenterHorizontally,
+                ),
         ) {
-            Row(
+            Box(
                 modifier =
                     Modifier
-                        .height(180.dp)
-                        .fillMaxWidth(),
-                horizontalArrangement =
-                    Arrangement.spacedBy(
-                        24.dp,
-                        alignment = Alignment.CenterHorizontally,
-                    ),
+                        .weight(1f, fill = false)
+                        .fillMaxHeight(),
             ) {
-                Box(
+                TemperatureBar(
                     modifier =
                         Modifier
-                            .weight(1f, fill = false)
-                            .fillMaxHeight(),
-                ) {
-                    TemperatureBar(
-                        modifier =
-                            Modifier
-                                .fillMaxSize(),
-                        temperatureOutside,
-                        temperatureInside,
-                    )
-                }
-                Box(
-                    modifier =
-                        Modifier
-                            .weight(1f, fill = false)
-                            .fillMaxHeight(),
-                ) {
-                    Co2Indicator(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(24.dp),
-                        co2 = co2,
-                        isAnimated = isAnimated.value,
-                    )
-                }
+                            .fillMaxSize(),
+                    temperatureOutside,
+                    temperatureInside,
+                )
             }
-            ChartStatisticView(chartCO2 = chartCO2)
+            Box(
+                modifier =
+                    Modifier
+                        .weight(1f, fill = false)
+                        .fillMaxHeight(),
+            ) {
+                Co2Indicator(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                    co2 = co2,
+                    isAnimated = isAnimated.value,
+                )
+            }
         }
+        ChartStatisticView(chartCO2 = chartCO2)
     }
 }
 
@@ -167,4 +188,32 @@ private fun ChartStatisticView(chartCO2: ImmutableList<CarbonDioxideEntity>) {
             )
         }
     }
+}
+
+@Preview
+@Composable
+@SuppressWarnings("MagicNumber")
+fun HomeScreenPreview() {
+    val isAnimated = remember { mutableStateOf(true) }
+    HomeContent(
+        22,
+        32,
+        3291,
+        listOf<CarbonDioxideEntity>().toImmutableList(),
+        isAnimated = isAnimated,
+    )
+}
+
+@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_UNDEFINED)
+@Composable
+@SuppressWarnings("MagicNumber")
+fun HomeScreenPreviewDark() {
+    val isAnimated = remember { mutableStateOf(true) }
+    HomeContent(
+        22,
+        32,
+        3291,
+        listOf<CarbonDioxideEntity>().toImmutableList(),
+        isAnimated = isAnimated,
+    )
 }

@@ -1,5 +1,6 @@
 package com.example.home.custom
 
+import android.content.res.Configuration
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +38,6 @@ import com.example.core.ui.theme.IndicatorCO2Danger
 import com.example.core.ui.theme.IndicatorCO2Good
 import com.example.core.ui.theme.IndicatorCO2LowDanger
 import com.example.core.ui.theme.IndicatorCO2Uncomfortable
-import com.example.core.ui.theme.TextColorCO2
 import com.example.core.utils.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
 import com.example.core.utils.Constant.INDICATOR_CO2_BED_LEVEL
 import com.example.core.utils.Constant.INDICATOR_CO2_GOOD_LEVEL
@@ -147,7 +148,7 @@ internal fun Co2Indicator(
                 )
                 Text(
                     text = stringResource(id = R.string.co2),
-                    color = TextColorCO2,
+                    color = MaterialTheme.colorScheme.inversePrimary,
                     fontSize = 12.sp,
                 )
             }
@@ -172,4 +173,11 @@ private fun getCountByCO2(co2: Int): Int {
 @Suppress("MagicNumber")
 fun PreviewCo2Indicator() {
     Co2Indicator(Modifier.size(150.dp), 2500, true)
+}
+
+@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_UNDEFINED)
+@Composable
+@Suppress("MagicNumber")
+fun PreviewCo2IndicatorDark() {
+    Co2Indicator(Modifier.size(150.dp), 500, true)
 }
