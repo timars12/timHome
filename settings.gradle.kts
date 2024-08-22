@@ -20,7 +20,7 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "ModularizationTest"
+//rootProject.name = "ModularizationTest"
 include(":app")
 include(":core")
 include(":benchmark")

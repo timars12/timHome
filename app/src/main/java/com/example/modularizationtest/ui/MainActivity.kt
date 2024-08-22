@@ -42,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -57,16 +56,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.authdynamic.ui.signin.navigation.signInScreen
+import com.example.authdynamic.ui.signin.navigation.signInRoute
 import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
+import com.example.core.ui.theme.HomeTheme
 import com.example.core.utils.NavigationDispatcher
 import com.example.device.ui.navigation.deviceRoute
-import com.example.home.ui.navigation.homeScreen
+import com.example.home.ui.navigation.homeRoute
+import com.example.settings.ui.navigation.settingRoute
 import com.example.modularizationtest.R
 import com.example.modularizationtest.data.BottomNavigationMenuItem
 import com.example.modularizationtest.di.DaggerAppComponent
-import com.example.settings.ui.navigation.settingRoute
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -121,42 +121,45 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            Scaffold(
-                modifier = Modifier.navigationBarsPadding().fillMaxSize(),
-                containerColor = MaterialTheme.colorScheme.background,
-                contentColor = Color.Transparent,
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                bottomBar = {
-                    AnimatedVisibility(
-                        visible = isShowBottomMenu.value,
-                        enter =
-                            slideInVertically(
-                                initialOffsetY = { y -> y },
-                                animationSpec =
-                                    tween(
-                                        durationMillis = 400,
-                                        delayMillis = 100,
-                                        easing = LinearEasing,
-                                    ),
-                            ) + expandVertically(expandFrom = Alignment.Bottom),
-                        exit =
-                            slideOutVertically(
-                                animationSpec = tween(durationMillis = 300),
-                            ),
+            HomeTheme {
+                Scaffold(
+                    modifier =
+                        Modifier
+                            .navigationBarsPadding()
+                            .fillMaxSize(),
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                    bottomBar = {
+                        AnimatedVisibility(
+                            visible = isShowBottomMenu.value,
+                            enter =
+                                slideInVertically(
+                                    initialOffsetY = { y -> y },
+                                    animationSpec =
+                                        tween(
+                                            durationMillis = 400,
+                                            delayMillis = 100,
+                                            easing = LinearEasing,
+                                        ),
+                                ) + expandVertically(expandFrom = Alignment.Bottom),
+                            exit =
+                                slideOutVertically(
+                                    animationSpec = tween(durationMillis = 300),
+                                ),
+                        ) {
+                            if (isShowBottomMenu.value) BottomNavigationBar(navController)
+                        }
+                    },
+                ) { padding ->
+                    NavHost(
+                        modifier = Modifier.padding(padding),
+                        navController = navController,
+                        startDestination = "signInScreen",
                     ) {
-                        if (isShowBottomMenu.value) BottomNavigationBar(navController)
+                        signInRoute()
+                        homeRoute()
+                        deviceRoute()
+                        settingRoute()
                     }
-                },
-            ) { padding ->
-                NavHost(
-                    modifier = Modifier.padding(padding),
-                    navController = navController,
-                    startDestination = "signInScreen",
-                ) {
-                    signInScreen()
-                    homeScreen()
-                    deviceRoute()
-                    settingRoute()
                 }
             }
         }
@@ -249,25 +252,27 @@ fun BottomNavigationBar(navController: NavHostController) {
         }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-
     NavigationBar(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .height(80.dp)
                 .padding(horizontal = 8.dp)
-                .clip(shape),
+                .clip(shape = shape),
+        containerColor = MaterialTheme.colorScheme.onSurface,
     ) {
         menuItems.forEach { item ->
             NavigationBarItem(
                 selected = currentDestination?.hierarchy?.any { it.route == item.destinationName } == true,
                 onClick = {
+                    if (currentDestination?.route == item.destinationName) return@NavigationBarItem
+
                     navController.navigate(item.destinationName) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
-                        launchSingleTop = true
                         restoreState = true
+                        launchSingleTop = true
                     }
                 },
                 icon = {
@@ -276,7 +281,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                         contentDescription = stringResource(item.label),
                     )
                 },
-                label = { Text(text = stringResource(item.label)) },
+                label = { Text(text = stringResource(item.label), color = MaterialTheme.colorScheme.tertiary) },
                 alwaysShowLabel = true,
             )
         }

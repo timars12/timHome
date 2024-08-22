@@ -1,5 +1,6 @@
 package com.example.authdynamic.ui.signin.composable
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -40,9 +41,27 @@ internal fun EmailTextField(
     )
 }
 
-@Preview
+@Preview(name = "Light Mode Empty Field")
+@Composable
+fun TestEmailTextFieldEmpty() {
+    EmailTextField(
+        data = FieldText("", null),
+        FocusRequester(),
+    ) {}
+}
+
+@Preview(name = "Light Mode")
 @Composable
 fun TestEmailTextField() {
+    EmailTextField(
+        FieldText("tim@dfff", MviError(type = ErrorType.FIELD, "Something wrong")),
+        FocusRequester(),
+    ) {}
+}
+
+@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun TestEmailTextFieldDarkPreview() {
     EmailTextField(
         FieldText("tim@df", MviError(type = ErrorType.FIELD, "Something wrong")),
         FocusRequester(),

@@ -11,4 +11,5 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(libs.firebase.analytics)
+    debugImplementation(libs.androidx.ui.tooling)
 }

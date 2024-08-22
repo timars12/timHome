@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.core.ui.theme.AuthTabSectionBackgroundColor
 import com.example.core.ui.theme.BackgroundTabColor
 import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.core.utils.OnEnterText
@@ -42,7 +43,7 @@ fun RoundedTabSection(
                     Modifier
                         .padding(4.dp)
                         .background(
-                            color = if (selected) Color.White else Color.Transparent,
+                            color = if (selected) AuthTabSectionBackgroundColor else Color.Transparent,
                             shape = MaterialTheme.cornerRoundedShapes.rounded,
                         ),
                 selected = selected,
@@ -53,7 +54,7 @@ fun RoundedTabSection(
                 text = {
                     Text(
                         text = text,
-                        color = if (selected) Color.Black else Color.White,
+                        color = if (selected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.inversePrimary,
                     )
                 },
             )

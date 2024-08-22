@@ -12,7 +12,7 @@ import com.example.core.ui.slideOutOfContainer
 import com.example.home.di.DaggerHomeComponent
 import com.example.home.ui.HomeScreen
 
-fun NavGraphBuilder.homeScreen() {
+fun NavGraphBuilder.homeRoute() {
     composable(
         route = "homeScreen",
         enterTransition = { slideIntoContainer() },
@@ -29,6 +29,6 @@ fun NavGraphBuilder.homeScreen() {
                         ).inject(it)
                 }.viewModelFactory
             }
-        HomeScreen(viewModelFactory)
+        HomeScreen(viewModelFactory.get())
     }
 }

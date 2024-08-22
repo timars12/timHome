@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -54,7 +55,7 @@ internal fun TemperatureBar(
         Paint().apply {
             textSize = fontSize.value
             textAlign = Paint.Align.CENTER
-            color = Color.White.toArgb()
+            color = MaterialTheme.colorScheme.onPrimary.toArgb()
         }
 
     Canvas(

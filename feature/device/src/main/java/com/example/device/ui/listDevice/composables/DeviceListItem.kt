@@ -126,7 +126,9 @@ internal fun DeviceListItem(
 @Composable
 fun PreviewDeviceListItem() {
     Column(
-        Modifier.background(color = Color.Blue).padding(8.dp),
+        Modifier
+            .background(color = Color.Blue)
+            .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         DeviceListItem(

@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.core.ui.RoundedTabSection
 import com.example.core.ui.theme.AuthTabSectionBackgroundColor
@@ -51,7 +50,6 @@ fun AuthTabSection(
         ) {
             Text(
                 text = "Welcome Back",
-                color = Color.White,
                 style = MaterialTheme.typography.headlineMedium,
             )
             Spacer(modifier = Modifier.height(8.dp))

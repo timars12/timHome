@@ -13,7 +13,7 @@ import com.example.core.di.ViewModelFactoryContainer
 import com.example.core.ui.slideIntoContainer
 import com.example.core.ui.slideOutOfContainer
 
-fun NavGraphBuilder.signInScreen() {
+fun NavGraphBuilder.signInRoute() {
     composable(
         route = "signInScreen",
         enterTransition = { slideIntoContainer() },

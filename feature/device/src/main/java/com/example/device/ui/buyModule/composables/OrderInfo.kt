@@ -22,12 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.core.ui.theme.LightBlack
 import com.example.device.ui.buyModule.BUY_SECTION_FRACTION
 import com.example.device.R
 import java.math.BigDecimal
@@ -72,7 +72,7 @@ internal fun BoxScope.OrderInfo(totalPrice: BigDecimal) {
     ) {
         HorizontalDivider(
             thickness = 1.dp,
-            color = Color.Black,
+            color = LightBlack,
         )
         Spacer(
             modifier =
@@ -114,10 +114,5 @@ internal fun BoxScope.OrderInfo(totalPrice: BigDecimal) {
         ) {
             Text(text = stringResource(R.string.confirm_order), fontSize = 20.sp)
         }
-        Spacer(
-            modifier =
-                Modifier
-                    .height(100.dp),
-        )
     }
 }
