@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.FabPosition
@@ -20,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.core.ui.theme.BackgroundColorLight
 import com.example.core.ui.theme.HomeTheme
 import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.core.utils.viewmodel.ViewModelFactory
@@ -53,19 +51,14 @@ internal fun DeviceDetailScreen(
                     }
                 }
             },
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding(),
+            modifier = Modifier.fillMaxSize(),
             floatingActionButtonPosition = FabPosition.End,
         ) { padding ->
-            Surface(
-                modifier = Modifier.padding(padding),
-            ) {
+            Surface(modifier = Modifier.padding(padding)) {
                 LazyColumnWithParallax(
                     modifier =
                         Modifier
-                            .background(color = BackgroundColorLight)
+                            .background(color = MaterialTheme.colorScheme.background)
                             .fillMaxSize(),
                     device = device!!,
                     modules = modules,
