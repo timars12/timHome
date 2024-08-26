@@ -25,8 +25,8 @@ android {
     defaultConfig {
         applicationId = "com.timhome.modularizationtest"
 
-        versionCode = 16
-        versionName = "2.0"
+        versionCode = 17
+        versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
@@ -37,11 +37,11 @@ android {
         val release by getting {
             isMinifyEnabled = true
 //            isShrinkResources = true do not use because drawable not available in another module that use that drawable
-            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("release")
             // Ensure Baseline Profile is fresh for release builds.
             baselineProfile.automaticGenerationDuringBuild = true
             baselineProfile.dexLayoutOptimization = true
@@ -74,4 +74,10 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     baselineProfile(project(":benchmark"))
+}
+
+baselineProfile {
+    // Don't build on every iteration of a full assemble.
+    // Instead enable generation directly for the release build variant.
+    automaticGenerationDuringBuild = false
 }
