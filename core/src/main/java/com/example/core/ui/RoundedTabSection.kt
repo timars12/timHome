@@ -1,6 +1,8 @@
 package com.example.core.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -20,6 +22,8 @@ import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.core.utils.OnEnterText
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun RoundedTabSection(
@@ -57,6 +61,16 @@ fun RoundedTabSection(
                         color = if (selected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.inversePrimary,
                     )
                 },
+                interactionSource =
+                    remember {
+                        object : MutableInteractionSource {
+                            override val interactions: Flow<Interaction> = emptyFlow()
+
+                            override suspend fun emit(interaction: Interaction) {}
+
+                            override fun tryEmit(interaction: Interaction) = true
+                        }
+                    },
             )
         }
     }
