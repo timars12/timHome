@@ -15,8 +15,10 @@ private val LightColorPalette =
         inversePrimary = Color.Black,
         secondary = Black,
         background = BackgroundColorLight,
+        onBackground = Color.White,
         onTertiary = LightBlack,
         tertiary = TextFieldBackgroundColor,
+        onSurface = TextColorCO2,
     )
 
 private val DarkColorPalette =
@@ -33,46 +35,6 @@ private val DarkColorPalette =
         surface = BackgroundColor,
         // buttons(and text in btn) & bnm
         onSurface = LightBlack,
-    )
-
-private val DarkColorPalette1 =
-    darkColorScheme(
-        primary = Color.Red,
-        onPrimary = Color.Red,
-        primaryContainer = Color.Red,
-        onPrimaryContainer = Color.Red,
-        inversePrimary = Color.Red,
-        secondary = Color.Green,
-        onSecondary = Color.Green,
-        secondaryContainer = Color.Green,
-        onSecondaryContainer = Color.Green,
-        tertiary = Color.Red,
-        onTertiary = Color.Red,
-        tertiaryContainer = Color.Red,
-        onTertiaryContainer = Color.Red,
-        background = Color.Blue,
-        onBackground = Color.Blue,
-        surface = Color.Yellow,
-        onSurface = Color.Yellow,
-        surfaceVariant = Color.Yellow,
-        onSurfaceVariant = Color.Yellow,
-        surfaceTint = Color.Yellow,
-        inverseSurface = Color.Yellow,
-        inverseOnSurface = Color.Yellow,
-        error = Color.Red,
-        onError = Color.Red,
-        errorContainer = Color.Red,
-        onErrorContainer = Color.Red,
-        outline = Color.Cyan,
-        outlineVariant = Color.Cyan,
-        scrim = Color.Cyan,
-        surfaceBright = Color.Yellow,
-        surfaceDim = Color.Yellow,
-        surfaceContainer = Color.Yellow,
-        surfaceContainerHigh = Color.Yellow,
-        surfaceContainerHighest = Color.Yellow,
-        surfaceContainerLow = Color.Yellow,
-        surfaceContainerLowest = Color.Yellow,
     )
 
 @Composable
