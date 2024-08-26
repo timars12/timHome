@@ -9,7 +9,7 @@ import org.junit.Test
 class StartupBaselineProfile {
     @get:Rule val baselineProfileRule = BaselineProfileRule()
 
-    // command task :benchmark:pixel3Api33BenchmarkAndroidTest --rerun-tasks -P android.testInstrumentationRunnerArguments.class=com.example.benchmark.baselineprofile.StartupBaselineProfile
+    // command task :benchmark:pixel4Api33BenchmarkAndroidTest --rerun-tasks -P android.testInstrumentationRunnerArguments.class=com.example.benchmark.baselineprofile.StartupBaselineProfile
     @Test
     fun generate() = baselineProfileRule.collect(
         "com.timhome.modularizationtest",
