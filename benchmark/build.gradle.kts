@@ -17,8 +17,8 @@ android {
     }
 
     testOptions.managedDevices.devices {
-        create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel3Api33") {
-            device = "Pixel 3"
+        create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel4Api33") {
+            device = "Pixel 4"
             apiLevel = 33
             systemImageSource = "aosp"
         }
@@ -29,11 +29,11 @@ android {
 }
 
 baselineProfile {
-    managedDevices += "pixel3Api33"
+    managedDevices += "pixel4Api33"
     // Enables using connected devices to generate profiles. The default is
     // `true`. When using connected devices, they must be rooted or API 33 and
     // higher.
-    useConnectedDevices = false
+    useConnectedDevices = true
 }
 
 dependencies {
