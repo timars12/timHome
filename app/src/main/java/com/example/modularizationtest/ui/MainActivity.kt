@@ -8,9 +8,14 @@ import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -27,6 +32,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -36,6 +43,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -77,16 +85,6 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationDispatcher: NavigationDispatcher
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission(),
-        ) { isGranted: Boolean ->
-            when {
-                isGranted -> createNotificationChannel()
-                else -> explainWhyWeNeedToUseNotification()
-            }
-        }
-
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
         DaggerAppComponent
@@ -98,22 +96,29 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkNotificationPermission()
 
         setContent {
             val navController: NavHostController = rememberNavController()
             val isShowBottomMenu = remember { mutableStateOf(false) }
+            val shouldShowDialog = remember { mutableStateOf(false) }
 
+            val requestPermissionLauncher =
+                rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                    when {
+                        isGranted -> createNotificationChannel()
+                        else -> shouldShowDialog.value = true
+                    }
+                }
+
+            CheckNotificationPermission(requestPermissionLauncher)
             LaunchedEffect(Unit) {
                 observeNavigationCommands(navController)
             }
             DisposableEffect(Unit) {
                 val destinationChangedListener =
                     NavController.OnDestinationChangedListener { _, destination, _ ->
-                        lifecycleScope.launch {
-                            isShowBottomMenu.value =
-                                !destination.route.isNullOrEmpty() && destination.route != "signInScreen"
-                        }
+                        isShowBottomMenu.value =
+                            !destination.route.isNullOrEmpty() && destination.route != "signInScreen"
                     }
                 navController.addOnDestinationChangedListener(destinationChangedListener)
                 onDispose {
@@ -141,10 +146,7 @@ class MainActivity : ComponentActivity() {
                                             easing = LinearEasing,
                                         ),
                                 ) + expandVertically(expandFrom = Alignment.Bottom),
-                            exit =
-                                slideOutVertically(
-                                    animationSpec = tween(durationMillis = 300),
-                                ),
+                            exit = slideOutVertically(animationSpec = tween(durationMillis = 300)),
                         ) {
                             if (isShowBottomMenu.value) BottomNavigationBar(navController)
                         }
@@ -161,19 +163,24 @@ class MainActivity : ComponentActivity() {
                         settingRoute()
                     }
                 }
+                if (shouldShowDialog.value) {
+                    ExplainWhyWeNeedToUseNotification(shouldShowDialog)
+                }
             }
         }
     }
 
+    @Composable
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun checkNotificationPermission() {
-        NotificationManagerCompat.from(this).apply {
-            when {
-                !areNotificationsEnabled() -> {
-                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    private fun CheckNotificationPermission(requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>) {
+        SideEffect {
+            NotificationManagerCompat.from(this@MainActivity).apply {
+                when {
+                    !areNotificationsEnabled() -> {
+                        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                    else -> createNotificationChannel()
                 }
-
-                else -> createNotificationChannel()
             }
         }
     }
@@ -205,17 +212,25 @@ class MainActivity : ComponentActivity() {
         startCo2JobService()
     }
 
-    private fun explainWhyWeNeedToUseNotification() {
-//        AlertDialog.Builder(this).apply {
-//            setTitle(getString(R.string.enable_notifications))
-//            setMessage(getString(R.string.explain_why_we_should_enable_notification))
-//            setPositiveButton(getString(R.string.go_to_settings)) { _, _ ->
-//                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-//                intent.data = Uri.fromParts("package", packageName, null)
-//                startActivity(intent)
-//            }
-//            create()
-//        }.show()
+    @Composable
+    private fun ExplainWhyWeNeedToUseNotification(shouldShowDialog: MutableState<Boolean>) {
+        AlertDialog(
+            onDismissRequest = { shouldShowDialog.value = false },
+            title = { Text(text = stringResource(id = R.string.enable_notifications)) },
+            text = { Text(text = stringResource(id = R.string.explain_why_we_should_enable_notification)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        intent.data = Uri.fromParts("package", packageName, null)
+                        startActivity(intent)
+                        shouldShowDialog.value = false
+                    },
+                ) {
+                    Text(text = stringResource(id = R.string.go_to_settings))
+                }
+            },
+        )
     }
 
     private suspend fun observeNavigationCommands(navController: NavHostController) {
@@ -281,7 +296,12 @@ fun BottomNavigationBar(navController: NavHostController) {
                         contentDescription = stringResource(item.label),
                     )
                 },
-                label = { Text(text = stringResource(item.label), color = MaterialTheme.colorScheme.tertiary) },
+                label = {
+                    Text(
+                        text = stringResource(item.label),
+                        color = MaterialTheme.colorScheme.tertiary,
+                    )
+                },
                 alwaysShowLabel = true,
             )
         }
