@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,8 +47,8 @@ import com.example.device.ui.device.composables.ModuleItemContent
 import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
 
-internal const val BUY_LIST_FRACTION = .65F
-internal const val BUY_SECTION_FRACTION = .35F
+internal const val BUY_LIST_FRACTION = .7F
+internal const val BUY_SECTION_FRACTION = .3F
 
 @Composable
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
@@ -74,7 +75,7 @@ internal fun BuyModuleScreen(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = remember { viewModel::goBack }) {
+                        IconButton(onClick = remember { viewModel::goBack }, colors = IconButtonDefaults.iconButtonColors().copy(contentColor = Color.Black)) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = null,

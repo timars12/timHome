@@ -90,6 +90,7 @@ internal fun BoxScope.OrderInfo(totalPrice: BigDecimal) {
                 text = stringResource(R.string.estimated_total),
                 fontSize = 24.sp,
                 maxLines = 1,
+                color = MaterialTheme.colorScheme.onTertiary,
             )
 
             Text(
@@ -97,6 +98,7 @@ internal fun BoxScope.OrderInfo(totalPrice: BigDecimal) {
                 fontWeight = FontWeight.W700,
                 fontSize = 24.sp,
                 maxLines = 1,
+                color = MaterialTheme.colorScheme.onTertiary,
             )
         }
         Button(

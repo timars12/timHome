@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.ui.theme.BackgroundColor
-import com.example.core.ui.theme.BackgroundColorLight
 import com.example.core.ui.theme.cornerRoundedShapes
 import com.example.core.utils.OnClick
 import com.example.device.R
@@ -113,8 +112,8 @@ fun HatOfList(modifier: Modifier) {
             modifier =
                 modifier
                     .background(
-                        color = BackgroundColorLight,
-                        shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
+                        color = MaterialTheme.colorScheme.background,
+                        shape = remember { RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp) },
                     ),
         ) {
             Text(
