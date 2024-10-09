@@ -7,4 +7,5 @@ data class BottomNavigationMenuItem(
     val destinationName: String,
     @StringRes val label: Int,
     @DrawableRes val icon: Int,
+    val testTag: String,
 )

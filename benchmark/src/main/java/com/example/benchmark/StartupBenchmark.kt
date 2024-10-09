@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
  * for investigating your app's performance.
  */
 @RunWith(AndroidJUnit4ClassRunner::class)
-class ExampleStartupBenchmark {
+class StartupBenchmark {
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
@@ -57,8 +57,6 @@ class ExampleStartupBenchmark {
         },
     ) {
         startActivityAndAllowNotifications()
-        // Waits until the content is ready to capture Time To Full Display
-//        forYouWaitForContent()
-        device.wait(Until.hasObject(By.res("my-content")), 1_000)
+        device.wait(Until.hasObject(By.res("login")), 5_000)
     }
 }
