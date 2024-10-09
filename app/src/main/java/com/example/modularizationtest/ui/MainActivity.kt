@@ -49,10 +49,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
@@ -93,6 +97,7 @@ class MainActivity : ComponentActivity() {
             .inject(this)
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,7 +136,10 @@ class MainActivity : ComponentActivity() {
                     modifier =
                         Modifier
                             .navigationBarsPadding()
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .semantics {
+                                testTagsAsResourceId = true
+                            },
                     contentWindowInsets = WindowInsets(0, 0, 0, 0),
                     bottomBar = {
                         AnimatedVisibility(
@@ -252,16 +260,19 @@ fun BottomNavigationBar(navController: NavHostController) {
                     destinationName = "homeScreen",
                     label = R.string.home,
                     icon = R.drawable.ic_home_bottom_menu,
+                    testTag = "bnv_home",
                 ),
                 BottomNavigationMenuItem(
                     destinationName = "devicesScreen",
                     label = R.string.device,
                     icon = R.drawable.ic_device_bottom_menu,
+                    testTag = "bnv_device",
                 ),
                 BottomNavigationMenuItem(
                     destinationName = "settingScreen",
                     label = R.string.setting,
                     icon = R.drawable.ic_setting_bottom_menu,
+                    testTag = "bnv_setting",
                 ),
             )
         }
@@ -278,6 +289,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     ) {
         menuItems.forEach { item ->
             NavigationBarItem(
+                modifier = Modifier.testTag(item.testTag),
                 selected = currentDestination?.hierarchy?.any { it.route == item.destinationName } == true,
                 onClick = {
                     if (currentDestination?.route == item.destinationName) return@NavigationBarItem

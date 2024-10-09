@@ -20,13 +20,14 @@ import com.example.core.utils.mvi.MviError
 
 @Composable
 internal fun EmailTextField(
+    modifier: Modifier = Modifier,
     data: FieldText,
     focusRequester: FocusRequester,
     onEnterText: OnEnterText,
 ) {
     TextFieldWithError(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
         data = data,
@@ -45,6 +46,7 @@ internal fun EmailTextField(
 @Composable
 fun TestEmailTextFieldEmpty() {
     EmailTextField(
+        modifier = Modifier,
         data = FieldText("", null),
         FocusRequester(),
     ) {}
@@ -54,6 +56,7 @@ fun TestEmailTextFieldEmpty() {
 @Composable
 fun TestEmailTextField() {
     EmailTextField(
+        modifier = Modifier,
         FieldText("tim@dfff", MviError(type = ErrorType.FIELD, "Something wrong")),
         FocusRequester(),
     ) {}
@@ -63,6 +66,7 @@ fun TestEmailTextField() {
 @Composable
 private fun TestEmailTextFieldDarkPreview() {
     EmailTextField(
+        modifier = Modifier,
         FieldText("tim@df", MviError(type = ErrorType.FIELD, "Something wrong")),
         FocusRequester(),
     ) {}

@@ -26,6 +26,7 @@ internal fun Project.configureAndroidCompose(
             val bom = libs.findLibrary("androidx-compose-bom").get()
             add("implementation", platform(bom))
             add("implementation", libs.findBundle("compose").get())
+            add("androidTestImplementation", libs.findLibrary("androidx-test-uiautomator").get())
             add("androidTestImplementation", platform(bom))
         }
     }

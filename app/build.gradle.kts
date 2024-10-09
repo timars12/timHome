@@ -45,6 +45,7 @@ android {
             // Ensure Baseline Profile is fresh for release builds.
             baselineProfile.automaticGenerationDuringBuild = true
             baselineProfile.dexLayoutOptimization = true
+            baselineProfile.saveInSrc = true
         }
         register("benchmark") {
             initWith(release)

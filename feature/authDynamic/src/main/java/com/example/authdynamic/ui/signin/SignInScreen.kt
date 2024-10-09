@@ -27,6 +27,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -74,7 +75,7 @@ internal fun SignInScreen(
         )
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().testTag("login"),
         ) {
             AuthTabSection(
                 tabNameList = tabNameList,
@@ -102,7 +103,7 @@ internal fun SignInScreen(
                         Text(text = "This screen will be implemented later")
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            modifier = Modifier.align(Alignment.CenterHorizontally).testTag("go_home"),
                             onClick = {
                                 dispatch(LoginViewIntent.SignInWithoutField)
                             },
@@ -135,8 +136,9 @@ private fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         EmailTextField(
-            viewState.email,
-            focusRequester,
+            modifier = Modifier.testTag("email_field"),
+            data = viewState.email,
+            focusRequester = focusRequester,
             onEnterText = { email -> dispatch(LoginViewIntent.EnterEmail(email)) },
         )
         PasswordTextField(
