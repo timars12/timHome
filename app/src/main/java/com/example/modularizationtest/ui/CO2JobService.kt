@@ -33,7 +33,6 @@ import javax.inject.Inject
 private const val START_NIGHT = 22
 private const val END_NIGHT = 8
 
-//no need it
 class CO2JobService : JobService() {
     private var job: Job? = null
 
