@@ -19,11 +19,12 @@ android {
             storePassword = ""
             // TODO: Use a secure way to store the keystore path and credentials
             // https://developer.android.com/studio/publish/app-signing#secure-shared-keystore
-            storeFile = if (file("adminTimApp.jks").exists()) {
-                file("adminTimApp.jks")
-            } else {
-                null
-            }
+            storeFile =
+                if (file("adminTimApp.jks").exists()) {
+                    file("adminTimApp.jks")
+                } else {
+                    null
+                }
         }
     }
 
@@ -47,11 +48,12 @@ android {
                 "proguard-rules.pro",
             )
             // Use debug signing if release config is not valid
-            signingConfig = if (signingConfigs.getByName("release").storeFile != null) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            signingConfig =
+                if (signingConfigs.getByName("release").storeFile != null) {
+                    signingConfigs.getByName("release")
+                } else {
+                    signingConfigs.getByName("debug")
+                }
             // Ensure Baseline Profile is fresh for release builds.
             baselineProfile.automaticGenerationDuringBuild = true
             baselineProfile.dexLayoutOptimization = true
