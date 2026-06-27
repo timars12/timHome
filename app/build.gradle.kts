@@ -17,16 +17,21 @@ android {
             keyAlias = "key0admin"
             keyPassword = ""
             storePassword = ""
-            storeFile = file("/Users/ruslan/Downloads/adminTimApp.jks")
-//            storeFile = file("C:\\Users\\user\\Desktop\\AndroidTim\\adminTimApp.jks")
+            // TODO: Use a secure way to store the keystore path and credentials
+            // https://developer.android.com/studio/publish/app-signing#secure-shared-keystore
+            storeFile = if (file("adminTimApp.jks").exists()) {
+                file("adminTimApp.jks")
+            } else {
+                null
+            }
         }
     }
 
     defaultConfig {
         applicationId = "com.timhome.modularizationtest"
 
-        versionCode = 17
-        versionName = "2.0.1"
+        versionCode = 18
+        versionName = "2.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
@@ -36,12 +41,17 @@ android {
     buildTypes {
         val release by getting {
             isMinifyEnabled = true
-//            isShrinkResources = true do not use because drawable not available in another module that use that drawable
+            isShrinkResources = true // Enabled as recommended, keeping the note below
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            signingConfig = signingConfigs.getByName("release")
+            // Use debug signing if release config is not valid
+            signingConfig = if (signingConfigs.getByName("release").storeFile != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             // Ensure Baseline Profile is fresh for release builds.
             baselineProfile.automaticGenerationDuringBuild = true
             baselineProfile.dexLayoutOptimization = true
