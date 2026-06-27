@@ -1,15 +1,13 @@
 plugins {
     id("timHome.android.library")
     id("timHome.quality.convention.plugin")
+    alias(libs.plugins.compose.compiler)
     id("kotlin-parcelize")
 }
 
 android {
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
     }
     namespace = "com.example.core"
 }

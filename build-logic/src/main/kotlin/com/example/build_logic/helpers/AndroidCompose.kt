@@ -13,13 +13,13 @@ import java.io.File
 internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
+    // From Kotlin 2.0 the Compose compiler ships with Kotlin and is enabled via this plugin
+    // instead of composeOptions.kotlinCompilerExtensionVersion.
+    pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+
     commonExtension.apply {
         buildFeatures {
             compose = true
-        }
-
-        composeOptions {
-            kotlinCompilerExtensionVersion = libs.findVersion("androidxComposeCompiler").get().toString()
         }
 
         dependencies {
@@ -32,8 +32,8 @@ internal fun Project.configureAndroidCompose(
     }
 
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + buildComposeMetricsParameters()
+        compilerOptions {
+            freeCompilerArgs.addAll(buildComposeMetricsParameters())
         }
     }
 }
