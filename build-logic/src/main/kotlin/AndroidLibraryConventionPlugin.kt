@@ -1,6 +1,7 @@
 import com.android.build.gradle.LibraryExtension
 import com.example.build_logic.helpers.configureKotlinAndroid
 import com.example.build_logic.helpers.configureGradleManagedDevices
+import com.example.build_logic.helpers.configureJacoco
 import com.example.build_logic.helpers.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -15,12 +16,14 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
                 apply("com.google.devtools.ksp")
+                apply("jacoco")
             }
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 35
                 configureGradleManagedDevices(this)
+                configureJacoco(this)
             }
             configurations.configureEach {
                 resolutionStrategy {
