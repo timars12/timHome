@@ -37,6 +37,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 add("androidTestImplementation", kotlin("test"))
                 add("testImplementation", kotlin("test"))
                 add("testImplementation", libs.findLibrary("mockk").get())
+                add("testImplementation", libs.findLibrary("robolectric").get())
                 add("testImplementation", libs.findLibrary("kotlinx-coroutines-test").get())
                 add("ksp", libs.findLibrary("dagger.compiler").get())
                 add("ksp", libs.findLibrary("room.compiler").get())
