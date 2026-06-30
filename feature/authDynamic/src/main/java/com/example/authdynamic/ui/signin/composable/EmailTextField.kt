@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.ImeAction
@@ -48,7 +49,7 @@ fun TestEmailTextFieldEmpty() {
     EmailTextField(
         modifier = Modifier,
         data = FieldText("", null),
-        FocusRequester(),
+        remember { FocusRequester() },
     ) {}
 }
 
@@ -58,7 +59,7 @@ fun TestEmailTextField() {
     EmailTextField(
         modifier = Modifier,
         FieldText("tim@dfff", MviError(type = ErrorType.FIELD, "Something wrong")),
-        FocusRequester(),
+        remember { FocusRequester() },
     ) {}
 }
 
@@ -68,6 +69,6 @@ private fun TestEmailTextFieldDarkPreview() {
     EmailTextField(
         modifier = Modifier,
         FieldText("tim@df", MviError(type = ErrorType.FIELD, "Something wrong")),
-        FocusRequester(),
+        remember { FocusRequester() },
     ) {}
 }
