@@ -72,7 +72,7 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":base"))
-    implementation(project(":feature:authDynamic"))
+    implementation(project(":feature:auth"))
     implementation(project(":feature:home"))
     implementation(project(":feature:device"))
     implementation(project(":feature:settings"))

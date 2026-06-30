@@ -68,7 +68,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.authdynamic.ui.signin.navigation.signInRoute
+import com.example.auth.ui.signin.navigation.signInRoute
 import com.example.base.DaggerBaseComponent
 import com.example.core.coreComponent
 import com.example.core.ui.theme.HomeTheme
