@@ -31,6 +31,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 }
             }
             dependencies {
+                add("implementation", platform(libs.findLibrary("firebase-bom").get()))
                 add("implementation", libs.findLibrary("collections-immutable").get())
                 add("implementation", libs.findBundle("lifecycle").get())
                 add("implementation", libs.findBundle("retrofit").get())

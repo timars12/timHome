@@ -8,7 +8,6 @@ import com.example.core.data.AppDatabase
 import com.example.core.utils.Constant.CODE_200
 import com.example.core.utils.mvi.ErrorType
 import com.example.core.utils.mvi.MviError
-import io.mockk.Called
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -81,7 +80,7 @@ class AuthorizationRepositoryImplTest {
 
             assertEquals(expectedState, actualState)
             coVerify { apiService.loginByEmail(any()) }
-            coVerify { database.userDao() wasNot Called }
+            coVerify(exactly = 0) { database.userDao() }
         }
 
     @Test
@@ -100,6 +99,6 @@ class AuthorizationRepositoryImplTest {
 
             assertEquals(expectedState, actualState)
             coVerify { apiService.loginByEmail(any()) }
-            coVerify { database.userDao() wasNot Called }
+            coVerify(exactly = 0) { database.userDao() }
         }
 }

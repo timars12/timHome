@@ -82,7 +82,6 @@ import com.example.modularizationtest.di.DaggerAppComponent
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import okhttp3.internal.immutableListOf
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
@@ -255,7 +254,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     val shape = remember { RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp) }
     val menuItems =
         remember {
-            immutableListOf(
+            listOf(
                 BottomNavigationMenuItem(
                     destinationName = "homeScreen",
                     label = R.string.home,

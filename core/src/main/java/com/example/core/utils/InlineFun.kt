@@ -1,8 +1,8 @@
 package com.example.core.utils
 
 import android.util.Log
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.perf.ktx.performance
+import com.google.firebase.Firebase
+import com.google.firebase.perf.performance
 
 inline fun <T> tryOrNull(f: () -> T) =
     try {

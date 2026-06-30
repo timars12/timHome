@@ -44,7 +44,7 @@ import com.example.core.utils.Constant.INDICATOR_CO2_GOOD_LEVEL
 import com.example.core.utils.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
 import com.example.core.utils.Constant.INDICATOR_CO2_UNCOMFORTABLE_LEVEL
 import com.example.home.R
-import okhttp3.internal.toImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 private const val MILLIS_DURATION_FOR_CO2_INDICATOR = 3000
 private const val MILLIS_DURATION_FOR_TEXT_CO2_INDICATOR = 180
