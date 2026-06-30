@@ -58,6 +58,7 @@ androidx-lifecycle-viewModelSavedstate = { group = "androidx.lifecycle", name = 
 junit = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk_version" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric_version" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
