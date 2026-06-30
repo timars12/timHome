@@ -1,7 +1,6 @@
 package com.example.core.di
 
 import com.example.core.data.api.ArduinoApi
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import java.util.concurrent.TimeUnit
@@ -34,7 +33,6 @@ class NetworkModule {
             .baseUrl("https://demo.treblle.com/api/v1/")
             .client(httpClient)
             .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
     }
 

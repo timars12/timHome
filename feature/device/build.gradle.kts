@@ -12,4 +12,5 @@ dependencies {
     implementation(libs.firebase.perf)
     implementation(libs.firebase.analytics)
     implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.compose.material.iconsCore)
 }

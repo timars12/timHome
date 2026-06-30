@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.room)
     implementation(libs.dagger)
+    implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
     implementation(libs.profileinstaller)
     ksp(libs.dagger.compiler)

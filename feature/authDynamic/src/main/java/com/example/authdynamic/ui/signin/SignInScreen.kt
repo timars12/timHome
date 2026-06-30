@@ -221,7 +221,7 @@ private fun InitSideEffects(
 fun LoginScreenPreview() {
     LoginScreen(
         viewState = LoginViewState.initial(),
-        focusRequester = FocusRequester(),
+        focusRequester = remember { FocusRequester() },
         dispatch = {},
         keyboardController = null,
     )
@@ -232,7 +232,7 @@ fun LoginScreenPreview() {
 fun LoginScreenPreviewDark() {
     LoginScreen(
         viewState = LoginViewState.initial(),
-        focusRequester = FocusRequester(),
+        focusRequester = remember { FocusRequester() },
         dispatch = {},
         keyboardController = null,
     )
