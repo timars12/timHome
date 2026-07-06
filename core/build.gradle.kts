@@ -9,7 +9,7 @@ android {
     buildFeatures {
         compose = true
     }
-    namespace = "com.example.core"
+    namespace = "com.timhome.core"
 }
 
 dependencies {

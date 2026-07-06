@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.base" // TODO
+    namespace = "com.timhome.base" // TODO
 }
 
 dependencies {

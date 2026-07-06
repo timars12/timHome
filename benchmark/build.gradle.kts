@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.benchmark" //TODO
+    namespace = "com.timhome.benchmark" //TODO
 
     defaultConfig {
         minSdk = 29

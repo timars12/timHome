@@ -1,5 +1,5 @@
 import com.android.build.gradle.LibraryExtension
-import com.example.build_logic.helpers.configureAndroidCompose
+import com.timhome.build_logic.helpers.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

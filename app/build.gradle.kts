@@ -66,7 +66,7 @@ android {
         }
     }
 
-    namespace = "com.example.modularizationtest"
+    namespace = "com.timhome.modularizationtest"
 }
 
 dependencies {

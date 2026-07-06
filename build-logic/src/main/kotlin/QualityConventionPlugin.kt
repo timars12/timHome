@@ -1,5 +1,5 @@
-import com.example.build_logic.helpers.configureDetekt
-import com.example.build_logic.helpers.configureKtlint
+import com.timhome.build_logic.helpers.configureDetekt
+import com.timhome.build_logic.helpers.configureKtlint
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

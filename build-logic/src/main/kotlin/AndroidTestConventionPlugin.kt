@@ -1,6 +1,6 @@
 
 import com.android.build.api.dsl.TestExtension
-import com.example.build_logic.helpers.configureKotlinAndroid
+import com.timhome.build_logic.helpers.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

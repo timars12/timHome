@@ -1,8 +1,8 @@
 import com.android.build.gradle.LibraryExtension
-import com.example.build_logic.helpers.configureKotlinAndroid
-import com.example.build_logic.helpers.configureGradleManagedDevices
-import com.example.build_logic.helpers.configureJacoco
-import com.example.build_logic.helpers.libs
+import com.timhome.build_logic.helpers.configureKotlinAndroid
+import com.timhome.build_logic.helpers.configureGradleManagedDevices
+import com.timhome.build_logic.helpers.configureJacoco
+import com.timhome.build_logic.helpers.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

@@ -81,10 +81,10 @@ and `./gradlew detektDebug` for CI/lint.
   `monkey -p <pkg> -c LAUNCHER 1` randomly picks between MainActivity and the
   LeakCanary leak-list screen (yellow Leaks/Heap Dumps/About bottom bar). The
   driver avoids this by starting the **explicit component**
-  `com.timhome.modularizationtest/com.example.modularizationtest.ui.MainActivity`.
+  `com.timhome.modularizationtest/com.timhome.modularizationtest.ui.MainActivity`.
   If you launch by hand, use `am start -n`, not `monkey`.
 - **applicationId ≠ namespace.** Install/launch use `com.timhome.modularizationtest`,
-  but the activity class lives under `com.example.modularizationtest` (the
+  and the activity class also lives under `com.timhome.modularizationtest` (the
   module namespace). The full component crosses both.
 - **The app fires a CO2 notification on launch** ("Dangerous levels of CO2 —
   CO2 = NNNN ppm"). The values are random mock data (`:mock` module), so they
