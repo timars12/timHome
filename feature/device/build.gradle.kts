@@ -4,7 +4,7 @@ plugins {
     id("timHome.quality.convention.plugin")
 }
 android {
-    namespace = "com.example.device"
+    namespace = "com.timhome.device"
 }
 
 dependencies {

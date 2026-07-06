@@ -43,9 +43,9 @@ SharedPreferences, Looper, …) and don't read resources.
 
 Tests live in `<module>/src/test/java/<package>/…Test.kt`, mirroring the
 package of the class under test (see
-[LoginReducerTest.kt](feature/authDynamic/src/test/java/com/example/authdynamic/ui/signin/LoginReducerTest.kt)
+[LoginReducerTest.kt](feature/auth/src/test/java/com/timhome/auth/ui/signin/LoginReducerTest.kt)
 and
-[AuthorizationRepositoryImplTest.kt](feature/authDynamic/src/test/java/com/example/authdynamic/data/AuthorizationRepositoryImplTest.kt)
+[AuthorizationRepositoryImplTest.kt](feature/auth/src/test/java/com/timhome/auth/data/AuthorizationRepositoryImplTest.kt)
 for the house style).
 
 ## Workflow

@@ -29,8 +29,8 @@ const APK = join(REPO, "app", "build", "outputs", "apk", "debug", "app-debug.apk
 const PKG = "com.timhome.modularizationtest";
 // Explicit component: the debug build also registers a LeakCanary LAUNCHER
 // activity, so `monkey -c LAUNCHER` is non-deterministic. Start MainActivity
-// directly. Class lives under the namespace (com.example.modularizationtest).
-const ACTIVITY = `${PKG}/com.example.modularizationtest.ui.MainActivity`;
+// directly. Class lives under the namespace (com.timhome.modularizationtest).
+const ACTIVITY = `${PKG}/com.timhome.modularizationtest.ui.MainActivity`;
 const DEFAULT_AVD = "Medium_Phone_API_36.0";
 const SHOT_DIR = join(REPO, "build", "run-screenshots");
 const isWin = process.platform === "win32";

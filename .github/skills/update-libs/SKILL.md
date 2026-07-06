@@ -72,7 +72,7 @@ Because this is a **modularized, convention-plugin-based project** (Now in Andro
 
 The catalog feeds `build-logic/` convention plugins, which configure every module. After any non-trivial bump, grep `build-logic/` for affected references and reconcile them:
 
-- **Kotlin → 2.0+ migration (the big one).** This project currently consumes the Compose compiler the old way: `composeOptions { kotlinCompilerExtensionVersion = libs.findVersion("androidxComposeCompiler") }` in `build-logic/src/main/kotlin/com/example/build_logic/helpers/AndroidCompose.kt`. From Kotlin 2.0 the Compose compiler ships **with Kotlin** via the `org.jetbrains.kotlin.plugin.compose` Gradle plugin. To migrate:
+- **Kotlin → 2.0+ migration (the big one).** This project currently consumes the Compose compiler the old way: `composeOptions { kotlinCompilerExtensionVersion = libs.findVersion("androidxComposeCompiler") }` in `build-logic/src/main/kotlin/com/timhome/build_logic/helpers/AndroidCompose.kt`. From Kotlin 2.0 the Compose compiler ships **with Kotlin** via the `org.jetbrains.kotlin.plugin.compose` Gradle plugin. To migrate:
   1. Add the plugin to `[plugins]` in the catalog: `compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }`.
   2. Apply it in the Compose convention plugins (`ApplicationComposeConventionPlugin.kt`, `AndroidLibraryComposeConventionPlugin.kt`).
   3. Remove the `composeOptions { kotlinCompilerExtensionVersion = ... }` block and the `androidxComposeCompiler` version entry.

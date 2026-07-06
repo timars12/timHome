@@ -5,7 +5,7 @@ plugins {
     id("kotlin-parcelize")
 }
 android {
-    namespace = "com.example.auth"
+    namespace = "com.timhome.auth"
 }
 
 dependencies {
