@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.timhome.core.R
 import com.timhome.core.ui.theme.AuthTabSectionBackgroundColor
-import com.timhome.core.utils.OnClick
+import com.timhome.core.common.OnClick
 
 @Composable
 internal fun DeviceDetailToolbar(

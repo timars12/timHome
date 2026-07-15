@@ -42,7 +42,7 @@ import com.timhome.auth.ui.signin.composable.PasswordTextField
 import com.timhome.core.ui.SnackbarMessage
 import com.timhome.core.ui.theme.AuthTabSectionBackgroundColor
 import com.timhome.core.ui.theme.HomeTheme
-import com.timhome.core.utils.mvi.ErrorType
+import com.timhome.core.common.mvi.ErrorType
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

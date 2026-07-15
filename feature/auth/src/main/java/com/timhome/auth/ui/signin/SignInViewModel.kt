@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timhome.auth.domain.IAuthorizationRepository
-import com.timhome.core.utils.NavigationDispatcher
-import com.timhome.core.utils.mvi.MviViewModel
+import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.mvi.MviViewModel
 import com.timhome.core.utils.viewmodel.ViewModelAssistedFactory
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.assisted.Assisted

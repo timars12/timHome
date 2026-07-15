@@ -1,4 +1,4 @@
-package com.timhome.core.utils
+package com.timhome.core.common
 
 import android.util.Log
 import com.google.firebase.Firebase

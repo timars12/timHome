@@ -15,9 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.timhome.core.data.models.FieldText
 import com.timhome.core.ui.TextFieldWithError
-import com.timhome.core.utils.OnEnterText
-import com.timhome.core.utils.mvi.ErrorType
-import com.timhome.core.utils.mvi.MviError
+import com.timhome.core.common.OnEnterText
+import com.timhome.core.common.mvi.ErrorType
+import com.timhome.core.common.mvi.MviError
 
 @Composable
 internal fun EmailTextField(

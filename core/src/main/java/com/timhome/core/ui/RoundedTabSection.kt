@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.timhome.core.ui.theme.AuthTabSectionBackgroundColor
 import com.timhome.core.ui.theme.BackgroundTabColor
 import com.timhome.core.ui.theme.cornerRoundedShapes
-import com.timhome.core.utils.OnEnterText
+import com.timhome.core.common.OnEnterText
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.Flow

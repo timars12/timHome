@@ -5,9 +5,9 @@ import com.timhome.auth.data.api.response.LoginResponse
 import com.timhome.auth.data.api.response.UserResponse
 import com.timhome.auth.ui.signin.LoginViewState
 import com.timhome.core.data.AppDatabase
-import com.timhome.core.utils.Constant.CODE_200
-import com.timhome.core.utils.mvi.ErrorType
-import com.timhome.core.utils.mvi.MviError
+import com.timhome.core.common.Constant.CODE_200
+import com.timhome.core.common.mvi.ErrorType
+import com.timhome.core.common.mvi.MviError
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify

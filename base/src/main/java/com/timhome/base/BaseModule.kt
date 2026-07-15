@@ -3,7 +3,7 @@ package com.timhome.base
 import com.timhome.core.data.DataStoreManager
 import com.timhome.core.data.repository.ArduinoRepository
 import com.timhome.core.data.repository.ArduinoRepositoryImpl
-import com.timhome.core.di.scope.FeatureScope
+import com.timhome.core.common.FeatureScope
 import com.timhome.mock.repository.MockArduinoRepositoryImpl
 import dagger.Module
 import dagger.Provides

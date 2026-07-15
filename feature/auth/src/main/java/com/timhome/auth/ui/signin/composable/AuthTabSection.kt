@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.timhome.core.ui.RoundedTabSection
 import com.timhome.core.ui.theme.AuthTabSectionBackgroundColor
-import com.timhome.core.utils.OnEnterText
+import com.timhome.core.common.OnEnterText
 import com.timhome.core.utils.rememberImeState
 import kotlinx.collections.immutable.PersistentList
 

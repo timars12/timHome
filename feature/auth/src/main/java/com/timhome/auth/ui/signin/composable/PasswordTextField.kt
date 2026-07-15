@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import com.timhome.auth.R
 import com.timhome.core.data.models.FieldText
 import com.timhome.core.ui.TextFieldWithError
-import com.timhome.core.utils.OnClick
-import com.timhome.core.utils.OnEnterText
+import com.timhome.core.common.OnClick
+import com.timhome.core.common.OnEnterText
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

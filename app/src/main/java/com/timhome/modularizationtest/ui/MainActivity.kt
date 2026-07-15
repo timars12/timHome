@@ -72,7 +72,7 @@ import com.timhome.auth.ui.signin.navigation.signInRoute
 import com.timhome.base.DaggerBaseComponent
 import com.timhome.core.coreComponent
 import com.timhome.core.ui.theme.HomeTheme
-import com.timhome.core.utils.NavigationDispatcher
+import com.timhome.core.common.NavigationDispatcher
 import com.timhome.device.ui.navigation.deviceRoute
 import com.timhome.home.ui.navigation.homeRoute
 import com.timhome.settings.ui.navigation.settingRoute

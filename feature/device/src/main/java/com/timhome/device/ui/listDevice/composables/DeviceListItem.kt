@@ -28,7 +28,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.timhome.core.ui.theme.Black
 import com.timhome.core.ui.theme.DataCreatedItemColor
 import com.timhome.core.ui.theme.PriceColor
-import com.timhome.core.utils.OnClick
+import com.timhome.core.common.OnClick
 import com.timhome.device.domain.models.DeviceModel
 
 @Composable

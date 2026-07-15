@@ -3,7 +3,7 @@ package com.timhome.auth.di
 import com.timhome.auth.data.AuthorizationRepositoryImpl
 import com.timhome.auth.data.api.AuthApi
 import com.timhome.auth.domain.IAuthorizationRepository
-import com.timhome.core.di.scope.FeatureScope
+import com.timhome.core.common.FeatureScope
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit

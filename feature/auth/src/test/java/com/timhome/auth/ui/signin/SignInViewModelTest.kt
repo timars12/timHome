@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import androidx.navigation.NavOptionsBuilder
 import com.timhome.auth.domain.IAuthorizationRepository
-import com.timhome.core.utils.NavigationDispatcher
+import com.timhome.core.common.NavigationDispatcher
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.mockk
 import io.mockk.verify

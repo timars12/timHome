@@ -4,7 +4,7 @@ import com.timhome.core.data.AppDatabase
 import com.timhome.core.data.api.response.ArduinoResponse
 import com.timhome.core.data.db.entity.CarbonDioxideEntity
 import com.timhome.core.data.repository.ArduinoRepository
-import com.timhome.core.utils.CallStatus
+import com.timhome.core.common.CallStatus
 import com.timhome.mock.api.Co2AndTemperatureMock
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

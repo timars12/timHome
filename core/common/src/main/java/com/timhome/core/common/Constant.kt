@@ -1,4 +1,4 @@
-package com.timhome.core.utils
+package com.timhome.core.common
 
 object Constant {
     const val APP_DATABASE = "timApp.db"

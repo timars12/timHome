@@ -38,11 +38,11 @@ import com.timhome.core.ui.theme.IndicatorCO2Danger
 import com.timhome.core.ui.theme.IndicatorCO2Good
 import com.timhome.core.ui.theme.IndicatorCO2LowDanger
 import com.timhome.core.ui.theme.IndicatorCO2Uncomfortable
-import com.timhome.core.utils.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
-import com.timhome.core.utils.Constant.INDICATOR_CO2_BED_LEVEL
-import com.timhome.core.utils.Constant.INDICATOR_CO2_GOOD_LEVEL
-import com.timhome.core.utils.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
-import com.timhome.core.utils.Constant.INDICATOR_CO2_UNCOMFORTABLE_LEVEL
+import com.timhome.core.common.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
+import com.timhome.core.common.Constant.INDICATOR_CO2_BED_LEVEL
+import com.timhome.core.common.Constant.INDICATOR_CO2_GOOD_LEVEL
+import com.timhome.core.common.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
+import com.timhome.core.common.Constant.INDICATOR_CO2_UNCOMFORTABLE_LEVEL
 import com.timhome.home.R
 import kotlinx.collections.immutable.toImmutableList
 

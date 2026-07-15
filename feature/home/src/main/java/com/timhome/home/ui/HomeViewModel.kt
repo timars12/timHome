@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timhome.core.data.db.entity.CarbonDioxideEntity
 import com.timhome.core.data.repository.ArduinoRepository
-import com.timhome.core.utils.CallStatus
+import com.timhome.core.common.CallStatus
 import com.timhome.core.utils.viewmodel.ViewModelAssistedFactory
 import com.timhome.home.data.repository.WeatherRepository
 import dagger.assisted.Assisted

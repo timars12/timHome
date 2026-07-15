@@ -2,7 +2,7 @@ package com.timhome.settings.di
 
 import com.timhome.core.di.CoreComponent
 import com.timhome.core.di.ViewModelFactoryContainer
-import com.timhome.core.di.scope.FeatureScope
+import com.timhome.core.common.FeatureScope
 import com.timhome.settings.ui.SettingModule
 import dagger.Component
 

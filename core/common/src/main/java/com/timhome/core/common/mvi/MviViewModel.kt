@@ -1,4 +1,4 @@
-package com.timhome.core.utils.mvi
+package com.timhome.core.common.mvi
 
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.StateFlow
