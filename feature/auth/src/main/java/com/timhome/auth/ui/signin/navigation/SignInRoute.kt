@@ -9,7 +9,7 @@ import com.timhome.auth.di.DaggerAuthenticationComponent
 import com.timhome.auth.ui.signin.SignInScreen
 import com.timhome.auth.ui.signin.SignInViewModel
 import com.timhome.core.ModularizationApplication
-import com.timhome.core.di.ViewModelFactoryContainer
+import com.timhome.core.ui.di.ViewModelFactoryContainer
 import com.timhome.core.ui.slideIntoContainer
 import com.timhome.core.ui.slideOutOfContainer
 

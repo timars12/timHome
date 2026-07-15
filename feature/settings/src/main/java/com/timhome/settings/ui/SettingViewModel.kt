@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timhome.core.data.repository.SettingRepository
-import com.timhome.core.utils.viewmodel.ViewModelAssistedFactory
+import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

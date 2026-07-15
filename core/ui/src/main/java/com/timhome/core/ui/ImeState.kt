@@ -1,4 +1,4 @@
-package com.timhome.core.utils
+package com.timhome.core.ui
 
 import android.view.ViewTreeObserver
 import androidx.compose.runtime.Composable

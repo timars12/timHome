@@ -1,4 +1,4 @@
-package com.timhome.core.utils.viewmodel
+package com.timhome.core.ui.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

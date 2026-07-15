@@ -36,7 +36,7 @@ import com.timhome.core.designsystem.ChartView
 import com.timhome.core.designsystem.theme.CO2BackgroundColor
 import com.timhome.core.designsystem.theme.DataCreatedItemColor
 import com.timhome.core.designsystem.theme.HomeTheme
-import com.timhome.core.utils.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.ViewModelFactory
 import com.timhome.home.R
 import com.timhome.home.custom.Co2Indicator
 import com.timhome.home.custom.TemperatureBar

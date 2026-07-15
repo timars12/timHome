@@ -2,7 +2,7 @@ package com.timhome.home.di
 
 import com.timhome.base.BaseComponent
 import com.timhome.base.BaseScope
-import com.timhome.core.di.ViewModelFactoryContainer
+import com.timhome.core.ui.di.ViewModelFactoryContainer
 import dagger.Component
 
 @BaseScope

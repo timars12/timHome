@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.timhome.core.ModularizationApplication
-import com.timhome.core.di.ViewModelFactoryContainer
+import com.timhome.core.ui.di.ViewModelFactoryContainer
 import com.timhome.device.di.DaggerDeviceComponent
 import com.timhome.device.ui.buyModule.BuyModuleScreen
 import com.timhome.device.ui.device.DeviceDetailScreen

@@ -1,7 +1,7 @@
 package com.timhome.device.di
 
 import com.timhome.core.di.CoreComponent
-import com.timhome.core.di.ViewModelFactoryContainer
+import com.timhome.core.ui.di.ViewModelFactoryContainer
 import com.timhome.core.common.FeatureScope
 import com.timhome.device.ui.buyModule.BuyModule
 import com.timhome.device.ui.device.DeviceDetailModule
