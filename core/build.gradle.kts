@@ -8,13 +8,12 @@ android {
 }
 
 dependencies {
-    // Re-exported so downstream Dagger components (BaseComponent + feature
-    // components depending on CoreComponent) can resolve the modules/types
-    // referenced by CoreComponent. Right-sized away in a later phase.
-    api(project(":core:common"))
-    api(project(":core:network"))
-    api(project(":core:database"))
-    api(project(":core:datastore"))
+    // Referenced by CoreComponent/AppModule (NavigationDispatcher, NetworkModule,
+    // DatabaseModule + the exposed AppDatabase/DataStoreManager/ArduinoApi types).
+    implementation(project(":core:common"))
+    implementation(project(":core:network"))
+    implementation(project(":core:database"))
+    implementation(project(":core:datastore"))
 
     implementation(libs.firebase.analytics)
 
