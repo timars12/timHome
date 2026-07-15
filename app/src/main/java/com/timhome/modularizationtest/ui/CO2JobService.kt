@@ -13,8 +13,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.timhome.base.DaggerBaseComponent
 import com.timhome.core.coreComponent
-import com.timhome.core.data.AppDatabase
-import com.timhome.core.data.db.entity.CarbonDioxideEntity
+import com.timhome.core.database.AppDatabase
+import com.timhome.core.database.entity.CarbonDioxideEntity
 import com.timhome.core.data.repository.ArduinoRepository
 import com.timhome.core.common.CallStatus
 import com.timhome.core.common.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE

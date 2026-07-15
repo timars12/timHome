@@ -1,9 +1,10 @@
 package com.timhome.core.di
 
 import android.content.Context
-import com.timhome.core.data.AppDatabase
-import com.timhome.core.data.DataStoreManager
-import com.timhome.core.data.api.ArduinoApi
+import com.timhome.core.database.AppDatabase
+import com.timhome.core.datastore.DataStoreManager
+import com.timhome.core.network.api.ArduinoApi
+import com.timhome.core.network.di.NetworkModule
 import com.timhome.core.common.NavigationDispatcher
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.BindsInstance

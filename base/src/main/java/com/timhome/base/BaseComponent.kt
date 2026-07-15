@@ -1,7 +1,7 @@
 package com.timhome.base
 
-import com.timhome.core.data.AppDatabase
-import com.timhome.core.data.DataStoreManager
+import com.timhome.core.database.AppDatabase
+import com.timhome.core.datastore.DataStoreManager
 import com.timhome.core.data.repository.ArduinoRepository
 import com.timhome.core.di.CoreComponent
 import com.timhome.core.common.FeatureScope

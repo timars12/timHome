@@ -1,6 +1,6 @@
 package com.timhome.mock.api
 
-import com.timhome.core.data.api.response.ArduinoResponse
+import com.timhome.core.network.api.response.ArduinoResponse
 import javax.inject.Inject
 import kotlin.random.Random
 

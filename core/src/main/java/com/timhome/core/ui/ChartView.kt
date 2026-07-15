@@ -16,7 +16,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.timhome.core.data.db.entity.CarbonDioxideEntity
+import com.timhome.core.database.entity.CarbonDioxideEntity
 import com.timhome.core.ui.theme.BackgroundColorLight
 import com.timhome.core.ui.theme.IndicatorCO2Bed
 import com.timhome.core.ui.theme.SelectedTabBottomBar

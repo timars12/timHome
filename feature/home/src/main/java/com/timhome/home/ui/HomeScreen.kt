@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.timhome.core.data.db.entity.CarbonDioxideEntity
+import com.timhome.core.database.entity.CarbonDioxideEntity
 import com.timhome.core.ui.ChartView
 import com.timhome.core.ui.theme.CO2BackgroundColor
 import com.timhome.core.ui.theme.DataCreatedItemColor

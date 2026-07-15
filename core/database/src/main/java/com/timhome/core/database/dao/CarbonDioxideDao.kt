@@ -1,10 +1,10 @@
-package com.timhome.core.data.db.dao
+package com.timhome.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.timhome.core.data.db.entity.CarbonDioxideEntity
+import com.timhome.core.database.entity.CarbonDioxideEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

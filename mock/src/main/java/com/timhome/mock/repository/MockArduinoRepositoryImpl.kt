@@ -1,8 +1,8 @@
 package com.timhome.mock.repository
 
-import com.timhome.core.data.AppDatabase
-import com.timhome.core.data.api.response.ArduinoResponse
-import com.timhome.core.data.db.entity.CarbonDioxideEntity
+import com.timhome.core.database.AppDatabase
+import com.timhome.core.network.api.response.ArduinoResponse
+import com.timhome.core.database.entity.CarbonDioxideEntity
 import com.timhome.core.data.repository.ArduinoRepository
 import com.timhome.core.common.CallStatus
 import com.timhome.mock.api.Co2AndTemperatureMock

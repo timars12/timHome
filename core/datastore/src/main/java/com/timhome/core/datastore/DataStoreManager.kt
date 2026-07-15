@@ -1,4 +1,4 @@
-package com.timhome.core.data
+package com.timhome.core.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

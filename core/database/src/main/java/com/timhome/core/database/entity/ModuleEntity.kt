@@ -1,4 +1,4 @@
-package com.timhome.core.data.db.entity
+package com.timhome.core.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

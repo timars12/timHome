@@ -1,6 +1,6 @@
 package com.timhome.auth.data.api.response
 
-import com.timhome.core.data.db.entity.UserEntity
+import com.timhome.core.database.entity.UserEntity
 import com.squareup.moshi.Json
 
 internal data class LoginResponse(val code: Int, val user: UserResponse)

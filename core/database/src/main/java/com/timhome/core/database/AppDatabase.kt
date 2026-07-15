@@ -1,16 +1,16 @@
-package com.timhome.core.data
+package com.timhome.core.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.timhome.core.data.db.dao.CarbonDioxideDao
-import com.timhome.core.data.db.dao.DeviceDao
-import com.timhome.core.data.db.dao.UserDao
-import com.timhome.core.data.db.entity.CarbonDioxideEntity
-import com.timhome.core.data.db.entity.DeviceEntity
-import com.timhome.core.data.db.entity.ModuleEntity
-import com.timhome.core.data.db.entity.UserEntity
+import com.timhome.core.database.dao.CarbonDioxideDao
+import com.timhome.core.database.dao.DeviceDao
+import com.timhome.core.database.dao.UserDao
+import com.timhome.core.database.entity.CarbonDioxideEntity
+import com.timhome.core.database.entity.DeviceEntity
+import com.timhome.core.database.entity.ModuleEntity
+import com.timhome.core.database.entity.UserEntity
 import com.timhome.core.common.Constant.APP_DATABASE
 
 @Database(

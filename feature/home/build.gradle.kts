@@ -10,6 +10,8 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":core:common"))
+    implementation(project(":core:datastore"))
+    implementation(project(":core:database"))
     implementation(project(":base"))
     implementation(libs.firebase.analytics)
 }
