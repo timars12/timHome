@@ -1,4 +1,4 @@
-package com.timhome.core.utils.mvi
+package com.timhome.core.common.mvi
 
 import android.os.Parcelable
 import androidx.annotation.StringRes

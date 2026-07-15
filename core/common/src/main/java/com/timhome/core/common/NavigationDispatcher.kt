@@ -1,4 +1,4 @@
-package com.timhome.core.utils
+package com.timhome.core.common
 
 import androidx.navigation.NavController
 import kotlinx.coroutines.channels.Channel

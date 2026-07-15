@@ -1,4 +1,4 @@
-package com.timhome.core.di.scope
+package com.timhome.core.common
 
 import javax.inject.Scope
 

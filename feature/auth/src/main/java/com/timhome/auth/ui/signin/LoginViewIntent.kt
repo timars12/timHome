@@ -1,6 +1,6 @@
 package com.timhome.auth.ui.signin
 
-import com.timhome.core.utils.mvi.MviIntent
+import com.timhome.core.common.mvi.MviIntent
 
 sealed interface LoginViewIntent : MviIntent {
     data object ForgotPassword : LoginViewIntent

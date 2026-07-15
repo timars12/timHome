@@ -4,7 +4,7 @@ import android.content.Context
 import com.timhome.core.data.AppDatabase
 import com.timhome.core.data.DataStoreManager
 import com.timhome.core.data.api.ArduinoApi
-import com.timhome.core.utils.NavigationDispatcher
+import com.timhome.core.common.NavigationDispatcher
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.BindsInstance
 import dagger.Component

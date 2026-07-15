@@ -2,7 +2,7 @@ package com.timhome.core.data.repository
 
 import com.timhome.core.data.api.response.ArduinoResponse
 import com.timhome.core.data.db.entity.CarbonDioxideEntity
-import com.timhome.core.utils.CallStatus
+import com.timhome.core.common.CallStatus
 import kotlinx.coroutines.flow.Flow
 
 interface ArduinoRepository {

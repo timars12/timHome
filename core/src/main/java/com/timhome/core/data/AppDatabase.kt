@@ -11,7 +11,7 @@ import com.timhome.core.data.db.entity.CarbonDioxideEntity
 import com.timhome.core.data.db.entity.DeviceEntity
 import com.timhome.core.data.db.entity.ModuleEntity
 import com.timhome.core.data.db.entity.UserEntity
-import com.timhome.core.utils.Constant.APP_DATABASE
+import com.timhome.core.common.Constant.APP_DATABASE
 
 @Database(
     entities = [

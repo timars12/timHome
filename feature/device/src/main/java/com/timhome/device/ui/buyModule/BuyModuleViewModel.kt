@@ -3,7 +3,7 @@ package com.timhome.device.ui.buyModule
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.timhome.core.utils.NavigationDispatcher
+import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.utils.viewmodel.ViewModelAssistedFactory
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository

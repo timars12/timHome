@@ -1,6 +1,6 @@
 package com.timhome.device.data.mock
 
-import com.timhome.core.di.scope.FeatureScope
+import com.timhome.core.common.FeatureScope
 import com.timhome.device.data.model.Device
 import com.timhome.device.data.model.ModuleModel
 import kotlinx.coroutines.flow.Flow

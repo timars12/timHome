@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
 import com.timhome.auth.data.AuthorizationRepositoryImpl
 import com.timhome.core.data.models.FieldText
-import com.timhome.core.utils.mvi.ErrorType
-import com.timhome.core.utils.mvi.MviError
+import com.timhome.core.common.mvi.ErrorType
+import com.timhome.core.common.mvi.MviError
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.coEvery
 import io.mockk.coVerify

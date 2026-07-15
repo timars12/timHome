@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.timhome.core.ui.theme.BackgroundColor
 import com.timhome.core.ui.theme.cornerRoundedShapes
-import com.timhome.core.utils.OnClick
+import com.timhome.core.common.OnClick
 import com.timhome.device.R
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.models.DeviceModel

@@ -16,9 +16,9 @@ import com.timhome.core.coreComponent
 import com.timhome.core.data.AppDatabase
 import com.timhome.core.data.db.entity.CarbonDioxideEntity
 import com.timhome.core.data.repository.ArduinoRepository
-import com.timhome.core.utils.CallStatus
-import com.timhome.core.utils.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
-import com.timhome.core.utils.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
+import com.timhome.core.common.CallStatus
+import com.timhome.core.common.Constant.INDICATOR_CO2_ACCEPTABLE_VALUE
+import com.timhome.core.common.Constant.INDICATOR_CO2_LOW_DANGER_LEVEL
 import com.timhome.modularizationtest.R
 import com.timhome.modularizationtest.di.DaggerAppComponent
 import kotlinx.coroutines.CoroutineScope

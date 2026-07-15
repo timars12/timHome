@@ -1,4 +1,4 @@
-package com.timhome.core.utils
+package com.timhome.core.common
 
 inline val CharSequence?.isEmail: Boolean get() = isMatch(REGEX_EMAIL)
 

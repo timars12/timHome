@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.timhome.core.ui.theme.CO2BackgroundColor
 import com.timhome.core.ui.theme.TextColorCO2
 import com.timhome.core.ui.theme.cornerRoundedShapes
-import com.timhome.core.utils.OnClick
+import com.timhome.core.common.OnClick
 import com.timhome.device.R
 
 private const val STROKE_WIDTH = 4f

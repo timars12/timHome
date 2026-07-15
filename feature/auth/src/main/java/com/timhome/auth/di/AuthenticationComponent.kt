@@ -3,7 +3,7 @@ package com.timhome.auth.di
 import com.timhome.auth.ui.signin.di.SignInModule
 import com.timhome.core.di.CoreComponent
 import com.timhome.core.di.ViewModelFactoryContainer
-import com.timhome.core.di.scope.FeatureScope
+import com.timhome.core.common.FeatureScope
 import dagger.Component
 
 @FeatureScope

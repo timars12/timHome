@@ -23,6 +23,7 @@ dependencyResolutionManagement {
 //rootProject.name = "ModularizationTest"
 include(":app")
 include(":core")
+include(":core:common")
 include(":benchmark")
 include(":mock")
 include(":base")

@@ -1,7 +1,7 @@
 package com.timhome.core.data.models
 
 import android.os.Parcelable
-import com.timhome.core.utils.mvi.MviError
+import com.timhome.core.common.mvi.MviError
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

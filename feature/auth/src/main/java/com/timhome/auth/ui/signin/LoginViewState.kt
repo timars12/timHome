@@ -2,8 +2,8 @@ package com.timhome.auth.ui.signin
 
 import android.os.Parcelable
 import com.timhome.core.data.models.FieldText
-import com.timhome.core.utils.mvi.MviError
-import com.timhome.core.utils.mvi.MviViewState
+import com.timhome.core.common.mvi.MviError
+import com.timhome.core.common.mvi.MviViewState
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
