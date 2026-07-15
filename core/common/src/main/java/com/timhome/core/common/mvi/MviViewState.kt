@@ -1,4 +1,5 @@
 package com.timhome.core.common.mvi
+// TODO(Task 05): dead MVI base parked here; remove when features move to MVVM.
 
 import android.os.Parcelable
 import androidx.annotation.StringRes
