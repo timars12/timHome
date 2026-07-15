@@ -3,7 +3,7 @@ package com.timhome.auth.ui.signin
 import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
 import com.timhome.auth.data.AuthorizationRepositoryImpl
-import com.timhome.core.data.models.FieldText
+import com.timhome.core.model.FieldText
 import com.timhome.core.common.mvi.ErrorType
 import com.timhome.core.common.mvi.MviError
 import com.google.firebase.analytics.FirebaseAnalytics

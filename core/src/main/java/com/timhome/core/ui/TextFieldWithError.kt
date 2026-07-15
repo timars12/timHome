@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.timhome.core.data.models.FieldText
+import com.timhome.core.model.FieldText
 import com.timhome.core.common.OnEnterText
 import com.timhome.core.common.mvi.ErrorType
 import com.timhome.core.common.mvi.MviError
@@ -55,15 +55,16 @@ fun TextFieldWithError(
                     unfocusedPlaceholderColor = MaterialTheme.colorScheme.onTertiary,
                 ),
         )
-        if (data.error != null) {
+        val error = data.error
+        if (error != null) {
             Text(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                 text =
-                    data.error.errorMessage
-                        ?: stringResource(id = data.error.errorRes!!),
+                    error.errorMessage
+                        ?: stringResource(id = error.errorRes!!),
                 color = MaterialTheme.colorScheme.error,
             )
         }
