@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.timhome.core.data.db.entity.CarbonDioxideEntity
+import com.timhome.core.database.entity.CarbonDioxideEntity
 import com.timhome.core.data.repository.ArduinoRepository
 import com.timhome.core.common.CallStatus
 import com.timhome.core.utils.viewmodel.ViewModelAssistedFactory

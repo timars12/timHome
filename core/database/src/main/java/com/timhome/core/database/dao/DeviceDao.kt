@@ -1,12 +1,12 @@
-package com.timhome.core.data.db.dao
+package com.timhome.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.timhome.core.data.db.entity.DeviceEntity
-import com.timhome.core.data.db.entity.ModuleEntity
+import com.timhome.core.database.entity.DeviceEntity
+import com.timhome.core.database.entity.ModuleEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

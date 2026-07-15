@@ -4,7 +4,7 @@ import com.timhome.auth.data.api.AuthApi
 import com.timhome.auth.data.api.request.UserLoginRequest
 import com.timhome.auth.domain.IAuthorizationRepository
 import com.timhome.auth.ui.signin.LoginViewState
-import com.timhome.core.data.AppDatabase
+import com.timhome.core.database.AppDatabase
 import com.timhome.core.common.Constant.CODE_200
 import com.timhome.core.common.mvi.ErrorType
 import com.timhome.core.common.mvi.MviError

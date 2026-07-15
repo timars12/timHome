@@ -1,7 +1,7 @@
 package com.timhome.device.data.repository
 
 import androidx.room.Transaction
-import com.timhome.core.data.AppDatabase
+import com.timhome.core.database.AppDatabase
 import com.timhome.device.data.mappers.DeviceMapper
 import com.timhome.device.data.mock.GenerateDate
 import com.timhome.device.data.model.Device

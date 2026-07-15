@@ -1,6 +1,6 @@
-package com.timhome.core.di
+package com.timhome.core.network.di
 
-import com.timhome.core.data.api.ArduinoApi
+import com.timhome.core.network.api.ArduinoApi
 import dagger.Module
 import dagger.Provides
 import java.util.concurrent.TimeUnit

@@ -1,7 +1,7 @@
 package com.timhome.core.di
 
 import android.content.Context
-import com.timhome.core.data.AppDatabase
+import com.timhome.core.database.AppDatabase
 import com.timhome.core.common.NavigationDispatcher
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics

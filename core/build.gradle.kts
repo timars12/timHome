@@ -13,8 +13,14 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:model"))
+    // Re-exported so downstream Dagger components (BaseComponent + feature
+    // components depending on CoreComponent) can resolve the modules/types
+    // referenced by CoreComponent. Right-sized away in a later phase.
+    api(project(":core:common"))
+    api(project(":core:datastore"))
+    api(project(":core:database"))
+    api(project(":core:network"))
+    api(project(":core:model"))
 
     implementation(platform(libs.androidx.compose.bom))
 

@@ -1,7 +1,7 @@
 package com.timhome.device.data.mappers
 
-import com.timhome.core.data.db.entity.DeviceEntity
-import com.timhome.core.data.db.entity.ModuleEntity
+import com.timhome.core.database.entity.DeviceEntity
+import com.timhome.core.database.entity.ModuleEntity
 import com.timhome.core.common.FeatureScope
 import com.timhome.device.R
 import com.timhome.device.data.model.Device

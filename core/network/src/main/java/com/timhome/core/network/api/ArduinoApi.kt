@@ -1,6 +1,6 @@
-package com.timhome.core.data.api
+package com.timhome.core.network.api
 
-import com.timhome.core.data.api.response.ArduinoResponse
+import com.timhome.core.network.api.response.ArduinoResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Url

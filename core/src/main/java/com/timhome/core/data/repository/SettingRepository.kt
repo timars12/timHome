@@ -1,6 +1,6 @@
 package com.timhome.core.data.repository
 
-import com.timhome.core.data.DataStoreManager
+import com.timhome.core.datastore.DataStoreManager
 import javax.inject.Inject
 
 class SettingRepository
