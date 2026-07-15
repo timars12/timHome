@@ -21,7 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.designsystem.theme.cornerRoundedShapes
-import com.timhome.core.utils.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.ViewModelFactory
 import com.timhome.device.ui.device.composables.LazyColumnWithParallax
 
 @Composable

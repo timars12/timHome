@@ -38,7 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.timhome.core.designsystem.theme.AuthTabSectionBackgroundColor
 import com.timhome.core.designsystem.theme.HomeTheme
-import com.timhome.core.utils.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.ViewModelFactory
 import com.timhome.device.R
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.ui.buyModule.composables.OrderInfo

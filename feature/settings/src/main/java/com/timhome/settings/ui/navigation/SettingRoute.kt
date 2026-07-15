@@ -5,7 +5,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.timhome.core.ModularizationApplication
-import com.timhome.core.di.ViewModelFactoryContainer
+import com.timhome.core.ui.di.ViewModelFactoryContainer
 import com.timhome.settings.di.DaggerSettingComponent
 import com.timhome.settings.ui.SettingScreen
 

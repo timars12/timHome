@@ -2,8 +2,8 @@ package com.timhome.auth.ui.signin.di
 
 import androidx.lifecycle.ViewModel
 import com.timhome.auth.ui.signin.SignInViewModel
-import com.timhome.core.utils.viewmodel.ViewModelAssistedFactory
-import com.timhome.core.utils.viewmodel.ViewModelKey
+import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
+import com.timhome.core.ui.viewmodel.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

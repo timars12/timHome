@@ -28,7 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.designsystem.theme.TextFieldBackgroundColor
-import com.timhome.core.utils.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.ViewModelFactory
 import com.timhome.settings.R
 import com.timhome.settings.ui.composables.SwitchWithText
 
