@@ -1,14 +1,9 @@
 plugins {
     id("timHome.android.library")
     id("timHome.quality.convention.plugin")
-    alias(libs.plugins.compose.compiler)
-    id("kotlin-parcelize")
 }
 
 android {
-    buildFeatures {
-        compose = true
-    }
     namespace = "com.timhome.core"
 }
 
@@ -17,26 +12,14 @@ dependencies {
     // components depending on CoreComponent) can resolve the modules/types
     // referenced by CoreComponent. Right-sized away in a later phase.
     api(project(":core:common"))
-    api(project(":core:datastore"))
-    api(project(":core:database"))
     api(project(":core:network"))
-    api(project(":core:model"))
+    api(project(":core:database"))
+    api(project(":core:datastore"))
 
-    implementation(platform(libs.androidx.compose.bom))
-
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging)
-
-    implementation(libs.bundles.compose)
-
-    implementation(libs.datastore)
     implementation(libs.firebase.analytics)
-    implementation(libs.firebase.perf)
 
-    // for testing process death
+    // ModularizationApplication process-death / leak tooling.
     debugImplementation(libs.venom)
-    debugImplementation(libs.androidx.ui.tooling)
     releaseImplementation(libs.venom.no.op)
-
     debugImplementation(libs.leakcanary)
 }
