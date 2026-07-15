@@ -2,6 +2,7 @@ package com.timhome.core.di
 
 import android.content.Context
 import com.timhome.core.database.AppDatabase
+import com.timhome.core.database.di.DatabaseModule
 import com.timhome.core.datastore.DataStoreManager
 import com.timhome.core.network.api.ArduinoApi
 import com.timhome.core.network.di.NetworkModule
@@ -14,7 +15,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
 @Singleton
-@Component(modules = [NetworkModule::class, AppModule::class])
+@Component(modules = [NetworkModule::class, DatabaseModule::class, AppModule::class])
 interface CoreComponent {
     val retrofit: Retrofit
     val okHttpClient: OkHttpClient
