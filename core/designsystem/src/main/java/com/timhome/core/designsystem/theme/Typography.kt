@@ -1,4 +1,4 @@
-package com.timhome.core.ui.theme
+package com.timhome.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color

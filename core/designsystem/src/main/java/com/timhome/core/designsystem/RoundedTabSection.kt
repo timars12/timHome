@@ -1,4 +1,4 @@
-package com.timhome.core.ui
+package com.timhome.core.designsystem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.Interaction
@@ -16,9 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.timhome.core.ui.theme.AuthTabSectionBackgroundColor
-import com.timhome.core.ui.theme.BackgroundTabColor
-import com.timhome.core.ui.theme.cornerRoundedShapes
+import com.timhome.core.designsystem.theme.AuthTabSectionBackgroundColor
+import com.timhome.core.designsystem.theme.BackgroundTabColor
+import com.timhome.core.designsystem.theme.cornerRoundedShapes
 import com.timhome.core.common.OnEnterText
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf

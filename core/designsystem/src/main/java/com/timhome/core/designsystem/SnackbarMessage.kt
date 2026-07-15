@@ -1,4 +1,4 @@
-package com.timhome.core.ui
+package com.timhome.core.designsystem
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Snackbar

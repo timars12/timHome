@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberAsyncImagePainter
-import com.timhome.core.ui.theme.Black
-import com.timhome.core.ui.theme.DataCreatedItemColor
-import com.timhome.core.ui.theme.PriceColor
+import com.timhome.core.designsystem.theme.Black
+import com.timhome.core.designsystem.theme.DataCreatedItemColor
+import com.timhome.core.designsystem.theme.PriceColor
 import com.timhome.core.common.OnClick
 import com.timhome.device.domain.models.DeviceModel
 

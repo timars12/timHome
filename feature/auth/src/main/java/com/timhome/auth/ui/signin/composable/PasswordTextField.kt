@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.timhome.auth.R
 import com.timhome.core.model.FieldText
-import com.timhome.core.ui.TextFieldWithError
+import com.timhome.core.designsystem.TextFieldWithError
 import com.timhome.core.common.OnClick
 import com.timhome.core.common.OnEnterText
 

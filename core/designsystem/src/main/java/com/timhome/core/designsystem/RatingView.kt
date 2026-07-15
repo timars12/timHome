@@ -1,4 +1,4 @@
-package com.timhome.core.ui
+package com.timhome.core.designsystem
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing

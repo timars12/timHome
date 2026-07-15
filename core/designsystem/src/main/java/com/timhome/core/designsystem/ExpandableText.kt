@@ -1,4 +1,4 @@
-package com.timhome.core.ui
+package com.timhome.core.designsystem
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
@@ -14,8 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextLayoutResult
-import com.timhome.core.ui.theme.Black
-import com.timhome.core.ui.theme.IndicatorCO2Danger
+import com.timhome.core.designsystem.theme.Black
+import com.timhome.core.designsystem.theme.IndicatorCO2Danger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -19,8 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.timhome.core.ui.theme.BackgroundColor
-import com.timhome.core.ui.theme.LightBlack
+import com.timhome.core.designsystem.theme.BackgroundColor
+import com.timhome.core.designsystem.theme.LightBlack
 
 internal typealias CalculateTextSize = () -> TextUnit
 

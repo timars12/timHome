@@ -39,9 +39,9 @@ import com.timhome.auth.R
 import com.timhome.auth.ui.signin.composable.AuthTabSection
 import com.timhome.auth.ui.signin.composable.EmailTextField
 import com.timhome.auth.ui.signin.composable.PasswordTextField
-import com.timhome.core.ui.SnackbarMessage
-import com.timhome.core.ui.theme.AuthTabSectionBackgroundColor
-import com.timhome.core.ui.theme.HomeTheme
+import com.timhome.core.designsystem.SnackbarMessage
+import com.timhome.core.designsystem.theme.AuthTabSectionBackgroundColor
+import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.common.mvi.ErrorType
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
