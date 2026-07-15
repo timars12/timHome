@@ -1,4 +1,4 @@
-package com.timhome.core.ui.theme
+package com.timhome.core.designsystem.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

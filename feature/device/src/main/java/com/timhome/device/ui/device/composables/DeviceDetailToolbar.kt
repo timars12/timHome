@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.timhome.core.R
-import com.timhome.core.ui.theme.AuthTabSectionBackgroundColor
+import com.timhome.core.designsystem.R
+import com.timhome.core.designsystem.theme.AuthTabSectionBackgroundColor
 import com.timhome.core.common.OnClick
 
 @Composable

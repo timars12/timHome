@@ -24,8 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.timhome.core.ui.theme.BackgroundColor
-import com.timhome.core.ui.theme.cornerRoundedShapes
+import com.timhome.core.designsystem.theme.BackgroundColor
+import com.timhome.core.designsystem.theme.cornerRoundedShapes
 import com.timhome.core.common.OnClick
 import com.timhome.device.R
 import com.timhome.device.data.model.ModuleModel

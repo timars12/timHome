@@ -1,4 +1,4 @@
-package com.timhome.core.ui
+package com.timhome.core.designsystem
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column

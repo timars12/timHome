@@ -27,7 +27,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.timhome.core.ui.theme.LightBlack
+import com.timhome.core.designsystem.theme.LightBlack
 import com.timhome.device.ui.buyModule.BUY_SECTION_FRACTION
 import com.timhome.device.R
 import java.math.BigDecimal

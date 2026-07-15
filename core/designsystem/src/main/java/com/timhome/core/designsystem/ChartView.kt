@@ -1,4 +1,4 @@
-package com.timhome.core.ui
+package com.timhome.core.designsystem
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
@@ -17,12 +17,12 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.timhome.core.database.entity.CarbonDioxideEntity
-import com.timhome.core.ui.theme.BackgroundColorLight
-import com.timhome.core.ui.theme.IndicatorCO2Bed
-import com.timhome.core.ui.theme.SelectedTabBottomBar
-import com.timhome.core.ui.theme.Typography
-import com.timhome.core.ui.theme.chartAxisTextStyle
-import com.timhome.core.ui.theme.chartValueTextStyle
+import com.timhome.core.designsystem.theme.BackgroundColorLight
+import com.timhome.core.designsystem.theme.IndicatorCO2Bed
+import com.timhome.core.designsystem.theme.SelectedTabBottomBar
+import com.timhome.core.designsystem.theme.Typography
+import com.timhome.core.designsystem.theme.chartAxisTextStyle
+import com.timhome.core.designsystem.theme.chartValueTextStyle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

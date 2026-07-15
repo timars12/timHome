@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
-import com.timhome.core.ui.LinkText
-import com.timhome.core.ui.theme.cornerRoundedShapes
+import com.timhome.core.designsystem.LinkText
+import com.timhome.core.designsystem.theme.cornerRoundedShapes
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.ui.listDevice.composables.DeviceBuyBorder
 

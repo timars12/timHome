@@ -33,9 +33,9 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.timhome.core.ui.theme.CO2BackgroundColor
-import com.timhome.core.ui.theme.TextColorCO2
-import com.timhome.core.ui.theme.cornerRoundedShapes
+import com.timhome.core.designsystem.theme.CO2BackgroundColor
+import com.timhome.core.designsystem.theme.TextColorCO2
+import com.timhome.core.designsystem.theme.cornerRoundedShapes
 import com.timhome.core.common.OnClick
 import com.timhome.device.R
 

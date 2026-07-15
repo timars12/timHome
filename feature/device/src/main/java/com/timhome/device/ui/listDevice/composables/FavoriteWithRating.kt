@@ -18,9 +18,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.timhome.core.R
-import com.timhome.core.ui.RatingView
-import com.timhome.core.ui.theme.Black
+import com.timhome.core.designsystem.R
+import com.timhome.core.designsystem.RatingView
+import com.timhome.core.designsystem.theme.Black
 
 private const val DIVIDER_FOR_RATING = 10f
 

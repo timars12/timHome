@@ -1,4 +1,4 @@
-package com.timhome.core.ui
+package com.timhome.core.designsystem
 
 import android.content.Context
 import android.content.Intent
@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.timhome.core.ui.theme.LinkTextColor
+import com.timhome.core.designsystem.theme.LinkTextColor
 
 @Composable
 fun LinkText(text: String) {
