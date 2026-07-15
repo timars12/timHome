@@ -24,6 +24,7 @@ dependencyResolutionManagement {
 include(":app")
 include(":core")
 include(":core:common")
+include(":core:model")
 include(":benchmark")
 include(":mock")
 include(":base")

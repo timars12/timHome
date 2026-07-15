@@ -13,7 +13,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.timhome.core.data.models.FieldText
+import com.timhome.core.model.FieldText
 import com.timhome.core.ui.TextFieldWithError
 import com.timhome.core.common.OnEnterText
 import com.timhome.core.common.mvi.ErrorType

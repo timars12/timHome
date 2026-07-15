@@ -1,4 +1,4 @@
-package com.timhome.core.data.models
+package com.timhome.core.model
 
 import android.os.Parcelable
 import com.timhome.core.common.mvi.MviError
