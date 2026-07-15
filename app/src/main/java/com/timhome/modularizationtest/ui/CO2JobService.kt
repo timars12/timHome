@@ -137,7 +137,7 @@ class CO2JobService : JobService() {
             NotificationCompat.Builder(this, channelId)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(com.timhome.core.R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
