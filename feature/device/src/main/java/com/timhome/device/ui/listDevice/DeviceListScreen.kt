@@ -26,7 +26,8 @@ internal fun DeviceListScreen(
     viewModel: DeviceListViewModel = viewModel(factory = abstractFactory.get()),
 ) {
     HomeTheme {
-        val deviceList by viewModel.deviceList.collectAsStateWithLifecycle()
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
+        val deviceList = state.devices
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().testTag("device_list"),

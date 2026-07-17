@@ -11,12 +11,21 @@ import com.timhome.device.ui.listDevice.SELECTED_DEVICE_ID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+
+internal data class BuyModuleUiState(
+    val totalPrice: BigDecimal = BigDecimal.ZERO,
+    val modules: ImmutableList<ModuleModel> = persistentListOf(),
+)
 
 internal class BuyModuleViewModel
     @AssistedInject
@@ -25,8 +34,8 @@ internal class BuyModuleViewModel
         private val navigationDispatcher: NavigationDispatcher,
         private val repository: IDeviceRepository,
     ) : ViewModel() {
-        val totalPrice = MutableStateFlow<BigDecimal>(BigDecimal.ZERO)
-        val modules = MutableStateFlow(listOf<ModuleModel>().toImmutableList())
+        private val _uiState = MutableStateFlow(BuyModuleUiState())
+        val uiState: StateFlow<BuyModuleUiState> = _uiState.asStateFlow()
 
         init {
             val deviceId = savedStateHandle.get<Int>(SELECTED_DEVICE_ID)
@@ -38,13 +47,11 @@ internal class BuyModuleViewModel
 
             viewModelScope.launch {
                 selectedModules.stateIn(viewModelScope).collect { list ->
-                    totalPrice.update {
-                        list.sumOf {
-                            BigDecimal(it.price.replace("$", ""))
-                        }
-                    }
-                    modules.update {
-                        list.toImmutableList()
+                    _uiState.update {
+                        it.copy(
+                            totalPrice = list.sumOf { module -> BigDecimal(module.price.replace("$", "")) },
+                            modules = list.toImmutableList(),
+                        )
                     }
                 }
             }

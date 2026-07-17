@@ -57,8 +57,9 @@ internal fun BuyModuleScreen(
     viewModel: BuyModuleViewModel = viewModel(factory = abstractFactory.get()),
 ) {
     HomeTheme {
-        val totalPrice by viewModel.totalPrice.collectAsStateWithLifecycle()
-        val modules by viewModel.modules.collectAsStateWithLifecycle()
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
+        val totalPrice = state.totalPrice
+        val modules = state.modules
 
         Scaffold(
             topBar = {
