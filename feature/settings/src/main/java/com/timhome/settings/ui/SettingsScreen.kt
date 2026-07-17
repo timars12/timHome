@@ -40,8 +40,9 @@ internal fun SettingScreen(
     viewModel: SettingViewModel = viewModel(factory = abstractFactory.get()),
 ) {
     HomeTheme {
-        val ipAddress by viewModel.ipAddress.collectAsStateWithLifecycle()
-        val isUseMock by viewModel.isUseMock.collectAsStateWithLifecycle()
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
+        val ipAddress = state.ipAddress
+        val isUseMock = state.isUseMock
 
         Column(
             modifier =
