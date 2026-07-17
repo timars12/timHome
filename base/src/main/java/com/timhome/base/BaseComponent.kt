@@ -6,8 +6,11 @@ import com.timhome.core.data.repository.ArduinoRepository
 import com.timhome.core.di.CoreComponent
 import com.timhome.core.common.FeatureScope
 import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.di.DefaultDispatcher
+import com.timhome.core.common.di.IoDispatcher
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Component
+import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
@@ -21,6 +24,12 @@ interface BaseComponent {
     val arduinoRepository: ArduinoRepository
     val firebaseAnalytics: FirebaseAnalytics
     val navigationDispatcher: NavigationDispatcher
+
+    @IoDispatcher
+    fun ioDispatcher(): CoroutineDispatcher
+
+    @DefaultDispatcher
+    fun defaultDispatcher(): CoroutineDispatcher
 
     @Component.Factory
     interface Factory {
