@@ -49,10 +49,11 @@ internal fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = abstractFactory),
 ) {
     HomeTheme {
-        val temperatureInside by viewModel.temperatureInside.collectAsStateWithLifecycle()
-        val temperatureOutside by viewModel.temperatureOutside.collectAsStateWithLifecycle()
-        val co2 by viewModel.co2.collectAsStateWithLifecycle()
-        val chartCO2 by viewModel.measureCO2Levels.collectAsStateWithLifecycle()
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
+        val temperatureInside = state.temperatureInside
+        val temperatureOutside = state.temperatureOutside
+        val co2 = state.co2
+        val chartCO2 = state.measureCO2Levels
         val isAnimated = remember { mutableStateOf(false) }
 
         DisposableEffect(key1 = Lifecycle.State.RESUMED) {
