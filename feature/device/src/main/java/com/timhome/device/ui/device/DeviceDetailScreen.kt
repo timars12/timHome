@@ -30,8 +30,9 @@ internal fun DeviceDetailScreen(
     viewModel: DeviceDetailViewModel = viewModel(factory = abstractFactory.get()),
 ) {
     HomeTheme {
-        val device by viewModel.device.collectAsStateWithLifecycle()
-        val modules by viewModel.module.collectAsStateWithLifecycle()
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
+        val device = state.device
+        val modules = state.modules
 
         if (device == null) return@HomeTheme
         Scaffold(
