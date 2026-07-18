@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.timhome.core.common.NavigationDispatcher
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
-import com.timhome.device.ui.listDevice.SELECTED_DEVICE_ID
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -19,8 +18,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import java.math.BigDecimal
 
+@RunWith(RobolectricTestRunner::class)
 class BuyModuleViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val repository: IDeviceRepository = mockk(relaxed = true)
@@ -34,6 +36,7 @@ class BuyModuleViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
+        every { repository.getSelectedModuleToBuyByDeviceId(any()) } returns flowOf(emptyList())
     }
 
     @After
@@ -41,14 +44,13 @@ class BuyModuleViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(deviceId: Int?): BuyModuleViewModel {
-        val handle = SavedStateHandle()
-        if (deviceId != null) handle[SELECTED_DEVICE_ID] = deviceId
+    private fun createViewModel(deviceId: Int = 1): BuyModuleViewModel {
+        val handle = SavedStateHandle(mapOf("deviceId" to deviceId))
         return BuyModuleViewModel(handle, navigationDispatcher, repository)
     }
 
     @Test
-    fun `sums prices and exposes modules for a device`() =
+    fun `sums prices and exposes modules for the routed device`() =
         runTest {
             every { repository.getSelectedModuleToBuyByDeviceId(7) } returns flowOf(listOf(moduleA, moduleB))
 
@@ -60,23 +62,9 @@ class BuyModuleViewModelTest {
         }
 
     @Test
-    fun `falls back to global selection when no deviceId`() =
-        runTest {
-            every { repository.getSelectedModuleToBuy() } returns flowOf(listOf(moduleA))
-
-            val viewModel = createViewModel(deviceId = null)
-            dispatcher.scheduler.advanceUntilIdle()
-
-            assertEquals(BigDecimal(3), viewModel.uiState.value.totalPrice)
-            assertEquals(listOf(moduleA), viewModel.uiState.value.modules)
-        }
-
-    @Test
     fun `removeModule delegates to repository`() =
         runTest {
-            every { repository.getSelectedModuleToBuy() } returns flowOf(emptyList())
-
-            val viewModel = createViewModel(deviceId = null)
+            val viewModel = createViewModel()
 
             viewModel.removeModule(moduleA)
             dispatcher.scheduler.advanceUntilIdle()
@@ -87,9 +75,7 @@ class BuyModuleViewModelTest {
     @Test
     fun `goBack emits a navigation command`() =
         runTest {
-            every { repository.getSelectedModuleToBuy() } returns flowOf(emptyList())
-
-            val viewModel = createViewModel(deviceId = null)
+            val viewModel = createViewModel()
 
             viewModel.goBack()
 

@@ -62,6 +62,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -73,6 +74,10 @@ import com.timhome.base.DaggerBaseComponent
 import com.timhome.core.coreComponent
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.navigation.Devices
+import com.timhome.core.common.navigation.Home
+import com.timhome.core.common.navigation.Setting
+import com.timhome.core.common.navigation.SignIn
 import com.timhome.device.ui.navigation.deviceRoute
 import com.timhome.home.ui.navigation.homeRoute
 import com.timhome.settings.ui.navigation.settingRoute
@@ -121,8 +126,7 @@ class MainActivity : ComponentActivity() {
             DisposableEffect(Unit) {
                 val destinationChangedListener =
                     NavController.OnDestinationChangedListener { _, destination, _ ->
-                        isShowBottomMenu.value =
-                            !destination.route.isNullOrEmpty() && destination.route != "signInScreen"
+                        isShowBottomMenu.value = !destination.hasRoute<SignIn>()
                     }
                 navController.addOnDestinationChangedListener(destinationChangedListener)
                 onDispose {
@@ -162,7 +166,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         modifier = Modifier.padding(padding),
                         navController = navController,
-                        startDestination = "signInScreen",
+                        startDestination = SignIn,
                     ) {
                         signInRoute()
                         homeRoute()
@@ -256,19 +260,19 @@ fun BottomNavigationBar(navController: NavHostController) {
         remember {
             listOf(
                 BottomNavigationMenuItem(
-                    destinationName = "homeScreen",
+                    route = Home,
                     label = R.string.home,
                     icon = R.drawable.ic_home_bottom_menu,
                     testTag = "bnv_home",
                 ),
                 BottomNavigationMenuItem(
-                    destinationName = "devicesScreen",
+                    route = Devices,
                     label = R.string.device,
                     icon = R.drawable.ic_device_bottom_menu,
                     testTag = "bnv_device",
                 ),
                 BottomNavigationMenuItem(
-                    destinationName = "settingScreen",
+                    route = Setting,
                     label = R.string.setting,
                     icon = R.drawable.ic_setting_bottom_menu,
                     testTag = "bnv_setting",
@@ -289,11 +293,11 @@ fun BottomNavigationBar(navController: NavHostController) {
         menuItems.forEach { item ->
             NavigationBarItem(
                 modifier = Modifier.testTag(item.testTag),
-                selected = currentDestination?.hierarchy?.any { it.route == item.destinationName } == true,
+                selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
                 onClick = {
-                    if (currentDestination?.route == item.destinationName) return@NavigationBarItem
+                    if (currentDestination?.hasRoute(item.route::class) == true) return@NavigationBarItem
 
-                    navController.navigate(item.destinationName) {
+                    navController.navigate(item.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }

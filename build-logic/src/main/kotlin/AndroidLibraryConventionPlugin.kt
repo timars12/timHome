@@ -15,6 +15,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
+                apply("org.jetbrains.kotlin.plugin.serialization")
                 apply("com.google.devtools.ksp")
                 apply("jacoco")
             }
@@ -38,6 +39,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findBundle("room").get())
                 add("implementation", libs.findLibrary("dagger").get())
                 add("implementation", libs.findLibrary("androidx-navigation-compose").get())
+                add("implementation", libs.findLibrary("kotlinx-serialization-json").get())
                 add("androidTestImplementation", kotlin("test"))
                 add("testImplementation", kotlin("test"))
                 add("testImplementation", libs.findLibrary("mockk").get())

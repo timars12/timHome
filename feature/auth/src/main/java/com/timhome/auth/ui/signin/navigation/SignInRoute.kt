@@ -9,13 +9,13 @@ import com.timhome.auth.di.DaggerAuthenticationComponent
 import com.timhome.auth.ui.signin.SignInScreen
 import com.timhome.auth.ui.signin.SignInViewModel
 import com.timhome.core.ModularizationApplication
+import com.timhome.core.common.navigation.SignIn
 import com.timhome.core.ui.di.ViewModelFactoryContainer
 import com.timhome.core.ui.slideIntoContainer
 import com.timhome.core.ui.slideOutOfContainer
 
 fun NavGraphBuilder.signInRoute() {
-    composable(
-        route = "signInScreen",
+    composable<SignIn>(
         enterTransition = { slideIntoContainer() },
         exitTransition = { slideOutOfContainer() },
     ) {

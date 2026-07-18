@@ -3,13 +3,15 @@ package com.timhome.device.ui.device
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.di.IoDispatcher
+import com.timhome.core.common.navigation.BuyModule
+import com.timhome.core.common.navigation.DeviceDetail
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
 import com.timhome.device.domain.models.DeviceModel
-import com.timhome.device.ui.listDevice.SELECTED_DEVICE_ID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -37,16 +39,14 @@ internal class DeviceDetailViewModel
         private val repository: IDeviceRepository,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
-        private val deviceId: Int? = savedStateHandle.get<Int>(SELECTED_DEVICE_ID)
+        private val deviceId: Int = savedStateHandle.toRoute<DeviceDetail>().deviceId
 
         private val _uiState = MutableStateFlow(DeviceDetailUiState())
         val uiState: StateFlow<DeviceDetailUiState> = _uiState.asStateFlow()
 
         init {
-            if (deviceId != null) {
-                viewModelScope.launch(ioDispatcher) {
-                    getSelectedDeviceById(deviceId)
-                }
+            viewModelScope.launch(ioDispatcher) {
+                getSelectedDeviceById(deviceId)
             }
         }
 
@@ -65,7 +65,7 @@ internal class DeviceDetailViewModel
 
         fun buyModules() {
             navigationDispatcher.emit {
-                it.navigate("buyModuleScreen/$deviceId")
+                it.navigate(BuyModule(deviceId))
             }
         }
 

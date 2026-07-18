@@ -92,6 +92,7 @@ dependencies {
     ksp(libs.dagger.compiler)
 
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     baselineProfile(project(":benchmark"))
 }
