@@ -18,8 +18,6 @@ import com.timhome.core.ui.viewmodel.ViewModelFactory
 import com.timhome.device.domain.models.DeviceModel
 import com.timhome.device.ui.listDevice.composables.DeviceListItem
 
-const val SELECTED_DEVICE_ID = "deviceId"
-
 @Composable
 internal fun DeviceListScreen(
     abstractFactory: dagger.Lazy<ViewModelFactory>,

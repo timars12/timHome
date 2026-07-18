@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.di.IoDispatcher
+import com.timhome.core.common.navigation.DeviceDetail
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.timhome.device.data.repository.DeviceRepository
 import com.timhome.device.domain.models.DeviceModel
@@ -54,7 +55,7 @@ internal class DeviceListViewModel
 
         fun navigateToDetailScreen(device: DeviceModel) {
             navigationDispatcher.emit {
-                it.navigate("deviceDetailScreen/${device.id}")
+                it.navigate(DeviceDetail(device.id))
             }
         }
 

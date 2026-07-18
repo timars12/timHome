@@ -5,7 +5,6 @@ import com.timhome.core.common.NavigationDispatcher
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
 import com.timhome.device.domain.models.DeviceModel
-import com.timhome.device.ui.listDevice.SELECTED_DEVICE_ID
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -18,10 +17,12 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class DeviceDetailViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val repository: IDeviceRepository = mockk(relaxed = true)
@@ -35,6 +36,8 @@ class DeviceDetailViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
+        coEvery { repository.getDeviceById(any()) } returns device
+        coEvery { repository.getModuleToBuyByDeviceId(any()) } returns flowOf(listOf(module))
     }
 
     @After
@@ -42,50 +45,34 @@ class DeviceDetailViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(deviceId: Int? = 1): DeviceDetailViewModel {
-        val handle = SavedStateHandle()
-        if (deviceId != null) handle[SELECTED_DEVICE_ID] = deviceId
+    private fun createViewModel(deviceId: Int = 1): DeviceDetailViewModel {
+        val handle = SavedStateHandle(mapOf("deviceId" to deviceId))
         return DeviceDetailViewModel(handle, navigationDispatcher, repository, dispatcher)
     }
 
     @Test
     fun `initial state is empty before loading`() =
         runTest {
-            coEvery { repository.getDeviceById(1) } returns device
-            coEvery { repository.getModuleToBuyByDeviceId(1) } returns flowOf(listOf(module))
-
             val viewModel = createViewModel()
 
             assertEquals(DeviceDetailUiState(), viewModel.uiState.value)
         }
 
     @Test
-    fun `loads device and modules when deviceId is present`() =
+    fun `loads device and modules for the routed deviceId`() =
         runTest {
-            coEvery { repository.getDeviceById(1) } returns device
-            coEvery { repository.getModuleToBuyByDeviceId(1) } returns flowOf(listOf(module))
-
-            val viewModel = createViewModel()
+            val viewModel = createViewModel(deviceId = 1)
             dispatcher.scheduler.advanceUntilIdle()
 
             assertEquals(device, viewModel.uiState.value.device)
             assertEquals(listOf(module), viewModel.uiState.value.modules)
-        }
-
-    @Test
-    fun `does not load anything when deviceId is absent`() =
-        runTest {
-            val viewModel = createViewModel(deviceId = null)
-            dispatcher.scheduler.advanceUntilIdle()
-
-            assertNull(viewModel.uiState.value.device)
-            coVerify(exactly = 0) { repository.getDeviceById(any()) }
+            coVerify { repository.getDeviceById(1) }
         }
 
     @Test
     fun `selectModuleToBuy delegates to repository`() =
         runTest {
-            val viewModel = createViewModel(deviceId = null)
+            val viewModel = createViewModel()
 
             viewModel.selectModuleToBuy(module)
             dispatcher.scheduler.advanceUntilIdle()
@@ -96,8 +83,6 @@ class DeviceDetailViewModelTest {
     @Test
     fun `buyModules emits a navigation command`() =
         runTest {
-            coEvery { repository.getDeviceById(1) } returns device
-            coEvery { repository.getModuleToBuyByDeviceId(1) } returns flowOf(listOf(module))
             val viewModel = createViewModel()
 
             viewModel.buyModules()
@@ -108,7 +93,7 @@ class DeviceDetailViewModelTest {
     @Test
     fun `goBack emits a navigation command`() =
         runTest {
-            val viewModel = createViewModel(deviceId = null)
+            val viewModel = createViewModel()
 
             viewModel.goBack()
 

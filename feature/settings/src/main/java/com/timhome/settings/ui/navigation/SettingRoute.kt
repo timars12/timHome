@@ -5,13 +5,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.timhome.core.ModularizationApplication
+import com.timhome.core.common.navigation.Setting
 import com.timhome.core.ui.di.ViewModelFactoryContainer
 import com.timhome.settings.di.DaggerSettingComponent
 import com.timhome.settings.ui.SettingScreen
 
 fun NavGraphBuilder.settingRoute() {
-    composable(
-        route = "settingScreen",
+    composable<Setting>(
         enterTransition = { com.timhome.core.ui.scaleIntoContainer() },
         exitTransition = { com.timhome.core.ui.scaleOutOfContainer() },
     ) {

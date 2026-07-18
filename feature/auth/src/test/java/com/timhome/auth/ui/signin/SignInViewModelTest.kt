@@ -73,7 +73,7 @@ class SignInViewModelTest {
 
             val navController = mockk<NavController>(relaxed = true)
             command!!.invoke(navController)
-            verify { navController.navigate(any<String>(), any<NavOptionsBuilder.() -> Unit>()) }
+            verify { navController.navigate(any<Any>(), any<NavOptionsBuilder.() -> Unit>()) }
 
             job.cancel()
         }

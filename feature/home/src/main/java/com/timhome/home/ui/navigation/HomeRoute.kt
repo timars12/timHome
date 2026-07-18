@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.timhome.base.DaggerBaseComponent
 import com.timhome.core.ModularizationApplication
+import com.timhome.core.common.navigation.Home
 import com.timhome.core.ui.di.ViewModelFactoryContainer
 import com.timhome.core.ui.slideIntoContainer
 import com.timhome.core.ui.slideOutOfContainer
@@ -13,8 +14,7 @@ import com.timhome.home.di.DaggerHomeComponent
 import com.timhome.home.ui.HomeScreen
 
 fun NavGraphBuilder.homeRoute() {
-    composable(
-        route = "homeScreen",
+    composable<Home>(
         enterTransition = { slideIntoContainer() },
         exitTransition = { slideOutOfContainer() },
     ) {

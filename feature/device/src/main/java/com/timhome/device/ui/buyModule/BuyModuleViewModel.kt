@@ -3,11 +3,12 @@ package com.timhome.device.ui.buyModule
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.navigation.BuyModule
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
-import com.timhome.device.ui.listDevice.SELECTED_DEVICE_ID
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -38,12 +39,8 @@ internal class BuyModuleViewModel
         val uiState: StateFlow<BuyModuleUiState> = _uiState.asStateFlow()
 
         init {
-            val deviceId = savedStateHandle.get<Int>(SELECTED_DEVICE_ID)
-            val selectedModules =
-                when {
-                    deviceId != null -> repository.getSelectedModuleToBuyByDeviceId(deviceId)
-                    else -> repository.getSelectedModuleToBuy()
-                }
+            val deviceId = savedStateHandle.toRoute<BuyModule>().deviceId
+            val selectedModules = repository.getSelectedModuleToBuyByDeviceId(deviceId)
 
             viewModelScope.launch {
                 selectedModules.stateIn(viewModelScope).collect { list ->

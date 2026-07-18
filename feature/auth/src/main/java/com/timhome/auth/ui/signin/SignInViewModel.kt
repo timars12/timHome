@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.timhome.auth.domain.IAuthorizationRepository
 import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.mvi.MviViewModel
+import com.timhome.core.common.navigation.Home
+import com.timhome.core.common.navigation.SignIn
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.assisted.Assisted
@@ -47,8 +49,8 @@ internal class SignInViewModel
 
         private fun goHomeScreen() {
             navigationDispatcher.emit {
-                it.navigate("homeScreen") {
-                    popUpTo("signInScreen") { inclusive = true }
+                it.navigate(Home) {
+                    popUpTo<SignIn> { inclusive = true }
                 }
             }
         }
