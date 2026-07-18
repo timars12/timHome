@@ -11,27 +11,27 @@ plugins {
 
 android {
 
-    // TODO https://developer.android.com/studio/publish/app-signing#secure-shared-keystore
     signingConfigs {
         create("release") {
-            keyAlias = "key0admin"
-            keyPassword = ""
-            storePassword = ""
-            // TODO: Use a secure way to store the keystore path and credentials
-            // https://developer.android.com/studio/publish/app-signing#secure-shared-keystore
-            storeFile =
-                if (file("adminTimApp.jks").exists()) {
-                    file("adminTimApp.jks")
-                } else {
-                    null
-                }
+            // Credentials come from environment variables in CI (the CD workflow decodes
+            // them from GitHub Secrets). Locally they fall back to the shared
+            // adminTimApp.jks so manual release builds keep working. When neither the env
+            // keystore nor the local file exists, storeFile stays null and the release
+            // build type falls back to debug signing (see buildTypes.release below).
+            val keystoreFile = file(System.getenv("KEYSTORE_FILE") ?: "adminTimApp.jks")
+            storeFile = keystoreFile.takeIf { it.exists() }
+            keyAlias = System.getenv("KEY_ALIAS") ?: "key0admin"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
         }
     }
 
     defaultConfig {
         applicationId = "com.timhome.modularizationtest"
 
-        versionCode = 18
+        // Overridable from CI via -PversionCode=… so every release gets a unique,
+        // ever-increasing code (Play rejects duplicates); defaults to 18 for local builds.
+        versionCode = (project.findProperty("versionCode") as String?)?.toInt() ?: 18
         versionName = "2.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
