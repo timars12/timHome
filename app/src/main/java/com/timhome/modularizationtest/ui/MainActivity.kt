@@ -69,18 +69,25 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import java.util.concurrent.TimeUnit
 import com.timhome.auth.ui.signin.navigation.signInRoute
 import com.timhome.base.DaggerBaseComponent
 import com.timhome.core.coreComponent
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.WateringRecheckScheduler
 import com.timhome.core.common.navigation.Devices
 import com.timhome.core.common.navigation.Home
 import com.timhome.core.common.navigation.Setting
 import com.timhome.core.common.navigation.SignIn
+import com.timhome.core.common.navigation.SoilMoisture
 import com.timhome.device.ui.navigation.deviceRoute
 import com.timhome.home.ui.navigation.homeRoute
 import com.timhome.settings.ui.navigation.settingRoute
+import com.timhome.soilmoisture.ui.navigation.soilMoistureRoute
 import com.timhome.modularizationtest.R
 import com.timhome.modularizationtest.data.BottomNavigationMenuItem
 import com.timhome.modularizationtest.di.DaggerAppComponent
@@ -88,6 +95,9 @@ import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val SOIL_MOISTURE_POLL_INTERVAL_MINUTES = 30L
+private const val SOIL_MOISTURE_WORK_NAME = "soil_moisture_poll"
 
 class MainActivity : ComponentActivity() {
     @Inject
@@ -105,6 +115,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WateringRecheckScheduler.instance = AppWateringRecheckScheduler(applicationContext)
 
         setContent {
             val navController: NavHostController = rememberNavController()
@@ -172,6 +183,7 @@ class MainActivity : ComponentActivity() {
                         homeRoute()
                         deviceRoute()
                         settingRoute()
+                        soilMoistureRoute()
                     }
                 }
                 if (shouldShowDialog.value) {
@@ -221,6 +233,18 @@ class MainActivity : ComponentActivity() {
         // Register the channel with the system
         NotificationManagerCompat.from(this).createNotificationChannel(channel)
         startCo2JobService()
+        startSoilMoistureWorker()
+    }
+
+    private fun startSoilMoistureWorker() {
+        val request =
+            PeriodicWorkRequestBuilder<SoilMoistureWorker>(SOIL_MOISTURE_POLL_INTERVAL_MINUTES, TimeUnit.MINUTES)
+                .build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            SOIL_MOISTURE_WORK_NAME,
+            ExistingPeriodicWorkPolicy.KEEP,
+            request,
+        )
     }
 
     @Composable
@@ -276,6 +300,12 @@ fun BottomNavigationBar(navController: NavHostController) {
                     label = R.string.setting,
                     icon = R.drawable.ic_setting_bottom_menu,
                     testTag = "bnv_setting",
+                ),
+                BottomNavigationMenuItem(
+                    route = SoilMoisture,
+                    label = R.string.soil_moisture,
+                    icon = R.drawable.ic_soil_moisture_bottom_menu,
+                    testTag = "bnv_soil_moisture",
                 ),
             )
         }

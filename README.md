@@ -16,6 +16,12 @@ This project can be used to improve indoor air quality. High level of carbon dio
 
 <a href="https://play.google.com/store/apps/details?id=com.timhome.modularizationtest" rel="nofollow"><img src="https://camo.githubusercontent.com/bf5c3d9991f2bc80b5500c332c9b00244661511938bb78626a30f06664d495fb/68747470733a2f2f706c61792e676f6f676c652e636f6d2f696e746c2f656e5f75732f6261646765732f7374617469632f696d616765732f6261646765732f656e5f62616467655f7765625f67656e657269632e706e67" height="70" data-canonical-src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" style="max-width: 100%;"></a>
 
+# Features
+- Indoor/outdoor temperature and CO2 monitoring with ventilation alerts.
+- **Soil moisture** — per-pot moisture across rooms from ESP32 watering stations, a manual
+  *water now* button, and a push when a watering doesn't raise moisture (empty tank).
+  See [docs/soil-moisture.md](docs/soil-moisture.md).
+
 # Continuous integration & pull requests
 - Template already has a few GitHub Actions workflows included. Please run commands in the IDE terminal, or setup a github hook. Commands are: `./gradlew ktlintFormat`, `./gradlew detektDebug`.
 

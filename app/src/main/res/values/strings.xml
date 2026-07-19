@@ -6,6 +6,7 @@
     <string name="home">Home</string>
     <string name="device">Device</string>
     <string name="setting">Setting</string>
+    <string name="soil_moisture">Ґрунт</string>
     <string name="title_settings">Setting</string>
     <string name="title_device">Device</string>
     <string name="notification_channel_id">TimHomeNotificationChannel</string>
@@ -20,4 +21,6 @@
     <string name="co2_level_returned_to_normal">The CO2 level has returned to normal</string>
     <string name="co2_level_returned_to_normal_long_text">The CO2 level has returned to normal and is now at %1$d. You can close the window and continue your work.</string>
     <string name="title_mock">Mock request</string>
+    <string name="watering_ineffective_title">Полив не подіяв</string>
+    <string name="watering_ineffective_text">«%1$s» (%2$s): вологість не зросла — перевірте бак з водою</string>
 </resources>

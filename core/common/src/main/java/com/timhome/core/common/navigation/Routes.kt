@@ -26,3 +26,12 @@ data class BuyModule(val deviceId: Int)
 
 @Serializable
 data object Setting
+
+@Serializable
+data object SoilMoisture
+
+@Serializable
+data class RoomEdit(val roomId: Int? = null)
+
+@Serializable
+data class PotEdit(val roomId: Int, val potId: Int? = null)

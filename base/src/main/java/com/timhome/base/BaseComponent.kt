@@ -3,6 +3,7 @@ package com.timhome.base
 import com.timhome.core.database.AppDatabase
 import com.timhome.core.datastore.DataStoreManager
 import com.timhome.core.data.repository.ArduinoRepository
+import com.timhome.core.data.repository.SoilMoistureRepository
 import com.timhome.core.di.CoreComponent
 import com.timhome.core.common.FeatureScope
 import com.timhome.core.common.NavigationDispatcher
@@ -22,6 +23,7 @@ interface BaseComponent {
     val appDatabase: AppDatabase
     val dataStore: DataStoreManager
     val arduinoRepository: ArduinoRepository
+    val soilMoistureRepository: SoilMoistureRepository
     val firebaseAnalytics: FirebaseAnalytics
     val navigationDispatcher: NavigationDispatcher
 

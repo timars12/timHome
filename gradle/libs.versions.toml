@@ -40,6 +40,7 @@ androidxTestRules = "1.6.1"
 androidxTestRunner = "1.6.2"
 androidxNavigation = "2.9.3"
 kotlinxSerialization = "1.9.0"
+androidxWork = "2.10.1"
 
 [libraries]
 accompanist-insets = { group = "com.google.accompanist", name = "accompanist-insets", version.ref = "accompanist" }
@@ -71,6 +72,7 @@ androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiaut
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp_version" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp_version" }
