@@ -5,6 +5,7 @@ import com.timhome.core.database.AppDatabase
 import com.timhome.core.database.di.DatabaseModule
 import com.timhome.core.datastore.DataStoreManager
 import com.timhome.core.network.api.ArduinoApi
+import com.timhome.core.network.api.SoilMoistureApi
 import com.timhome.core.network.di.NetworkModule
 import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.di.DefaultDispatcher
@@ -25,6 +26,7 @@ interface CoreComponent {
     val appDatabase: AppDatabase
     val dataStore: DataStoreManager
     val arduinoApi: ArduinoApi
+    val soilMoistureApi: SoilMoistureApi
     val firebaseAnalytics: FirebaseAnalytics
     val navigationDispatcher: NavigationDispatcher
 
