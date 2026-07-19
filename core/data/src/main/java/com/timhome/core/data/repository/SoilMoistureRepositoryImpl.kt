@@ -2,7 +2,6 @@ package com.timhome.core.data.repository
 
 import com.timhome.core.common.CallStatus
 import com.timhome.core.common.Constant.CODE_200
-import com.timhome.core.common.Constant.SOIL_MOISTURE_MIN_EFFECTIVE_INCREASE_PERCENT
 import com.timhome.core.database.AppDatabase
 import com.timhome.core.database.entity.PotEntity
 import com.timhome.core.database.entity.RoomClimateReadingEntity
@@ -10,7 +9,7 @@ import com.timhome.core.database.entity.RoomEntity
 import com.timhome.core.database.entity.SoilMoistureReadingEntity
 import com.timhome.core.database.entity.WateringEventEntity
 import com.timhome.core.network.api.SoilMoistureApi
-import com.timhome.core.network.api.response.PotReading
+import com.timhome.core.network.api.response.SoilMoistureStatusResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.io.IOException
@@ -63,13 +62,8 @@ class SoilMoistureRepositoryImpl
             return try {
                 val response = soilMoistureApi.waterPot("http://${room.ipAddress}/pump?id=${pot.channel}")
                 if (response.isSuccessful) {
-                    val lastMoisture = database.soilMoistureReadingDao().getLatestForPotOnce(pot.id)?.moisturePercent ?: 0
                     database.wateringEventDao().insert(
-                        WateringEventEntity(
-                            potId = pot.id,
-                            wateredAt = LocalDateTime.now().toString(),
-                            moistureBeforeWatering = lastMoisture,
-                        ),
+                        WateringEventEntity(potId = pot.id, wateredAt = LocalDateTime.now().toString()),
                     )
                     CallStatus.Success(Unit)
                 } else {
@@ -82,46 +76,57 @@ class SoilMoistureRepositoryImpl
 
         override suspend fun pollAllRooms(): List<Pair<PotEntity, RoomEntity>> {
             val rooms = database.roomDao().getAll().first()
-            rooms.forEach { room -> pollRoom(room) }
-            return resolveWateringEffectiveness()
+            val toNotify = mutableListOf<Pair<PotEntity, RoomEntity>>()
+            rooms.forEach { room -> toNotify += pollRoom(room) }
+            return toNotify
         }
 
-        private suspend fun pollRoom(room: RoomEntity) {
+        private suspend fun pollRoom(room: RoomEntity): List<Pair<PotEntity, RoomEntity>> {
             if (room.ipAddress.isBlank()) {
                 markRoomStatus(room, isSuccessful = false, error = "IP-адреса не налаштована")
-                return
+                return emptyList()
             }
-            try {
+            return try {
                 val response = soilMoistureApi.getData("http://${room.ipAddress}/data")
                 val body = response.body()
                 if (response.code() == CODE_200 && body != null) {
                     markRoomStatus(room, isSuccessful = true, error = null)
-                    saveReadings(room, body.temp, body.hum, body.pots)
+                    saveReadingsAndDetectAlarms(room, body)
                 } else {
                     markRoomStatus(room, isSuccessful = false, error = "HTTP ${response.code()}")
+                    emptyList()
                 }
             } catch (exception: Exception) {
                 markRoomStatus(room, isSuccessful = false, error = exception.toConnectionErrorMessage())
+                emptyList()
             }
         }
 
-        private suspend fun saveReadings(
+        /**
+         * Persists the latest readings and mirrors the ESP32's per-pot alarm flag onto
+         * [PotEntity.alarmActive]. Returns the pots whose alarm just flipped false -> true,
+         * so the caller notifies exactly once per failure instead of on every poll.
+         */
+        private suspend fun saveReadingsAndDetectAlarms(
             room: RoomEntity,
-            temperature: Double,
-            humidity: Double,
-            pots: List<PotReading>,
-        ) {
-            val now = LocalDateTime.now().toString()
+            body: SoilMoistureStatusResponse,
+        ): List<Pair<PotEntity, RoomEntity>> {
             database.roomClimateReadingDao().insert(
-                RoomClimateReadingEntity(roomId = room.id, temperature = temperature, humidity = humidity, timestamp = now),
+                RoomClimateReadingEntity(roomId = room.id, temperature = body.temp, humidity = body.hum),
             )
             val roomPots = database.potDao().getForRoom(room.id).first()
-            pots.forEach { reading ->
+            val toNotify = mutableListOf<Pair<PotEntity, RoomEntity>>()
+            body.pots.forEach { reading ->
                 val pot = roomPots.firstOrNull { it.channel == reading.id } ?: return@forEach
                 database.soilMoistureReadingDao().insert(
-                    SoilMoistureReadingEntity(potId = pot.id, moisturePercent = reading.pct, timestamp = now),
+                    SoilMoistureReadingEntity(potId = pot.id, moisturePercent = reading.pct),
                 )
+                if (reading.waterAlarm != pot.alarmActive) {
+                    database.potDao().update(pot.copy(alarmActive = reading.waterAlarm))
+                    if (reading.waterAlarm) toNotify.add(pot to room)
+                }
             }
+            return toNotify
         }
 
         private suspend fun markRoomStatus(
@@ -131,26 +136,6 @@ class SoilMoistureRepositoryImpl
         ) {
             if (room.lastPollSuccessful == isSuccessful && room.lastPollError == error) return
             database.roomDao().update(room.copy(lastPollSuccessful = isSuccessful, lastPollError = error))
-        }
-
-        private suspend fun resolveWateringEffectiveness(): List<Pair<PotEntity, RoomEntity>> {
-            val unresolved = database.wateringEventDao().getUnresolved()
-            val ineffective = mutableListOf<Pair<PotEntity, RoomEntity>>()
-            unresolved.forEach { event ->
-                val pot = database.potDao().getById(event.potId) ?: return@forEach
-                val latestReading = database.soilMoistureReadingDao().getLatestForPotOnce(pot.id) ?: return@forEach
-                if (latestReading.timestamp <= event.wateredAt) return@forEach
-
-                val increase = latestReading.moisturePercent - event.moistureBeforeWatering
-                val isEffective = increase >= SOIL_MOISTURE_MIN_EFFECTIVE_INCREASE_PERCENT
-                database.wateringEventDao().update(event.copy(isEffective = isEffective))
-
-                if (!isEffective) {
-                    val room = database.roomDao().getById(pot.roomId)
-                    if (room != null) ineffective.add(pot to room)
-                }
-            }
-            return ineffective
         }
 
         private fun Exception.toConnectionErrorMessage(): String =

@@ -1,7 +1,6 @@
 package com.timhome.mock.repository
 
 import com.timhome.core.common.CallStatus
-import com.timhome.core.common.Constant.SOIL_MOISTURE_MIN_EFFECTIVE_INCREASE_PERCENT
 import com.timhome.core.data.repository.SoilMoistureRepository
 import com.timhome.core.database.AppDatabase
 import com.timhome.core.database.entity.PotEntity
@@ -14,11 +13,8 @@ import kotlinx.coroutines.flow.first
 import java.time.LocalDateTime
 import javax.inject.Inject
 
-private const val MOCK_DEFAULT_MOISTURE = 50
-private const val MOCK_MIN_MOISTURE = 0
-private const val MOCK_MAX_MOISTURE = 100
-private const val MOCK_MOISTURE_DRIFT_MIN = -5
-private const val MOCK_MOISTURE_DRIFT_MAX = 2
+private const val MOCK_MIN_MOISTURE = 30
+private const val MOCK_MAX_MOISTURE = 70
 private const val MOCK_TEMPERATURE_MIN = 20.0
 private const val MOCK_TEMPERATURE_MAX = 27.0
 private const val MOCK_HUMIDITY_MIN = 40.0
@@ -26,8 +22,9 @@ private const val MOCK_HUMIDITY_MAX = 65.0
 
 /**
  * Simulates the ESP32 REST layer so the soil-moisture screen has data to show when the
- * app is running in mock mode. Room/pot management is still backed by the real database,
- * mirroring [com.timhome.core.data.repository.SoilMoistureRepositoryImpl].
+ * app runs in mock mode. Room/pot management is backed by the real database, mirroring
+ * [com.timhome.core.data.repository.SoilMoistureRepositoryImpl]. The mock never raises a
+ * watering alarm (that verdict is produced on the device).
  */
 open class MockSoilMoistureRepositoryImpl
     @Inject
@@ -66,19 +63,13 @@ open class MockSoilMoistureRepositoryImpl
             pot: PotEntity,
             room: RoomEntity,
         ): CallStatus<Unit> {
-            val lastMoisture = database.soilMoistureReadingDao().getLatestForPotOnce(pot.id)?.moisturePercent ?: MOCK_DEFAULT_MOISTURE
             database.wateringEventDao().insert(
-                WateringEventEntity(
-                    potId = pot.id,
-                    wateredAt = LocalDateTime.now().toString(),
-                    moistureBeforeWatering = lastMoisture,
-                ),
+                WateringEventEntity(potId = pot.id, wateredAt = LocalDateTime.now().toString()),
             )
             return CallStatus.Success(Unit)
         }
 
         override suspend fun pollAllRooms(): List<Pair<PotEntity, RoomEntity>> {
-            val now = LocalDateTime.now().toString()
             val rooms = database.roomDao().getAll().first()
             rooms.forEach { room ->
                 if (!room.lastPollSuccessful || room.lastPollError != null) {
@@ -89,40 +80,18 @@ open class MockSoilMoistureRepositoryImpl
                         roomId = room.id,
                         temperature = randomDouble(MOCK_TEMPERATURE_MIN, MOCK_TEMPERATURE_MAX),
                         humidity = randomDouble(MOCK_HUMIDITY_MIN, MOCK_HUMIDITY_MAX),
-                        timestamp = now,
                     ),
                 )
                 database.potDao().getForRoom(room.id).first().forEach { pot ->
-                    val previous = database.soilMoistureReadingDao().getLatestForPotOnce(pot.id)?.moisturePercent ?: MOCK_DEFAULT_MOISTURE
-                    val drifted =
-                        (previous + randomInt(MOCK_MOISTURE_DRIFT_MIN, MOCK_MOISTURE_DRIFT_MAX))
-                            .coerceIn(MOCK_MIN_MOISTURE, MOCK_MAX_MOISTURE)
                     database.soilMoistureReadingDao().insert(
-                        SoilMoistureReadingEntity(potId = pot.id, moisturePercent = drifted, timestamp = now),
+                        SoilMoistureReadingEntity(
+                            potId = pot.id,
+                            moisturePercent = randomInt(MOCK_MIN_MOISTURE, MOCK_MAX_MOISTURE),
+                        ),
                     )
                 }
             }
-            return resolveWateringEffectiveness()
-        }
-
-        private suspend fun resolveWateringEffectiveness(): List<Pair<PotEntity, RoomEntity>> {
-            val unresolved = database.wateringEventDao().getUnresolved()
-            val ineffective = mutableListOf<Pair<PotEntity, RoomEntity>>()
-            unresolved.forEach { event ->
-                val pot = database.potDao().getById(event.potId) ?: return@forEach
-                val latestReading = database.soilMoistureReadingDao().getLatestForPotOnce(pot.id) ?: return@forEach
-                if (latestReading.timestamp <= event.wateredAt) return@forEach
-
-                val increase = latestReading.moisturePercent - event.moistureBeforeWatering
-                val isEffective = increase >= SOIL_MOISTURE_MIN_EFFECTIVE_INCREASE_PERCENT
-                database.wateringEventDao().update(event.copy(isEffective = isEffective))
-
-                if (!isEffective) {
-                    val room = database.roomDao().getById(pot.roomId)
-                    if (room != null) ineffective.add(pot to room)
-                }
-            }
-            return ineffective
+            return emptyList()
         }
 
         private fun randomDouble(

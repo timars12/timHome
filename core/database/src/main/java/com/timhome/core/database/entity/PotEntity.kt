@@ -10,4 +10,7 @@ data class PotEntity(
     val roomId: Int,
     val name: String,
     val channel: Int,
+    // Mirrors the ESP32's per-pot "watering ineffective" alarm from the last poll.
+    // Used to render the warning and to notify only on the false -> true transition.
+    val alarmActive: Boolean = false,
 )

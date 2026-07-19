@@ -9,5 +9,4 @@ data class SoilMoistureReadingEntity(
     val id: Int = 0,
     val potId: Int,
     val moisturePercent: Int,
-    val timestamp: String,
 )

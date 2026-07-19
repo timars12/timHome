@@ -14,10 +14,4 @@ interface SoilMoistureReadingDao {
 
     @Query("select * from soil_moisture_reading where potId = :potId ORDER BY id DESC LIMIT 1")
     fun getLatestForPot(potId: Int): Flow<SoilMoistureReadingEntity?>
-
-    @Query("select * from soil_moisture_reading where potId = :potId ORDER BY id DESC LIMIT 1")
-    suspend fun getLatestForPotOnce(potId: Int): SoilMoistureReadingEntity?
-
-    @Query("select * from soil_moisture_reading where potId = :potId ORDER BY id DESC limit 20")
-    fun getHistoryForPot(potId: Int): Flow<List<SoilMoistureReadingEntity>>
 }

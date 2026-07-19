@@ -37,7 +37,7 @@ class SoilMoistureListViewModelTest {
     private val firebaseAnalytics: FirebaseAnalytics = mockk(relaxed = true)
 
     private val room = RoomEntity(id = 1, name = "Кухня", ipAddress = "192.168.1.50")
-    private val pot = PotEntity(id = 10, roomId = 1, name = "Фікус", channel = 0)
+    private val pot = PotEntity(id = 10, roomId = 1, name = "Фікус", channel = 0, alarmActive = true)
 
     @Before
     fun setUp() {
@@ -58,11 +58,11 @@ class SoilMoistureListViewModelTest {
             every { repository.getRooms() } returns flowOf(listOf(room))
             every { repository.getPots() } returns flowOf(listOf(pot))
             every { repository.getLatestClimate(room.id) } returns
-                flowOf(RoomClimateReadingEntity(roomId = room.id, temperature = 23.5, humidity = 48.0, timestamp = "t"))
+                flowOf(RoomClimateReadingEntity(roomId = room.id, temperature = 23.5, humidity = 48.0))
             every { repository.getLatestMoisture(pot.id) } returns
-                flowOf(SoilMoistureReadingEntity(potId = pot.id, moisturePercent = 42, timestamp = "t"))
+                flowOf(SoilMoistureReadingEntity(potId = pot.id, moisturePercent = 42))
             every { repository.getLatestWatering(pot.id) } returns
-                flowOf(WateringEventEntity(potId = pot.id, wateredAt = "t0", moistureBeforeWatering = 30, isEffective = true))
+                flowOf(WateringEventEntity(potId = pot.id, wateredAt = "t0"))
 
             val viewModel = createViewModel()
             dispatcher.scheduler.advanceUntilIdle()
@@ -75,7 +75,8 @@ class SoilMoistureListViewModelTest {
             assertEquals(true, roomState.isConnected)
             assertEquals(1, roomState.pots.size)
             assertEquals(42, roomState.pots.first().moisturePercent)
-            assertEquals(true, roomState.pots.first().lastWateringEffective)
+            // hasWaterAlarm mirrors PotEntity.alarmActive (true here)
+            assertEquals(true, roomState.pots.first().hasWaterAlarm)
             assertEquals(false, state.isLoading)
         }
 

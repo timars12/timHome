@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timhome.core.common.CallStatus
 import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.WateringRecheckScheduler
 import com.timhome.core.common.di.IoDispatcher
 import com.timhome.core.common.navigation.PotEdit
 import com.timhome.core.common.navigation.RoomEdit
@@ -53,7 +54,7 @@ internal data class PotUiModel(
     val name: String,
     val moisturePercent: Int?,
     val lastWateredAt: String?,
-    val lastWateringEffective: Boolean?,
+    val hasWaterAlarm: Boolean,
 )
 
 internal class SoilMoistureListViewModel
@@ -123,7 +124,7 @@ internal class SoilMoistureListViewModel
                             name = pot.name,
                             moisturePercent = moisture?.moisturePercent,
                             lastWateredAt = watering?.wateredAt,
-                            lastWateringEffective = watering?.isEffective,
+                            hasWaterAlarm = pot.alarmActive,
                         )
                     }
                 }
@@ -139,7 +140,7 @@ internal class SoilMoistureListViewModel
                         val message = result.error ?: "Не вдалося звʼязатися з ESP32"
                         _uiState.update { it.copy(snackbarMessage = message) }
                     }
-                    is CallStatus.Success -> Unit
+                    is CallStatus.Success -> WateringRecheckScheduler.instance.scheduleQuickRecheck()
                 }
             }
         }

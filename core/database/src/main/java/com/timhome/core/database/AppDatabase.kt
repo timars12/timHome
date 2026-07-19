@@ -35,7 +35,7 @@ import com.timhome.core.common.Constant.APP_DATABASE
         RoomClimateReadingEntity::class,
         WateringEventEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {

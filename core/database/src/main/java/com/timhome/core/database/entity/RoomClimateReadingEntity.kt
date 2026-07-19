@@ -10,5 +10,4 @@ data class RoomClimateReadingEntity(
     val roomId: Int,
     val temperature: Double,
     val humidity: Double,
-    val timestamp: String,
 )

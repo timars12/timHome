@@ -78,6 +78,7 @@ import com.timhome.base.DaggerBaseComponent
 import com.timhome.core.coreComponent
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.WateringRecheckScheduler
 import com.timhome.core.common.navigation.Devices
 import com.timhome.core.common.navigation.Home
 import com.timhome.core.common.navigation.Setting
@@ -114,6 +115,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WateringRecheckScheduler.instance = AppWateringRecheckScheduler(applicationContext)
 
         setContent {
             val navController: NavHostController = rememberNavController()

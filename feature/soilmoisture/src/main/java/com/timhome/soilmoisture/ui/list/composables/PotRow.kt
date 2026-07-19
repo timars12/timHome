@@ -69,7 +69,7 @@ internal fun PotRow(
                 Text(text = stringResource(R.string.soil_moisture_water_now))
             }
         }
-        if (pot.lastWateringEffective == false) {
+        if (pot.hasWaterAlarm) {
             Text(
                 text = stringResource(R.string.soil_moisture_watering_ineffective),
                 color = MaterialTheme.colorScheme.error,
