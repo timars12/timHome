@@ -1,5 +1,6 @@
 package com.timhome.soilmoisture.ui.list
 
+import androidx.compose.runtime.Immutable
 import androidx.core.os.bundleOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -38,6 +39,7 @@ internal data class SoilMoistureUiState(
     val snackbarMessage: String? = null,
 )
 
+@Immutable
 internal data class RoomUiModel(
     val id: Int,
     val name: String,
@@ -48,6 +50,7 @@ internal data class RoomUiModel(
     val pots: ImmutableList<PotUiModel>,
 )
 
+@Immutable
 internal data class PotUiModel(
     val id: Int,
     val roomId: Int,
