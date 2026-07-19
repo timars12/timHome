@@ -4,6 +4,7 @@ import com.timhome.base.BaseComponent
 import com.timhome.base.BaseScope
 import com.timhome.modularizationtest.ui.CO2JobService
 import com.timhome.modularizationtest.ui.MainActivity
+import com.timhome.modularizationtest.ui.SoilMoistureWorker
 import dagger.Component
 
 @BaseScope
@@ -17,4 +18,6 @@ internal interface AppComponent {
     fun inject(activity: MainActivity)
 
     fun inject(service: CO2JobService)
+
+    fun inject(worker: SoilMoistureWorker)
 }

@@ -82,6 +82,7 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:device"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:soilmoisture"))
     implementation(libs.bundles.lifecycle)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.room)
@@ -93,6 +94,7 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.work.runtime.ktx)
 
     baselineProfile(project(":benchmark"))
 }

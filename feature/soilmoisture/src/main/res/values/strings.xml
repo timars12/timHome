@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="soil_moisture_title">Вологість ґрунту</string>
+    <string name="soil_moisture_empty_title">Ще немає жодної кімнати</string>
+    <string name="soil_moisture_empty_subtitle">Додайте кімнату з ESP32, а потім вазонки в ній</string>
+    <string name="soil_moisture_add_room">Додати кімнату</string>
+    <string name="soil_moisture_add_pot">Додати вазонок</string>
+    <string name="soil_moisture_water_now">Полити</string>
+    <string name="soil_moisture_last_watered">Останній полив: %1$s</string>
+    <string name="soil_moisture_never_watered">Ще не поливали</string>
+    <string name="soil_moisture_watering_ineffective">Вода не подіяла — перевірте бак</string>
+    <string name="soil_moisture_no_connection">Немає зв\'язку з ESP32</string>
+    <string name="soil_moisture_no_pots">Немає вазонків</string>
+    <string name="soil_moisture_moisture_unknown">—</string>
+    <string name="soil_moisture_edit_room">Кімната</string>
+    <string name="soil_moisture_edit_pot">Вазонок</string>
+    <string name="room_name">Назва кімнати</string>
+    <string name="room_ip_address">IP-адреса ESP32</string>
+    <string name="pot_name">Назва вазонка</string>
+    <string name="pot_channel">Номер каналу</string>
+    <string name="save">Зберегти</string>
+    <string name="delete">Видалити</string>
+</resources>

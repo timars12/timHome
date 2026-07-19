@@ -1,6 +1,7 @@
 package com.timhome.core.network.di
 
 import com.timhome.core.network.api.ArduinoApi
+import com.timhome.core.network.api.SoilMoistureApi
 import dagger.Module
 import dagger.Provides
 import java.util.concurrent.TimeUnit
@@ -40,5 +41,11 @@ class NetworkModule {
     @Provides
     fun provideApi(retrofit: Retrofit): ArduinoApi {
         return retrofit.create(ArduinoApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSoilMoistureApi(retrofit: Retrofit): SoilMoistureApi {
+        return retrofit.create(SoilMoistureApi::class.java)
     }
 }
