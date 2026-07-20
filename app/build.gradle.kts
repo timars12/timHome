@@ -67,6 +67,12 @@ android {
     }
 
     namespace = "com.timhome.modularizationtest"
+
+    // CO2WorkerTest resolves strings via applicationContext.getString(), which needs the
+    // module's resources on the unit-test classpath. Scoped to :app on purpose — enabling it
+    // globally makes AAPT link unit-test resources for feature modules too, where Material
+    // theme attrs then fail to resolve.
+    testOptions { unitTests.isIncludeAndroidResources = true }
 }
 
 dependencies {
@@ -94,6 +100,15 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.work.runtime.ktx)
+
+    // The android.library convention plugin wires these into every library module; :app uses
+    // the android.application convention, so it needs them declared explicitly.
+    testImplementation(kotlin("test"))
+    testImplementation(libs.junit4)
+    testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.work.testing)
 
     baselineProfile(project(":benchmark"))
 }

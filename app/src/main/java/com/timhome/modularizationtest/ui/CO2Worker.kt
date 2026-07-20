@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -29,6 +30,7 @@ import com.timhome.modularizationtest.di.DaggerAppComponent
 import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.time.Clock
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -47,19 +49,30 @@ class CO2Worker(
     @Inject
     lateinit var database: AppDatabase
 
-    init {
+    /** Clock behind the night window; pinned in tests to make the hour deterministic. */
+    @VisibleForTesting
+    internal var clock: Clock = Clock.systemDefaultZone()
+
+    /**
+     * Resolves dependencies on first use rather than in `init` so the worker can be constructed
+     * in unit tests and handed fakes directly. WorkManager always calls [doWork] after
+     * construction, so production wiring is unchanged.
+     */
+    private fun injectIfNeeded() {
+        if (::arduinoRepository.isInitialized) return
         DaggerAppComponent
             .factory()
             .create(
                 baseComponent =
                     DaggerBaseComponent.factory()
-                        .create(ModularizationApplication.coreComponent(appContext)),
+                        .create(ModularizationApplication.coreComponent(applicationContext)),
             )
             .inject(this)
     }
 
     @AddTrace(name = "co2Worker", enabled = true)
     override suspend fun doWork(): Result {
+        injectIfNeeded()
         Log.d(TAG, "doWork() started (runAttempt=$runAttemptCount)")
         val result = getCO2()
         Log.d(TAG, "doWork() finished with result=$result")
@@ -124,7 +137,7 @@ class CO2Worker(
 
     private suspend fun saveToDataBase(co2: Int) {
         database.carbonDioxideDao().saveCO2LevelToDB(
-            CarbonDioxideEntity(co2Level = co2, date = LocalDateTime.now().toString()),
+            CarbonDioxideEntity(co2Level = co2, date = LocalDateTime.now(clock).toString()),
         )
     }
 
@@ -172,17 +185,23 @@ class CO2Worker(
         }
     }
 
-    private fun isNightPeriod(): Boolean {
-        val currentHour = LocalDateTime.now().hour
+    @VisibleForTesting
+    internal fun isNightPeriod(): Boolean {
+        val currentHour = LocalDateTime.now(clock).hour
         // Night = 22:00–08:00; notifications are suppressed during this window.
         return currentHour < END_NIGHT || currentHour >= START_NIGHT
     }
 
     companion object {
         private const val NOTIFICATION_ID = 1025
-        private const val WORK_NAME = "co2_periodic_work"
+
+        @VisibleForTesting
+        internal const val WORK_NAME = "co2_periodic_work"
         private const val REPEAT_INTERVAL_MINUTES = 15L
-        private var isDangerCO2LevelsInRoom = false
+
+        /** Sticky across runs so the "air is clean" push only follows a danger push. */
+        @VisibleForTesting
+        internal var isDangerCO2LevelsInRoom = false
 
         /**
          * Enqueues the periodic CO2 check. WorkManager persists this across reboots, so no
