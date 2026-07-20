@@ -2,7 +2,7 @@ package com.timhome.modularizationtest.di
 
 import com.timhome.base.BaseComponent
 import com.timhome.base.BaseScope
-import com.timhome.modularizationtest.ui.CO2JobService
+import com.timhome.modularizationtest.ui.CO2Worker
 import com.timhome.modularizationtest.ui.MainActivity
 import dagger.Component
 
@@ -16,5 +16,5 @@ internal interface AppComponent {
 
     fun inject(activity: MainActivity)
 
-    fun inject(service: CO2JobService)
+    fun inject(worker: CO2Worker)
 }

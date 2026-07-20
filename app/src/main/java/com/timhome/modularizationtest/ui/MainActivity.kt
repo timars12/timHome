@@ -1,12 +1,8 @@
 package com.timhome.modularizationtest.ui
 
 import android.Manifest
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -84,7 +80,6 @@ import com.timhome.settings.ui.navigation.settingRoute
 import com.timhome.modularizationtest.R
 import com.timhome.modularizationtest.data.BottomNavigationMenuItem
 import com.timhome.modularizationtest.di.DaggerAppComponent
-import com.google.firebase.perf.metrics.AddTrace
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -196,23 +191,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @AddTrace(name = "startCo2JobService", enabled = true)
-    private fun startCo2JobService() {
-        val jobId = 1 // Unique job ID
-        val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        val jobs = jobScheduler.allPendingJobs.singleOrNull { jobInfo -> jobInfo.id == jobId }
-
-        if (jobs == null) {
-            val jobInfo =
-                JobInfo.Builder(jobId, ComponentName(this, CO2JobService::class.java))
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // Requires a network connection
-                    .setPeriodic(AlarmManager.INTERVAL_FIFTEEN_MINUTES) // Sets the job to repeat every 5 minutes
-                    .build()
-
-            jobScheduler.schedule(jobInfo)
-        }
-    }
-
     private fun createNotificationChannel() {
         val channelId = getString(R.string.notification_channel_id)
         val name = getString(R.string.app_name)
@@ -220,7 +198,7 @@ class MainActivity : ComponentActivity() {
         val channel = NotificationChannel(channelId, name, importance)
         // Register the channel with the system
         NotificationManagerCompat.from(this).createNotificationChannel(channel)
-        startCo2JobService()
+        CO2Worker.enqueue(this)
     }
 
     @Composable
