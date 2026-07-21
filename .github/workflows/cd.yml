@@ -44,8 +44,9 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-        # github.run_number + 18 keeps the code above the current 18 and always increasing.
-        run: ./gradlew :app:bundleRelease -PversionCode=${{ github.run_number + 18 }}
+        # GITHUB_RUN_NUMBER + 18 keeps the code above the current 18 and always increasing.
+        # Arithmetic is done in the shell because GitHub Actions expressions have no '+' operator.
+        run: ./gradlew :app:bundleRelease -PversionCode=$((GITHUB_RUN_NUMBER + 18))
 
       - name: Publish to Google Play (internal track)
         uses: r0adkll/upload-google-play@v1
