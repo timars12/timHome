@@ -24,7 +24,17 @@ Sync Impact Report
 
 - The dependency direction is fixed: `:app` → `:feature:*` → `:core:ui` / `:core:designsystem`
   → `:core:data` → `:core:database` / `:core:network` / `:core:datastore` → `:core:model` /
-  `:core:common`. A lower layer MUST NOT depend on a higher one.
+  `:core:common`. A lower layer MUST NOT depend on a higher one. Skipping layers downward is
+  allowed.
+- The DI wiring modules sit between `:app`/`:feature:*` and the `:core:*` layers: `:core`
+  hosts the root `CoreComponent`, and `:base` hosts `BaseComponent` (it depends on `:core` and
+  `:mock`). Neither may depend on `:app` or a `:feature:*` module. Because Dagger
+  component-dependencies need the whole provision chain resolvable, every module that hosts a
+  component in that chain MUST depend on `:core:common`, `:core:network`, `:core:database`, and
+  `:core:datastore`, even if its own code does not import them.
+- `:mock` provides the mock-data mode and is consumed only by the DI wiring modules.
+  `:benchmark` is test-only (baseline profiles) and MUST NOT be an `implementation` dependency
+  of any module.
 - A `:feature:*` module MUST NOT depend on another `:feature:*` module. Cross-feature
   navigation goes through shared `@Serializable` routes in `:core:common`; shared data goes
   through `:core:data` repositories.
@@ -91,7 +101,8 @@ trusted when every branch is exercised deterministically.
 ### V. Reliable Background Work & User Trust
 
 - Periodic or deferrable background work MUST use WorkManager as unique work with an explicit
-  `ExistingWorkPolicy` and appropriate constraints (for example, `NetworkType.CONNECTED`).
+  `ExistingWorkPolicy` (one-time) or `ExistingPeriodicWorkPolicy` (periodic), and appropriate
+  constraints (for example, `NetworkType.CONNECTED`).
   `JobScheduler`, `AlarmManager` loops, and boot receivers are not used for this.
 - Transient failures (network or device unreachable) return `Result.retry()`. Permanent or
   "nothing to do" outcomes return `Result.success()` and never crash the worker.
@@ -157,4 +168,4 @@ or 3 a.m. alert breaks that promise just as much as a crash does.
   Existing code that violates a principle is fixed when touched. It does not block unrelated
   work.
 
-**Version**: 1.0.1 | **Ratified**: 2026-09-25 | **Last Amended**: 2026-09-25
+**Version**: 1.0.2 | **Ratified**: 2026-09-25 | **Last Amended**: 2026-10-08
