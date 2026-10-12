@@ -399,12 +399,12 @@ one abstract method:
   - delete the now-unused `feature/auth/…/signin/navigation/SignInRoute.kt`,
     `feature/home/…/ui/navigation/HomeRoute.kt`, `feature/device/…/ui/navigation/DeviceRoute.kt`
     and `feature/settings/…/ui/navigation/SettingRoute.kt`.
-- [ ] T029 Run `./gradlew assembleDebug testDebugUnitTest`. Smoke-test by hand: Sign In → Home
+- [X] T029 Run `./gradlew assembleDebug testDebugUnitTest`. Smoke-test by hand: Sign In → Home
   (through `ReplaceAll`), every tab is reachable from the bottom bar, and Devices → Device Detail
   → Buy Module → back → back works.
   *2026-10-13: build and unit tests green, and `NavigationHostTest` (Robolectric Compose, added in
   this phase) drives the same flow through the real `NavigationHost` with stub screens. The
-  on-device smoke test with the real screens is still open.*
+  on-device smoke test with the real screens was run by the developer the same day and passed.*
 
 **Checkpoint**: The app runs on Navigation 3 and every screen is reachable. The stories now add
 their rules.
