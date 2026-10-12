@@ -1,6 +1,7 @@
 package com.timhome.core.di
 
 import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.navigation.ChannelNavigator
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
@@ -13,6 +14,12 @@ class AppModule {
     @Singleton
     @Provides
     fun provideNavDispatcher(): NavigationDispatcher = NavigationDispatcher()
+
+    // There is deliberately no Navigator binding: screen logic gets a navigator scoped to its
+    // route from ViewModelFactory, so every command carries its origin.
+    @Singleton
+    @Provides
+    fun provideChannelNavigator(): ChannelNavigator = ChannelNavigator()
 
     @Singleton
     @Provides

@@ -7,3 +7,7 @@ plugins {
 android {
     namespace = "com.timhome.core.ui"
 }
+
+dependencies {
+    implementation(project(":core:common"))
+}

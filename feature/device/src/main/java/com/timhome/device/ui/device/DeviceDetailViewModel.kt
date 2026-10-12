@@ -3,11 +3,11 @@ package com.timhome.device.ui.device
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.di.IoDispatcher
 import com.timhome.core.common.navigation.BuyModule
 import com.timhome.core.common.navigation.DeviceDetail
+import com.timhome.core.common.navigation.Navigator
+import com.timhome.core.common.navigation.Route
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
@@ -35,11 +35,12 @@ internal class DeviceDetailViewModel
     @AssistedInject
     constructor(
         @Assisted private val savedStateHandle: SavedStateHandle,
-        private val navigationDispatcher: NavigationDispatcher,
+        @Assisted private val route: DeviceDetail,
+        @Assisted private val navigator: Navigator,
         private val repository: IDeviceRepository,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
-        private val deviceId: Int = savedStateHandle.toRoute<DeviceDetail>().deviceId
+        private val deviceId: Int = route.deviceId
 
         private val _uiState = MutableStateFlow(DeviceDetailUiState())
         val uiState: StateFlow<DeviceDetailUiState> = _uiState.asStateFlow()
@@ -64,15 +65,25 @@ internal class DeviceDetailViewModel
         }
 
         fun buyModules() {
-            navigationDispatcher.emit {
-                it.navigate(BuyModule(deviceId))
-            }
+            navigator.navigate(BuyModule(deviceId))
         }
 
-        fun goBack() = navigationDispatcher.emit { it.popBackStack() }
+        fun goBack() = navigator.back()
 
         @AssistedFactory
         interface Factory : ViewModelAssistedFactory<DeviceDetailViewModel> {
-            override fun create(handle: SavedStateHandle): DeviceDetailViewModel
+            fun createFor(
+                handle: SavedStateHandle,
+                route: DeviceDetail,
+                navigator: Navigator,
+            ): DeviceDetailViewModel
+
+            override fun create(
+                handle: SavedStateHandle,
+                route: Route,
+                navigator: Navigator,
+            ): DeviceDetailViewModel = createFor(handle, route as DeviceDetail, navigator)
+
+            override fun create(handle: SavedStateHandle): DeviceDetailViewModel = error("needs a route and a navigator")
         }
     }

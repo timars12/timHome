@@ -3,9 +3,9 @@ package com.timhome.device.ui.buyModule
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.navigation.BuyModule
+import com.timhome.core.common.navigation.Navigator
+import com.timhome.core.common.navigation.Route
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
@@ -32,15 +32,15 @@ internal class BuyModuleViewModel
     @AssistedInject
     constructor(
         @Assisted private val savedStateHandle: SavedStateHandle,
-        private val navigationDispatcher: NavigationDispatcher,
+        @Assisted private val route: BuyModule,
+        @Assisted private val navigator: Navigator,
         private val repository: IDeviceRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(BuyModuleUiState())
         val uiState: StateFlow<BuyModuleUiState> = _uiState.asStateFlow()
 
         init {
-            val deviceId = savedStateHandle.toRoute<BuyModule>().deviceId
-            val selectedModules = repository.getSelectedModuleToBuyByDeviceId(deviceId)
+            val selectedModules = repository.getSelectedModuleToBuyByDeviceId(route.deviceId)
 
             viewModelScope.launch {
                 selectedModules.stateIn(viewModelScope).collect { list ->
@@ -61,11 +61,23 @@ internal class BuyModuleViewModel
         }
 
         fun goBack() {
-            navigationDispatcher.emit { it.popBackStack() }
+            navigator.back()
         }
 
         @AssistedFactory
         interface Factory : ViewModelAssistedFactory<BuyModuleViewModel> {
-            override fun create(handle: SavedStateHandle): BuyModuleViewModel
+            fun createFor(
+                handle: SavedStateHandle,
+                route: BuyModule,
+                navigator: Navigator,
+            ): BuyModuleViewModel
+
+            override fun create(
+                handle: SavedStateHandle,
+                route: Route,
+                navigator: Navigator,
+            ): BuyModuleViewModel = createFor(handle, route as BuyModule, navigator)
+
+            override fun create(handle: SavedStateHandle): BuyModuleViewModel = error("needs a route and a navigator")
         }
     }

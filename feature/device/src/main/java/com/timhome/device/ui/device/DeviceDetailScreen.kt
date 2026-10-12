@@ -21,13 +21,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.designsystem.theme.cornerRoundedShapes
+import com.timhome.core.common.navigation.DeviceDetail
 import com.timhome.core.ui.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.routeExtras
 import com.timhome.device.ui.device.composables.LazyColumnWithParallax
 
 @Composable
 internal fun DeviceDetailScreen(
     abstractFactory: dagger.Lazy<ViewModelFactory>,
-    viewModel: DeviceDetailViewModel = viewModel(factory = abstractFactory.get()),
+    route: DeviceDetail,
+    viewModel: DeviceDetailViewModel = viewModel(factory = abstractFactory.get(), extras = routeExtras(route)),
 ) {
     HomeTheme {
         val state by viewModel.uiState.collectAsStateWithLifecycle()

@@ -1,14 +1,16 @@
 package com.timhome.auth.ui.signin
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.NavController
-import androidx.navigation.NavOptionsBuilder
 import com.timhome.auth.domain.IAuthorizationRepository
-import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.navigation.ChannelNavigator
+import com.timhome.core.common.navigation.Home
+import com.timhome.core.common.navigation.IssuedCommand
+import com.timhome.core.common.navigation.NavigationCommand.ReplaceAll
+import com.timhome.core.common.navigation.SignIn
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -16,7 +18,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
@@ -24,7 +25,7 @@ class SignInViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val repository: IAuthorizationRepository = mockk()
     private val firebaseAnalytics: FirebaseAnalytics = mockk()
-    private val navigationDispatcher = NavigationDispatcher()
+    private val channelNavigator = ChannelNavigator()
     private val savedStateHandle = SavedStateHandle()
 
     @Before
@@ -38,7 +39,7 @@ class SignInViewModelTest {
     }
 
     private fun createViewModel() =
-        SignInViewModel(repository, firebaseAnalytics, navigationDispatcher, savedStateHandle)
+        SignInViewModel(repository, firebaseAnalytics, channelNavigator.issuedFrom(SignIn), savedStateHandle)
 
     @Test
     fun `viewState is persisted to savedStateHandle when login is not successful`() =
@@ -68,12 +69,7 @@ class SignInViewModelTest {
 
             assertEquals(true, viewModel.viewState.value.isLoginSuccess)
 
-            val command = navigationDispatcher.navigationEmitter.tryReceive().getOrNull()
-            assertNotNull(command)
-
-            val navController = mockk<NavController>(relaxed = true)
-            command!!.invoke(navController)
-            verify { navController.navigate(any<Any>(), any<NavOptionsBuilder.() -> Unit>()) }
+            assertEquals(IssuedCommand(ReplaceAll(Home), origin = SignIn), channelNavigator.commands.first())
 
             job.cancel()
         }

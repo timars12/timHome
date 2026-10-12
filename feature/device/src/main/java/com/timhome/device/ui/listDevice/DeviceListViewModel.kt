@@ -4,9 +4,10 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.di.IoDispatcher
 import com.timhome.core.common.navigation.DeviceDetail
+import com.timhome.core.common.navigation.Navigator
+import com.timhome.core.common.navigation.Route
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.timhome.device.data.repository.DeviceRepository
 import com.timhome.device.domain.models.DeviceModel
@@ -32,7 +33,7 @@ internal class DeviceListViewModel
     @AssistedInject
     constructor(
         @Assisted private val savedStateHandle: SavedStateHandle,
-        private val navigationDispatcher: NavigationDispatcher,
+        @Assisted private val navigator: Navigator,
         private val repository: DeviceRepository,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
         firebaseAnalytics: FirebaseAnalytics,
@@ -54,13 +55,22 @@ internal class DeviceListViewModel
         }
 
         fun navigateToDetailScreen(device: DeviceModel) {
-            navigationDispatcher.emit {
-                it.navigate(DeviceDetail(device.id))
-            }
+            navigator.navigate(DeviceDetail(device.id))
         }
 
         @AssistedFactory
         interface Factory : ViewModelAssistedFactory<DeviceListViewModel> {
-            override fun create(handle: SavedStateHandle): DeviceListViewModel
+            fun createFor(
+                handle: SavedStateHandle,
+                navigator: Navigator,
+            ): DeviceListViewModel
+
+            override fun create(
+                handle: SavedStateHandle,
+                route: Route,
+                navigator: Navigator,
+            ): DeviceListViewModel = createFor(handle, navigator)
+
+            override fun create(handle: SavedStateHandle): DeviceListViewModel = error("needs a route and a navigator")
         }
     }
