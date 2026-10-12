@@ -101,7 +101,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
 
 ### Tests (write first)
 
-- [ ] T005 [P] Create `core/common/src/test/java/com/timhome/core/common/navigation/ChannelNavigatorTest.kt`.
+- [X] T005 [P] Create `core/common/src/test/java/com/timhome/core/common/navigation/ChannelNavigatorTest.kt`.
   Cover guarantees N1–N9 from `contracts/navigator.md`:
   - N1: `navigate(r)`, `back()` and `replaceAll(r)` on `ChannelNavigator` itself emit
     `IssuedCommand(GoTo(r) / Back / ReplaceAll(r), origin = null)`;
@@ -120,7 +120,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
     and a second one starts.
 
   Use `kotlinx-coroutines-test` and a real `ChannelNavigator`.
-- [ ] T006 [P] Create `core/ui/src/test/java/com/timhome/core/ui/viewmodel/ViewModelFactoryTest.kt`.
+- [X] T006 [P] Create `core/ui/src/test/java/com/timhome/core/ui/viewmodel/ViewModelFactoryTest.kt`.
   Use a real `ChannelNavigator` and a small fake `ViewModelAssistedFactory` that records its
   arguments. Check that:
   - `ViewModelFactory.create` passes `extras[RouteExtrasKey]` and a navigator whose commands
@@ -135,7 +135,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
 
 ### Core contracts (`:core:common`, `:core`, `:base`)
 
-- [ ] T007 In `core/common/src/main/java/com/timhome/core/common/navigation/Routes.kt`:
+- [X] T007 In `core/common/src/main/java/com/timhome/core/common/navigation/Routes.kt`:
   - add `@Serializable sealed interface Route` and
     `@Serializable sealed interface TopLevelRoute : Route`;
   - make `SignIn`, `DeviceDetail(val deviceId: Int)` and `BuyModule(val deviceId: Int)`
@@ -146,7 +146,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
 
   Keep `@Serializable` on every route. Navigation 2's `composable<T>` still compiles with these
   changes.
-- [ ] T008 [P] Create `core/common/src/main/java/com/timhome/core/common/navigation/Navigator.kt`
+- [X] T008 [P] Create `core/common/src/main/java/com/timhome/core/common/navigation/Navigator.kt`
   with exactly the API from `contracts/navigator.md`:
   - `interface Navigator { fun navigate(route: Route); fun back(); fun replaceAll(route: Route) }`;
   - `sealed interface NavigationCommand { data class GoTo(val route: Route); data object Back; data class ReplaceAll(val route: Route) }`;
@@ -155,7 +155,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
   In the KDoc, state that "switch tab" is `navigate(TopLevelRoute)` (research R15), and that
   `origin` is "the route of the screen whose ViewModel issued it, or `null` for the bottom bar"
   (data-model).
-- [ ] T009 Create `core/common/src/main/java/com/timhome/core/common/navigation/ChannelNavigator.kt`:
+- [X] T009 Create `core/common/src/main/java/com/timhome/core/common/navigation/ChannelNavigator.kt`:
   - `class ChannelNavigator : Navigator`, backed by
     `Channel<IssuedCommand>(Channel.UNLIMITED)`;
   - `val commands: Flow<IssuedCommand> = channel.receiveAsFlow()`, with each `Navigator` method
@@ -169,7 +169,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
 
   `issuedFrom`, `hold`, `takeHeld` and `discardPending` are **not** part of `Navigator`
   (research R13, R19, R20). T005 must pass.
-- [ ] T010 Wire up DI:
+- [X] T010 Wire up DI:
   - in `core/src/main/java/com/timhome/core/di/AppModule.kt`, add
     `@Provides @Singleton fun provideChannelNavigator(): ChannelNavigator`. Do **not** add a
     `Navigator` binding: feature code must not get a navigator without an origin (research R19);
@@ -178,7 +178,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
     `base/src/main/java/com/timhome/base/BaseComponent.kt`.
 
   Keep `navigationDispatcher` for now. T080 removes it.
-- [ ] T011 In `app/src/main/java/com/timhome/modularizationtest/ui/MainActivity.kt`, add a
+- [X] T011 In `app/src/main/java/com/timhome/modularizationtest/ui/MainActivity.kt`, add a
   temporary bridge:
   - inject `ChannelNavigator`;
   - next to `observeNavigationCommands`, collect `channelNavigator.commands` with
@@ -191,7 +191,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
 
 ### Core UI (`:core:ui`)
 
-- [ ] T012 [P] In `core/ui/src/main/java/com/timhome/core/ui/Navigation.kt`, add:
+- [X] T012 [P] In `core/ui/src/main/java/com/timhome/core/ui/Navigation.kt`, add:
   - `enum class TransitionStyle { Slide, Scale }` and a private metadata key constant;
   - `fun slideTransition(): Map<String, Any>` and `fun scaleTransition(): Map<String, Any>`,
     which return `mapOf(KEY to style)`;
@@ -202,7 +202,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
 
   Keep the existing functions and the `ANIMATION_DURATION_MILLS`/`ANIMATION_DELAY_MILLS`
   constants (research R7).
-- [ ] T013 Pass the route and an entry-scoped navigator to ViewModels (research R6, R19):
+- [X] T013 Pass the route and an entry-scoped navigator to ViewModels (research R6, R19):
   - create `core/ui/src/main/java/com/timhome/core/ui/viewmodel/RouteExtras.kt` with
     `val RouteExtrasKey = object : CreationExtras.Key<Route> {}` and
     `@Composable fun routeExtras(route: Route): CreationExtras`. The function copies the current
@@ -232,7 +232,7 @@ one abstract method:
   that delegates to `createFor` (casting `route` where the ViewModel needs its typed route);
 - `override fun create(handle: SavedStateHandle): VM = error("needs a route and a navigator")`.
 
-- [ ] T014 [P] Pass the route extra at every ViewModel creation site that T015–T018 do not already
+- [X] T014 [P] Pass the route extra at every ViewModel creation site that T015–T018 do not already
   change, so that `ViewModelFactory` (T013) never runs without a route:
   - `feature/home/…/home/ui/HomeScreen.kt`:
     `viewModel(factory = abstractFactory, extras = routeExtras(Home))`;
@@ -241,7 +241,7 @@ one abstract method:
 
   `HomeViewModel` and `SettingViewModel` keep their `create(handle)` factories; the default
   3-argument `create` delegates to it.
-- [ ] T015 [P] In `feature/auth/…/auth/ui/signin/SignInViewModel.kt`, replace the injected
+- [X] T015 [P] In `feature/auth/…/auth/ui/signin/SignInViewModel.kt`, replace the injected
   `NavigationDispatcher` with an `@Assisted navigator: Navigator`, and make `goHomeScreen()` call
   `navigator.replaceAll(Home)`. Change its factory to the pattern above. In
   `feature/auth/…/auth/ui/signin/navigation/SignInRoute.kt`, create the ViewModel with
@@ -249,14 +249,14 @@ one abstract method:
   `feature/auth/src/test/…/auth/ui/signin/SignInViewModelTest.kt`, remove the
   `mockk<NavController>`, pass `channelNavigator.issuedFrom(SignIn)`, and assert
   `channelNavigator.commands.first() == IssuedCommand(ReplaceAll(Home), origin = SignIn)`.
-- [ ] T016 [P] In `feature/device/…/device/ui/listDevice/DeviceListViewModel.kt`, replace the
+- [X] T016 [P] In `feature/device/…/device/ui/listDevice/DeviceListViewModel.kt`, replace the
   injected `NavigationDispatcher` with an `@Assisted navigator: Navigator` (factory pattern above)
   and call `navigator.navigate(DeviceDetail(device.id))`. In `DeviceListScreen.kt`, create the
   ViewModel with `extras = routeExtras(Devices)`. Update
   `feature/device/src/test/…/device/ui/listDevice/DeviceListViewModelTest.kt` to pass
   `channelNavigator.issuedFrom(Devices)` and assert
   `IssuedCommand(GoTo(DeviceDetail(id)), origin = Devices)`.
-- [ ] T017 [P] In `feature/device/…/device/ui/device/DeviceDetailViewModel.kt`:
+- [X] T017 [P] In `feature/device/…/device/ui/device/DeviceDetailViewModel.kt`:
   - replace the injected `NavigationDispatcher` with `@Assisted navigator: Navigator`
     (`navigate(BuyModule(deviceId))`, `back()`);
   - replace `savedStateHandle.toRoute<DeviceDetail>()` with an `@Assisted route: DeviceDetail`
@@ -269,19 +269,21 @@ one abstract method:
   While the bridge is in place, the Navigation 2 `composable` in `DeviceRoute.kt` passes
   `backStackEntry.toRoute<DeviceDetail>()` as `route`. Update `DeviceDetailViewModelTest.kt` to
   pass `channelNavigator.issuedFrom(DeviceDetail(id))` and assert commands with that origin.
-- [ ] T018 [P] Apply the T017 changes to:
+- [X] T018 [P] Apply the T017 changes to:
   - `feature/device/…/device/ui/buyModule/BuyModuleViewModel.kt` (`@Assisted route: BuyModule`,
     `@Assisted navigator: Navigator`, `back()`);
   - `BuyModuleScreen.kt` (`route` parameter and `routeExtras(route)`);
   - `DeviceRoute.kt`;
   - `BuyModuleViewModelTest.kt` (origin `BuyModule(id)`).
-- [ ] T019 Run `./gradlew testDebugUnitTest assembleDebug`, then check by hand that every screen
+- [X] T019 Run `./gradlew testDebugUnitTest assembleDebug`, then check by hand that every screen
   opens without an `IllegalStateException` from `ViewModelFactory`, and that sign-in, the device
   flow and back all still work through the T011 bridge.
+  *Done 2026-10-13: build and unit tests green. By hand, only the launch to Sign In was checked
+  on the bridge build (the emulator froze during text input); the rest is covered by T029.*
 
 ### Navigation state and host (`:app`)
 
-- [ ] T020 Create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/NavigationState.kt`
+- [X] T020 Create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/NavigationState.kt`
   (`internal`, `@Serializable`), exactly as in `data-model.md`:
   - `sealed interface NavigationState`, with the variants `SignedOut(val stack: List<Route>)`
     and
@@ -296,7 +298,7 @@ one abstract method:
 
   Document invariants 1–5 from `data-model.md` in the KDoc, with invariant 4 worded as "Within a
   single stack, no two adjacent entries have the same route type (FR-026)".
-- [ ] T021 Create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/NavigationReducer.kt`
+- [X] T021 Create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/NavigationReducer.kt`
   as an `internal object`:
   - `sealed interface Transition { data class Update(val state: NavigationState); data object Exit; data object Ignore }`;
   - `fun reduce(state, command: NavigationCommand): Transition`, using exhaustive `when`;
@@ -313,7 +315,7 @@ one abstract method:
   - `GoTo` a non-top-level route → push it onto the current stack (or onto `SignedOut.stack`);
   - `GoTo` a `TopLevelRoute` while signed in → make it the last element of `visitOrder`;
   - `Back` → pop the current stack if its size is greater than 1, otherwise `Exit`.
-- [ ] T022 Hold the navigation state in an activity-scoped ViewModel, as in `data-model.md`
+- [X] T022 Hold the navigation state in an activity-scoped ViewModel, as in `data-model.md`
   ("ViewModel lifecycle", research R3). Write the tests first:
   - create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationViewModelTest.kt`,
     a plain JVM test with a real `SavedStateHandle()`. Cover V1, V2, V3 and V7 from
@@ -342,28 +344,28 @@ one abstract method:
     navigation state of its own.
 
   `NavigationViewModelTest` must pass.
-- [ ] T023 [P] Create `feature/auth/src/main/java/com/timhome/auth/ui/signin/navigation/SignInEntries.kt`:
+- [X] T023 [P] Create `feature/auth/src/main/java/com/timhome/auth/ui/signin/navigation/SignInEntries.kt`:
   `fun EntryProviderScope<Route>.signInEntries()` with
   `entry<SignIn>(metadata = slideTransition()) { … }`. Reuse the `DaggerAuthenticationComponent`
   factory code and the `routeExtras(SignIn)` call from `SignInRoute.kt`, and keep `SignInRoute.kt`
   until T028.
-- [ ] T024 [P] Create `feature/home/src/main/java/com/timhome/home/ui/navigation/HomeEntries.kt`:
+- [X] T024 [P] Create `feature/home/src/main/java/com/timhome/home/ui/navigation/HomeEntries.kt`:
   `homeEntries()` with `entry<Home>(metadata = slideTransition())`, reusing the DI code from
   `HomeRoute.kt`.
-- [ ] T025 [P] Create `feature/device/src/main/java/com/timhome/device/ui/navigation/DeviceEntries.kt`:
+- [X] T025 [P] Create `feature/device/src/main/java/com/timhome/device/ui/navigation/DeviceEntries.kt`:
   `deviceEntries()` with `entry<Devices>`,
   `entry<DeviceDetail> { key -> DeviceDetailScreen(…, route = key) }` and
   `entry<BuyModule> { key -> BuyModuleScreen(…, route = key) }`. All three use
   `metadata = scaleTransition()` and the DI code from `DeviceRoute.kt`.
-- [ ] T026 [P] Create `feature/settings/src/main/java/com/timhome/settings/ui/navigation/SettingEntries.kt`:
+- [X] T026 [P] Create `feature/settings/src/main/java/com/timhome/settings/ui/navigation/SettingEntries.kt`:
   `settingEntries()` with `entry<Setting>(metadata = scaleTransition())`, reusing the DI code
   from `SettingRoute.kt`.
-- [ ] T027 Change `app/src/main/java/com/timhome/modularizationtest/data/BottomNavigationMenuItem.kt`
+- [X] T027 Change `app/src/main/java/com/timhome/modularizationtest/data/BottomNavigationMenuItem.kt`
   to `val route: TopLevelRoute`, keeping `label`, `icon` and `testTag`. Move the three menu
   items out of `MainActivity.kt` into
   `app/src/main/java/com/timhome/modularizationtest/ui/navigation/TopLevelTabs.kt` as
   `internal val topLevelTabs`. Keep the same `testTag`s: `bnv_home`, `bnv_device`, `bnv_setting`.
-- [ ] T028 Switch the host in `app/src/main/java/com/timhome/modularizationtest/ui/MainActivity.kt`:
+- [X] T028 Switch the host in `app/src/main/java/com/timhome/modularizationtest/ui/MainActivity.kt`:
   - replace `rememberNavController`, `NavHost`, `OnDestinationChangedListener`,
     `observeNavigationCommands` and the T011 bridge with
     `private val navigationViewModel: NavigationViewModel by viewModels { NavigationViewModel.Factory }`,
@@ -400,6 +402,9 @@ one abstract method:
 - [ ] T029 Run `./gradlew assembleDebug testDebugUnitTest`. Smoke-test by hand: Sign In → Home
   (through `ReplaceAll`), every tab is reachable from the bottom bar, and Devices → Device Detail
   → Buy Module → back → back works.
+  *2026-10-13: build and unit tests green, and `NavigationHostTest` (Robolectric Compose, added in
+  this phase) drives the same flow through the real `NavigationHost` with stub screens. The
+  on-device smoke test with the real screens is still open.*
 
 **Checkpoint**: The app runs on Navigation 3 and every screen is reachable. The stories now add
 their rules.
@@ -466,7 +471,10 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030�
     `IssuedCommand(ReplaceAll(Home), origin = SignIn)` is emitted;
   - on failure, neither happens;
   - when the success state is emitted a second time, `markSignedIn()` is still called once and
-    exactly one `ReplaceAll(Home)` is emitted (the T035 once-only guard, constitution III).
+    exactly one `ReplaceAll(Home)` is emitted (the T035 once-only guard, constitution III);
+  - when `markSignedIn()` throws (make `FakeSessionRepository` able to fail), the error is logged
+    and `IssuedCommand(ReplaceAll(Home), origin = SignIn)` is still emitted (contract S5). If the
+    ViewModel logs with `android.util.Log`, run this test class with Robolectric.
 - [ ] T034 [US1] Add `implementation(project(":core:data"))` to `feature/auth/build.gradle.kts`,
   and add `SessionModule::class` to `modules` in
   `feature/auth/src/main/java/com/timhome/auth/di/AuthenticationComponent.kt`.
@@ -474,8 +482,10 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030�
   `SessionRepository` (a normal `@Inject` constructor parameter next to the `@Assisted` ones). In
   `goHomeScreen()`, run
   `viewModelScope.launch { sessionRepository.markSignedIn(); navigator.replaceAll(Home) }`. Make
-  sure it runs only once per successful sign-in, even if the state is emitted again. T033 must
-  pass.
+  sure it runs only once per successful sign-in, even if the state is emitted again. If
+  `markSignedIn()` throws, log the error under a stable tag and still call
+  `navigator.replaceAll(Home)`; rethrow `CancellationException` (contract S5). Log no personal
+  data. T033 must pass.
 - [ ] T036 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`
   with cases R0a, R0b, R1, R2, R3, R4, R16, R19, R20 and R22 from `contracts/navigation-rules.md`,
   plus the `startState` cases R0c–R0f. R0d (restored Sign In with the flag set → fresh tabs) is
@@ -902,7 +912,8 @@ its "completed" case fails before T074.
   Robolectric Compose test of the release **order** that H2 assumes: the gesture's own `Back` must
   be applied before held commands are released (FR-027, research R20, plan risk "Releasing held
   commands before `NavDisplay` applies the gesture's own `Back`").
-  - Dependencies: add `androidx-compose-ui-test-junit4` (`androidx.compose.ui:ui-test-junit4`) and
+  - Dependencies (already added in Phase 2 for `NavigationHostTest`; verify they are present):
+    add `androidx-compose-ui-test-junit4` (`androidx.compose.ui:ui-test-junit4`) and
     `androidx-compose-ui-test-manifest` (`androidx.compose.ui:ui-test-manifest`) to
     `gradle/libs.versions.toml`, with no version (Compose BOM). In `app/build.gradle.kts` add
     `testImplementation(platform(libs.androidx.compose.bom))`,
@@ -1026,6 +1037,8 @@ FR-022, SC-005 to SC-007).
   - the "US3 first screen kept" row from T055;
   - the release restore;
   - the stress session (monkey with seed `20261009`, then the 5-minute scripted cycle).
+  - the "Final check" in `specs/002-navigation3-migration/gaps.md`: run the check for every row
+    and set its status. A row still open becomes a new task or is accepted with a reason.
 
   Record any failure as a new task.
 
