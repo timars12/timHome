@@ -1,13 +1,17 @@
 package com.timhome.device.ui.buyModule
 
 import androidx.lifecycle.SavedStateHandle
-import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.navigation.BuyModule
+import com.timhome.core.common.navigation.ChannelNavigator
+import com.timhome.core.common.navigation.IssuedCommand
+import com.timhome.core.common.navigation.NavigationCommand.Back
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -15,7 +19,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,7 +29,7 @@ import java.math.BigDecimal
 class BuyModuleViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val repository: IDeviceRepository = mockk(relaxed = true)
-    private val navigationDispatcher = NavigationDispatcher()
+    private val channelNavigator = ChannelNavigator()
 
     private val moduleA =
         ModuleModel(id = 1, title = "A", price = "$3", link = "l", isSelectToBuy = true)
@@ -45,8 +48,8 @@ class BuyModuleViewModelTest {
     }
 
     private fun createViewModel(deviceId: Int = 1): BuyModuleViewModel {
-        val handle = SavedStateHandle(mapOf("deviceId" to deviceId))
-        return BuyModuleViewModel(handle, navigationDispatcher, repository)
+        val route = BuyModule(deviceId)
+        return BuyModuleViewModel(SavedStateHandle(), route, channelNavigator.issuedFrom(route), repository)
     }
 
     @Test
@@ -79,6 +82,6 @@ class BuyModuleViewModelTest {
 
             viewModel.goBack()
 
-            assertNotNull(navigationDispatcher.navigationEmitter.tryReceive().getOrNull())
+            assertEquals(IssuedCommand(Back, origin = BuyModule(1)), channelNavigator.commands.first())
         }
 }

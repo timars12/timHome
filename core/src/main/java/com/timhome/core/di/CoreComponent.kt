@@ -7,6 +7,7 @@ import com.timhome.core.datastore.DataStoreManager
 import com.timhome.core.network.api.ArduinoApi
 import com.timhome.core.network.di.NetworkModule
 import com.timhome.core.common.NavigationDispatcher
+import com.timhome.core.common.navigation.ChannelNavigator
 import com.timhome.core.common.di.DefaultDispatcher
 import com.timhome.core.common.di.IoDispatcher
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -27,6 +28,7 @@ interface CoreComponent {
     val arduinoApi: ArduinoApi
     val firebaseAnalytics: FirebaseAnalytics
     val navigationDispatcher: NavigationDispatcher
+    val channelNavigator: ChannelNavigator
 
     @IoDispatcher
     fun ioDispatcher(): CoroutineDispatcher

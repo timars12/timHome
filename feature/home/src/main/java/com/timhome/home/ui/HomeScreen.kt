@@ -36,7 +36,9 @@ import com.timhome.core.designsystem.ChartView
 import com.timhome.core.designsystem.theme.CO2BackgroundColor
 import com.timhome.core.designsystem.theme.DataCreatedItemColor
 import com.timhome.core.designsystem.theme.HomeTheme
+import com.timhome.core.common.navigation.Home
 import com.timhome.core.ui.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.routeExtras
 import com.timhome.home.R
 import com.timhome.home.custom.Co2Indicator
 import com.timhome.home.custom.TemperatureBar
@@ -46,7 +48,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 internal fun HomeScreen(
     abstractFactory: ViewModelFactory,
-    viewModel: HomeViewModel = viewModel(factory = abstractFactory),
+    viewModel: HomeViewModel = viewModel(factory = abstractFactory, extras = routeExtras(Home)),
 ) {
     HomeTheme {
         val state by viewModel.uiState.collectAsStateWithLifecycle()

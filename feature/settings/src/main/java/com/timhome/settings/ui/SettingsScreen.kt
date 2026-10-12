@@ -28,7 +28,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.designsystem.theme.TextFieldBackgroundColor
+import com.timhome.core.common.navigation.Setting
 import com.timhome.core.ui.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.routeExtras
 import com.timhome.settings.R
 import com.timhome.settings.ui.composables.SwitchWithText
 
@@ -37,7 +39,7 @@ private const val CORNER_SHAPE_TEXT_FIELD = 20
 @Composable
 internal fun SettingScreen(
     abstractFactory: dagger.Lazy<ViewModelFactory>,
-    viewModel: SettingViewModel = viewModel(factory = abstractFactory.get()),
+    viewModel: SettingViewModel = viewModel(factory = abstractFactory.get(), extras = routeExtras(Setting)),
 ) {
     HomeTheme {
         val state by viewModel.uiState.collectAsStateWithLifecycle()

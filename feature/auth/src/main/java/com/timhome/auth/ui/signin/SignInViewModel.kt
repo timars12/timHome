@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.timhome.auth.domain.IAuthorizationRepository
-import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.mvi.MviViewModel
 import com.timhome.core.common.navigation.Home
-import com.timhome.core.common.navigation.SignIn
+import com.timhome.core.common.navigation.Navigator
+import com.timhome.core.common.navigation.Route
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.assisted.Assisted
@@ -27,7 +27,7 @@ internal class SignInViewModel
     constructor(
         repository: IAuthorizationRepository,
         firebaseAnalytics: FirebaseAnalytics,
-        private val navigationDispatcher: NavigationDispatcher,
+        @Assisted private val navigator: Navigator,
         @Assisted private val savedStateHandle: SavedStateHandle,
     ) : ViewModel(), MviViewModel<LoginViewIntent, LoginViewState> {
         private val reducer = LoginReducer(firebaseAnalytics, repository, savedStateHandle)
@@ -48,15 +48,22 @@ internal class SignInViewModel
         }
 
         private fun goHomeScreen() {
-            navigationDispatcher.emit {
-                it.navigate(Home) {
-                    popUpTo<SignIn> { inclusive = true }
-                }
-            }
+            navigator.replaceAll(Home)
         }
 
         @AssistedFactory
         interface Factory : ViewModelAssistedFactory<SignInViewModel> {
-            override fun create(handle: SavedStateHandle): SignInViewModel
+            fun createFor(
+                handle: SavedStateHandle,
+                navigator: Navigator,
+            ): SignInViewModel
+
+            override fun create(
+                handle: SavedStateHandle,
+                route: Route,
+                navigator: Navigator,
+            ): SignInViewModel = createFor(handle, navigator)
+
+            override fun create(handle: SavedStateHandle): SignInViewModel = error("needs a route and a navigator")
         }
     }
