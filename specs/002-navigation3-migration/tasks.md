@@ -50,7 +50,7 @@ depends on it. Each story phase then adds the rules and behaviors that belong to
 **Purpose**: Put Navigation 3 on the classpath next to Navigation 2, so every commit stays green
 (research R1, R9).
 
-- [ ] T001 In `gradle/libs.versions.toml`:
+- [X] T001 In `gradle/libs.versions.toml`:
   - add the version `navigation3 = "1.1.7"`;
   - add the libraries `androidx-navigation3-runtime` (`androidx.navigation3:navigation3-runtime`,
     version.ref `navigation3`), `androidx-navigation3-ui` (`androidx.navigation3:navigation3-ui`,
@@ -62,17 +62,17 @@ depends on it. Each story phase then adds the rules and behaviors that belong to
 
   Keep `androidxNavigation`, `androidx-navigation-compose` and `androidx-navigation-testing`.
   T079 removes them.
-- [ ] T002 [P] In `build-logic/src/main/kotlin/com/timhome/build_logic/helpers/KotlinAndroid.kt`,
+- [X] T002 [P] In `build-logic/src/main/kotlin/com/timhome/build_logic/helpers/KotlinAndroid.kt`,
   change `compileSdk = 35` to `compileSdk = 36`. Leave `targetSdk = 35` unchanged in
   `AndroidApplicationConventionPlugin.kt`, `AndroidLibraryConventionPlugin.kt` and
   `AndroidTestConventionPlugin.kt`. Leave the JVM 11 target in this file unchanged: it is a known,
   older mismatch with the constitution and is out of scope (plan "Notes").
-- [ ] T003 [P] Add the `navigation3` bundle as an `implementation` dependency in
+- [X] T003 [P] Add the `navigation3` bundle as an `implementation` dependency in
   `build-logic/src/main/kotlin/AndroidLibraryComposeConventionPlugin.kt`, using
   `libs.findBundle("navigation3")` through the existing `libs` helper. Add
   `implementation(libs.bundles.navigation3)` to `app/build.gradle.kts`, next to the existing
   navigation-compose line.
-- [ ] T004 Run `./gradlew assembleDebug testDebugUnitTest lintDebug detektDebug ktlintCheck` and
+- [X] T004 Run `./gradlew assembleDebug testDebugUnitTest lintDebug detektDebug ktlintCheck` and
   confirm everything is green with both libraries on the classpath. If compileSdk 36 brings new
   lint findings, fix them instead of suppressing them (constitution IV). Also confirm that
   `ComponentActivity.navigationEventDispatcher` and
@@ -463,7 +463,9 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030â€
   backed by a `MutableStateFlow<Boolean>` and recording calls. Extend `SignInViewModelTest.kt`:
   - on login success, `markSignedIn()` is called **before**
     `IssuedCommand(ReplaceAll(Home), origin = SignIn)` is emitted;
-  - on failure, neither happens.
+  - on failure, neither happens;
+  - when the success state is emitted a second time, `markSignedIn()` is still called once and
+    exactly one `ReplaceAll(Home)` is emitted (the T035 once-only guard, constitution III).
 - [ ] T034 [US1] Add `implementation(project(":core:data"))` to `feature/auth/build.gradle.kts`,
   and add `SessionModule::class` to `modules` in
   `feature/auth/src/main/java/com/timhome/auth/di/AuthenticationComponent.kt`.
@@ -820,7 +822,9 @@ its "completed" case fails before T074.
   - T5/E1/E5: build the real
     `entryProvider { signInEntries(); homeEntries(); deviceEntries(); settingEntries() }` and,
     for one sample of every `Route` subtype, assert
-    `entryProvider(route).metadata.transitionStyle() != null`. Entry content is not invoked.
+    `entryProvider(route).metadata.transitionStyle() != null`. Entry content is not invoked;
+  - missing style: `transitionStyleFor(emptyMap())` throws `IllegalStateException` (the T065
+    `error(...)` branch, constitution III).
 - [ ] T065 [US5] Add `internal fun transitionStyleFor(metadata: Map<String, Any>): TransitionStyle`
   in `app/â€¦/modularizationtest/ui/navigation/TransitionSelection.kt`. If the style is missing,
   fail with `error(...)`. T064 must pass.
