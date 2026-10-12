@@ -4,7 +4,7 @@ androidGradlePlugin = "8.13.2"
 androidxActivity = "1.10.1"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxDataStore = "1.1.7"
-androidxLifecycle = "2.9.4"
+androidxLifecycle = "2.10.0"
 #androidxMetrics = "1.0.0-alpha03"
 constraintlayoutCompose = "1.1.0"
 googleServices = "4.5.0"
@@ -39,6 +39,7 @@ androidxTestExt = "1.2.1"
 androidxTestRules = "1.6.1"
 androidxTestRunner = "1.6.2"
 androidxNavigation = "2.9.3"
+navigation3 = "1.1.7"
 kotlinxSerialization = "1.9.0"
 androidxWork = "2.11.2"
 
@@ -71,6 +72,9 @@ androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espres
 androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiAutomator" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
+androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3" }
+androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
+androidx-lifecycle-viewmodel-navigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "androidxLifecycle" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
 androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "androidxWork" }
@@ -125,6 +129,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 [bundles]
 compose = ["androidx-ui-tooling-preview-android", "androidx-compose-material3", "androidx-activity-compose", "coil"]
 lifecycle = ["androidx-lifecycle-runtime-ktx", "androidx-lifecycle-runtimeCompose", "androidx-lifecycle-viewModelCompose", "androidx-lifecycle-viewModelSavedstate"]
+navigation3 = ["androidx-navigation3-runtime", "androidx-navigation3-ui", "androidx-lifecycle-viewmodel-navigation3"]
 room = ["room-ktx", "room-runtime"]
 retrofit = ["retrofit-core", "retrofit-moshi"]
 firebase = ["firebase-perf", "firebase-analytics", "firebase-crashlytics"]
