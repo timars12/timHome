@@ -40,7 +40,7 @@ fixed in this feature).
 
 | # | Gap | Fixed by | How to confirm | Status |
 |---|---|---|---|---|
-| V1 | The real screens, with their Dagger wiring, were not exercised on Navigation 3 on a device. The emulator froze, then exited. Only the launch to Sign In was seen, on the intermediate bridge build. `NavigationHostTest` covers the host with stub screens. | T029 (still unchecked) | Sign in, open all three tabs, Devices → Device Detail → Buy Module → back → back, with no crash | Open |
+| V1 | The real screens, with their Dagger wiring, were not exercised on Navigation 3 on a device. The emulator froze, then exited. Only the launch to Sign In was seen, on the intermediate bridge build. `NavigationHostTest` covers the host with stub screens. | T029 (still unchecked) | Sign in, open all three tabs, Devices → Device Detail → Buy Module → back → back, with no crash | Closed 2026-10-13: the developer ran the smoke test on a device and it passed |
 | V2 | Lint output was not compared with the report from before the compileSdk 36 bump. The lint task passes. | – | Compare `app/build/reports/lint-results-debug.html` with a build of `develop` | Open |
 
 ## Not covered by any task
