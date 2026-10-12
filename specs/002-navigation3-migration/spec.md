@@ -14,8 +14,8 @@ This is a technical migration of the app's navigation foundation. The app's scre
 content do not change, and flows change only where the Clarifications section says so (tab
 back behavior, tab reselect, Device Detail/Buy Module transitions, a remembered sign-in
 that skips Sign In on later launches, where the CO2 alert notification leads, quick taps on
-different devices opening only one Device Detail, and navigation held during a predictive back
-gesture). The value is (a) a navigation model where the app owns the screen
+different devices opening only one Device Detail, and, during a predictive back gesture,
+navigation from screen logic held and bottom-bar taps ignored). The value is (a) a navigation model where the app owns the screen
 history as plain state, which makes navigation logic unit-testable and prepares for adaptive
 layouts later, and (b) fixing tab-history behavior so it matches what users expect. The "users"
 of this feature are app end users (who must notice no regressions) and the developer (who
@@ -85,6 +85,16 @@ device), Settings. Home, Devices, and Settings are top-level tabs in a bottom na
   if the screen that issued it is still the one shown.
 - Q: What should the migration guarantee for screen-reader (TalkBack) users when they change
   screens or tabs? → A: Nothing specific. Accessibility is out of scope for this migration.
+
+### Session 2026-10-12
+
+- Q: While the user is mid-way through a predictive back swipe, should a tap on the bottom
+  navigation bar wait until the swipe ends, like requests from screen logic? → A: No. A
+  bottom-bar tap during the swipe is ignored: it does nothing, either during the swipe or after
+  it, and the user taps again afterwards.
+- Q: On a fresh launch, how long may the app show an empty background while it checks whether
+  the user has signed in before? → A: Not at all. The system launch (splash) screen stays visible
+  until the start screen is chosen, so no empty background is shown.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -206,7 +216,7 @@ screen is previewed, and canceling the swipe keeps the user on the current scree
 
 - **Rapid repeated taps** on a device row or tab: navigation happens once; no duplicate screens are added to history. This also holds for quick taps on *different* device rows: only the first tap opens Device Detail, and later taps are ignored (FR-026).
 - **Navigation requested while the app is in the background** (for example, sign-in completes as the user leaves): the request is not lost and is not applied twice. It takes effect when the app returns to the foreground, also after a fresh launch. If the app is instead opened from the CO2 alert notification, the request is discarded (FR-015, FR-024). If the system ends the process before the user returns, pending requests are gone. A sign-in that completed in the background still counts: the user returns to Home with fresh tab history, not to Sign In (FR-010).
-- **Navigation requested during a predictive back gesture** (for example, a purchase completes on Buy Module while the user is swiping back): the request is held until the gesture finishes or is canceled, then applied only if the screen that issued it is still shown (FR-027). The screen does not jump while the user's finger is down. If the user completed the swipe and left Buy Module, Buy Module's held "go back" is dropped, so the user lands on Device Detail and not on the Devices list. If the user canceled the swipe, the request is applied.
+- **Navigation requested during a predictive back gesture** (for example, a purchase completes on Buy Module while the user is swiping back): the request is held until the gesture finishes or is canceled, then applied only if the screen that issued it is still shown (FR-027). The screen does not jump while the user's finger is down. A bottom-bar tap during the gesture is ignored and is not applied afterwards (FR-028). If the user completed the swipe and left Buy Module, Buy Module's held "go back" is dropped, so the user lands on Device Detail and not on the Devices list. If the user canceled the swipe, the request is applied.
 - **Back on Sign In**: leaves the app, as today.
 - **Tapping the CO2 alert notification** (app open, in the background, or not running): Home opens with fresh tab history and any previous history is discarded. If the user has never signed in, Sign In opens instead. Today the tap recreates the screen and always shows Sign In; the new behavior is an intended change.
 - **A screen's own back action on the first screen of a tab** (not expected in the current UI): behaves like system back at that point (goes to the previously visited tab, or leaves the app if no other tab is in the tab visit history).
@@ -222,6 +232,7 @@ screen is previewed, and canceling the swipe keeps the user on the current scree
 **Behavior parity**
 
 - **FR-001**: On a launch with no saved navigation history, the app MUST start on Sign In with the bottom navigation bar hidden if the user has never signed in on this device. Otherwise it MUST start on Home with fresh tab history (only Home visited). A launch that restores saved history after process death follows FR-010 instead.
+- **FR-029**: On every launch that has to check the remembered signed-in status before choosing the start screen (FR-001, FR-010), the system launch (splash) screen MUST stay visible until the start screen is ready. The app MUST NOT show an empty or blank background between the splash screen and the start screen.
 - **FR-002**: Successful sign-in MUST show Home, MUST remove Sign In from history so back never returns to it, and MUST remember on the device that the user has signed in.
 - **FR-023**: The remembered signed-in status MUST survive leaving the app with back, process death, force-stop, and device restart. It MUST be cleared only when the app's data is cleared (or by a future sign-out). It MUST be a yes/no status only: no credentials, tokens, or personal data are stored for it.
 - **FR-024**: Opening the app from the CO2 alert notification MUST show Home with fresh tab history (only Home visited), discarding any current or saved history and any pending navigation requests (FR-015), whether the app was open, in the background, or not running. If the user has never signed in, it MUST show Sign In instead.
@@ -247,6 +258,7 @@ screen is previewed, and canceling the swipe keeps the user on the current scree
 - **FR-014**: The predictive back gesture MUST preview the destination and MUST leave the current screen unchanged if canceled.
 - **FR-015**: Navigation requests issued by screen logic MUST be delivered exactly once and only while the app is in the foreground. Requests issued while in the background MUST be applied when the app returns, including on a fresh launch (after the start screen chosen by FR-001), as long as the app's process kept running. Requests pending when the system ends the process are lost; FR-010 covers the one that matters (a completed sign-in). The only exception is opening the app from the CO2 alert notification: pending requests MUST then be discarded (FR-024).
 - **FR-027**: While a predictive back gesture is in progress, navigation requests from screen logic MUST NOT be applied. They MUST be held, in order, until the gesture finishes or is canceled. Each held request MUST then be applied exactly once (FR-015) if the screen that issued it is still the one shown, and MUST be dropped otherwise, so a completed back gesture is never followed by a second, stale back.
+- **FR-028**: A bottom-bar tap made while a predictive back gesture is in progress MUST be ignored. It MUST NOT change the screen, the tab, or any history, either during the gesture or after it finishes or is canceled. FR-027's holding applies only to requests from screen logic.
 
 **Architecture and maintainability** (developer-facing; constitution Principles I–IV)
 
@@ -277,7 +289,8 @@ screen is previewed, and canceling the swipe keeps the user on the current scree
 - **SC-003**: Switching away from a tab and back restores the last screen in that tab in 100% of attempts (3 attempts for each of the 3 tabs, 9 in total).
 - **SC-004**: Back from Home after sign-in never shows Sign In (0 occurrences in testing).
 - **SC-005**: No navigation-related crash or ANR occurs in either of two sessions on API 36, both signed in and in mock data mode. (a) An automated random-input run of about 10 minutes, limited to this app, with a fixed, recorded seed so it can be repeated exactly. (b) A 5-minute scripted manual run that repeats this cycle: switch through all 3 tabs, open a device and Buy Module, rotate the device, start and cancel a predictive back gesture, start and complete one, press back to the previous tab.
-- **SC-006**: Every navigation rule (tab switch, reselect, ignoring a same-kind screen on top of itself, holding and dropping requests around a predictive back gesture, re-visiting a tab, back within tab, back to the previous tab, exit from the last remaining tab, replace after sign-in) is covered by an automated test that runs without a device, with at least 80% line coverage on the new navigation logic.
+- **SC-006**: Every navigation rule (tab switch, reselect, ignoring a same-kind screen on top of itself, holding and dropping requests around a predictive back gesture, ignoring bottom-bar taps during one, re-visiting a tab, back within tab, back to the previous tab, exit from the last remaining tab, replace after sign-in) is covered by an automated test that runs without a device, with at least 80% line coverage on the new navigation logic.
+- **SC-008**: In 10 fresh launches on each test device (API 26 and API 36), half with a remembered sign-in and half without, the splash screen goes straight to the start screen with no empty background visible in between (0 occurrences). Each launch is checked frame by frame in a screen recording of the device, because a single blank frame is too short to judge by eye.
 - **SC-007**: The previous navigation library appears in 0 build files and 0 source imports after the change, and all quality gates and the shrunk release build pass.
 
 ## Assumptions

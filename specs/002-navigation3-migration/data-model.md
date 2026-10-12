@@ -67,8 +67,9 @@ What the navigator delivers: a command plus who issued it (research R19).
 | `command` | `NavigationCommand` | The intent |
 | `origin` | `Route?` | The route of the screen whose ViewModel issued it (set by the entry-scoped navigator), or `null` for the bottom bar |
 
-`origin` is only used when a command was held during a predictive back gesture (FR-027, rules
-H1–H7). System back from `NavDisplay.onBack` does not go through the navigator, so it is never
+`origin` matters only during a predictive back gesture. A command with origin `null` (bottom bar)
+is dropped (FR-028, rule W8). Any other command is held and later applied only if its origin is
+still shown (FR-027, rules H1–H7). System back from `NavDisplay.onBack` does not go through the navigator, so it is never
 held: it *is* the gesture.
 
 ## NavigationState (`:app`, package `com.timhome.modularizationtest.ui.navigation`)
@@ -149,7 +150,7 @@ satisfies constitution II: the state that must survive process death lives in `S
 | `state: StateFlow<NavigationState?>` | The current state, starting as `startState(restored, isSignedIn = null)` |
 | `start(state)` | Sets the state only while it is `null`; otherwise does nothing |
 | `dispatch(command): Boolean` | Applies `NavigationReducer.reduce`. Returns `true` on `Exit`. Does nothing and returns `false` while the state is `null` |
-| `applyHeld(held): Boolean` | Applies `NavigationReducer.applyHeld` (FR-027). Returns `HeldResult.exit` |
+| `applyHeld(held): HeldResult?` | Applies `NavigationReducer.applyHeld` (FR-027) and returns its result. Does nothing and returns `null` while the state is `null` or `held` is empty |
 
 Every state change writes `NavigationJson.encodeToString(state)` to `savedStateHandle[KEY_STATE]`.
 Nothing is written while the state is `null`.
@@ -158,7 +159,8 @@ Starting up takes two phases, so the ViewModel can exist before its state does:
 
 1. At creation the state is `startState(restored, null)`. A restored `SignedIn` is ready on the
    first frame. On a configuration change the ViewModel survives, so its state is already set.
-2. While `state.value == null`, `MainActivity` shows only the themed background, reads
+2. While `state.value == null`, the system splash screen stays up (FR-029, research R12) and
+   `MainActivity` renders nothing. It reads
    `isSignedIn.first()` once, and calls
    `start(startState(navigationViewModel.restored, flag)!!)`.
 
@@ -192,17 +194,31 @@ commands held during a predictive back gesture (FR-027, research R20).
 | `applied` | How many commands were applied (for logging) |
 | `dropped` | How many were dropped because their origin was no longer shown (for logging) |
 
-A held command is applied when `origin == null` or `origin == currentRoute` of the state at that
-step, which already includes the commands applied before it. Otherwise it is dropped.
+A held command is applied when `origin == currentRoute` of the state at that step, which already
+includes the commands applied before it. Otherwise it is dropped. A command with origin `null`
+(bottom bar) is always dropped: the router never holds one (FR-028).
 
 ## Held commands (`:core:common`, inside `ChannelNavigator`)
 
 | Item | Value |
 |---|---|
 | Where | A list inside the process-wide `ChannelNavigator`, next to the channel |
-| Added | `hold(issued)`, called by `MainActivity` for a command collected while the gesture is `InProgress` |
+| Added | `hold(issued)`, called by `NavigationCommandRouter` for a command collected while the gesture is `InProgress` |
 | Removed | `takeHeld()` returns them in order and empties the list; `discardPending()` also empties it |
 | Lifetime | Survives activity recreation; lost on process death, like the channel (FR-015) |
+
+## Command routing (`:app`, `NavigationCommandRouter`)
+
+This is not data. It is a plain class that connects the held list above with
+`NavigationViewModel`, and it holds no state of its own. `NavigationHost` creates one with
+`remember` and passes it whether a back gesture is in progress.
+
+| Member | Meaning |
+|---|---|
+| `onCollected(issued, gestureInProgress): Boolean` | While a gesture is in progress, drops a command with origin `null` (bottom bar, FR-028) and parks any other with `hold`. Otherwise applies it with `dispatch`. Returns `true` on `Exit` |
+| `releaseHeld(): HeldResult?` | `applyHeld(takeHeld())`. Returns `null`, without taking the parked commands, while the ViewModel state is `null` |
+
+Its cases are W1–W8 in [contracts/navigation-rules.md](contracts/navigation-rules.md).
 
 ## Launch inputs (`:app`, `StartPolicy`)
 

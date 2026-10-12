@@ -16,7 +16,7 @@ interface SessionRepository {
     suspend fun markSignedIn()
 }
 
-internal class DataStoreSessionRepository @Inject constructor(
+internal class DataStoreSessionRepository(
     private val dataStore: DataStoreManager,
 ) : SessionRepository
 ```
@@ -35,8 +35,11 @@ internal class DataStoreSessionRepository @Inject constructor(
 
 ## Wiring and consumers
 
-- `SessionModule` (`:core:data`) has
-  `@Binds fun bind(impl: DataStoreSessionRepository): SessionRepository`.
+- `SessionModule` (`:core:data`) is a public `@Module object` with
+  `@Provides fun provideSessionRepository(dataStore: DataStoreManager): SessionRepository = DataStoreSessionRepository(dataStore)`.
+  It is not a `@Binds` module: the components that include it are in other modules, so it must
+  be public, and a public `@Binds` function taking the `internal` implementation does not compile
+  in Kotlin (it exposes an internal parameter type).
 - It is included by `AuthenticationComponent` (`:feature:auth`) and by `AppComponent`, which injects
   `MainActivity` (`:app`). Both reach `DataStoreManager` through their dependency chains:
   `CoreComponent` for auth, and `BaseComponent` for `AppComponent`.

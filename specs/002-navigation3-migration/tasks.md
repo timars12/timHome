@@ -11,18 +11,29 @@ description: "Task list for the Navigation 3 migration"
 [data-model.md](data-model.md), [contracts/](contracts/), [quickstart.md](quickstart.md)
 
 **Tests**: Required by the spec (FR-021, SC-006) and by constitution III: at least 80% line
-coverage on new or changed logic, and every branch tested. In each phase, test tasks come before
-the implementation tasks. Write them first and confirm they fail. Prefer real classes and fakes
-over mocks.
+coverage on new or changed logic, and every branch tested. Write each test first and confirm it
+fails, then implement. Prefer real classes and fakes over mocks.
+
+Gradle compiles all of a module's tests together. One test that refers to code that does not
+exist yet stops every other test in that module from running, so a "Tx must pass" check would
+fail for the wrong reason. So where a phase has several test tasks in one module (`:app` in US1
+and US5, `:feature:device` in US2), work in **test → implementation pairs**. The story phases
+list and number their tasks in that execution order, with each test right before the task that
+makes it pass, so following the task IDs is enough. A new test that fails because it does not
+compile yet counts as failing, as long as it is the only one in its module that does not compile.
 
 **Organization**: Because this is a migration, the **Foundational** phase switches the host to
 Navigation 3, with every screen reachable and basic push/pop working. It also builds the
 navigator contract with command origins (research R19), because every screen's ViewModel
 depends on it. Each story phase then adds the rules and behaviors that belong to that story.
 
-**Regenerated 2026-10-11** for the 2026-10-10 clarifications: FR-026 (same-kind screens) is in US2,
-and FR-027 (requests held during a predictive back gesture) is in US5, with its origin plumbing in
-Foundational.
+**Regenerated 2026-10-12** for the 2026-10-12 clarifications and analysis fixes:
+
+- FR-026 (same-kind screens) is in US2.
+- FR-027 (requests held during a predictive back gesture) and FR-028 (bottom-bar taps ignored
+  during it) are in US5, with the origin plumbing in Foundational.
+- FR-029 (splash screen until the start screen is ready) is in US1.
+- Every story phase now lists and numbers its tasks in execution order.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -50,7 +61,7 @@ Foundational.
     `navigation3 = ["androidx-navigation3-runtime", "androidx-navigation3-ui", "androidx-lifecycle-viewmodel-navigation3"]`.
 
   Keep `androidxNavigation`, `androidx-navigation-compose` and `androidx-navigation-testing`.
-  T074 removes them.
+  T079 removes them.
 - [ ] T002 [P] In `build-logic/src/main/kotlin/com/timhome/build_logic/helpers/KotlinAndroid.kt`,
   change `compileSdk = 35` to `compileSdk = 36`. Leave `targetSdk = 35` unchanged in
   `AndroidApplicationConventionPlugin.kt`, `AndroidLibraryConventionPlugin.kt` and
@@ -165,7 +176,7 @@ When this phase is done, all six screens are reachable on Navigation 3 with basi
     `core/src/main/java/com/timhome/core/di/CoreComponent.kt` and
     `base/src/main/java/com/timhome/base/BaseComponent.kt`.
 
-  Keep `navigationDispatcher` for now. T075 removes it.
+  Keep `navigationDispatcher` for now. T080 removes it.
 - [ ] T011 In `app/src/main/java/com/timhome/modularizationtest/ui/MainActivity.kt`, add a
   temporary bridge:
   - inject `ChannelNavigator`;
@@ -289,7 +300,12 @@ one abstract method:
   - `sealed interface Transition { data class Update(val state: NavigationState); data object Exit; data object Ignore }`;
   - `fun reduce(state, command: NavigationCommand): Transition`, using exhaustive `when`;
   - `fun initialState(isSignedIn: Boolean): NavigationState`, which returns
-    `SignedOut(listOf(SignIn))` for now. US1 completes it.
+    `SignedOut(listOf(SignIn))` for now. US1 completes it;
+  - `fun startState(restored: NavigationState?, isSignedIn: Boolean?): NavigationState?` with
+    rules R0c and R0f only, in this order: a restored `SignedIn` state is returned as it was
+    (R0c); with `isSignedIn == null` it returns `null` (R0f); otherwise it returns
+    `initialState(isSignedIn)`. US1 (T037) adds R0d/R0e for a restored `SignedOut` state.
+    `NavigationViewModel` (T022) needs this function to start.
 
   Implement only this baseline; the story phases refine it:
   - `ReplaceAll(Home)` → `Update(FreshTabs)`;
@@ -306,7 +322,7 @@ one abstract method:
     with
     - `val restored: NavigationState?` (always `null` until US4 decodes it from the handle);
     - `val state: StateFlow<NavigationState?>`, backed by a private `MutableStateFlow` that
-      starts as `NavigationReducer.startState(restored, null)`;
+      starts as `NavigationReducer.startState(restored, null)` (from T021);
     - `fun start(state: NavigationState)`, which sets the state only while it is `null` and
       otherwise does nothing;
     - `fun dispatch(command: NavigationCommand): Boolean`, which applies
@@ -353,20 +369,28 @@ one abstract method:
     and read the state in `setContent` with
     `val state by navigationViewModel.state.collectAsStateWithLifecycle()`. While `state == null`,
     call `navigationViewModel.start(NavigationReducer.initialState(false))` from a
-    `LaunchedEffect` and render only the themed background. T042 replaces this with the flag
+    `LaunchedEffect` and render nothing (T044 later covers this gap with the splash screen). T041 replaces this with the flag
     read;
-  - once `state != null`, collect `channelNavigator.commands` with
-    `flowWithLifecycle(lifecycle, RESUMED)` and, for each `issued`, call `finish()` when
-    `navigationViewModel.dispatch(issued.command)` returns `true`. US5 (T069) adds the gesture
-    hold here;
-  - render
-    `NavDisplay(entries = rememberNavigationEntries(state, entryProvider { signInEntries(); homeEntries(); deviceEntries(); settingEntries() }), onBack = { if (navigationViewModel.dispatch(Back)) finish() })`.
-    System back goes straight to the ViewModel, never through the navigator (data-model
-    "IssuedCommand");
+  - create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/NavigationHost.kt` with
+    `@Composable internal fun NavigationHost(state: NavigationState, navigationViewModel: NavigationViewModel, channelNavigator: ChannelNavigator, entryProvider: (Route) -> NavEntry<Route>, onExit: () -> Unit)`.
+    It holds everything between the state and the screen, so T073 can test it in a plain
+    `ComponentActivity` without the app's Dagger graph:
+    - collect `channelNavigator.commands` in a `LaunchedEffect`, with
+      `flowWithLifecycle(LocalLifecycleOwner.current.lifecycle, RESUMED)`, and for each `issued`
+      call `onExit()` when `navigationViewModel.dispatch(issued.command)` returns `true`. US5
+      (T074) adds the gesture hold here;
+    - render
+      `NavDisplay(entries = rememberNavigationEntries(state, entryProvider), onBack = { if (navigationViewModel.dispatch(Back)) onExit() })`.
+      System back goes straight to the ViewModel, never through the navigator (data-model
+      "IssuedCommand");
+  - once `state != null`, `MainActivity` calls
+    `NavigationHost(state, navigationViewModel, channelNavigator, entryProvider { signInEntries(); homeEntries(); deviceEntries(); settingEntries() }, onExit = ::finish)`.
+    `NavigationHost` is composed only while the state exists, so commands are never collected
+    before the start state (FR-015);
   - drive bottom-bar visibility from `state?.isBottomBarVisible == true`;
   - change `BottomNavigationBar` to take `(currentTab, onSelect = { channelNavigator.navigate(it) })`
     instead of the `NavHostController` parameter. Bottom-bar taps go through the navigator with
-    origin `null`, so US5 can hold them during a gesture (research R20);
+    origin `null`, so US5 can ignore them during a gesture (FR-028, research R20);
   - keep the `AnimatedVisibility` specs, the notification-permission code and `HomeTheme` as
     they are;
   - delete the now-unused `feature/auth/…/signin/navigation/SignInRoute.kt`,
@@ -390,14 +414,23 @@ their rules.
 - The device remembers that the user signed in, so later launches open Home with fresh history.
 - The CO2 notification opens Home with fresh history and discards navigation requests that were
   pending (FR-001, FR-002, FR-015, FR-023, FR-024).
+- The splash screen stays up until the start screen is ready, with no empty background in
+  between (FR-029).
 
 **Independent Test**:
 
-- Quickstart §2: the "US1" and "US1-4" rows and the notification rows.
+- Quickstart §2: the "US1" and "US1-4" rows, the notification rows and the "Launch splash" row
+  (SC-008).
 - `NavigationReducerTest` (R0a–R0f, R1–R4, R16, R19, R20, R22), `StartPolicyTest` (D1–D4),
   `DataStoreSessionRepositoryTest`, `SignInViewModelTest` and `CO2WorkerTest`.
 
-### Tests for User Story 1
+**Order**: the tasks are listed in execution order. Each test comes right before the task
+that makes it pass, so every module's tests compile at each "must pass" check (see "Tests"
+at the top). Tasks in different modules can run in parallel: `:core:data` T030–T032,
+`:feature:auth` T033–T035 (after T032, because `FakeSessionRepository` needs
+`SessionRepository`), and `:app` T036–T044.
+
+### Tasks (in execution order)
 
 - [ ] T030 [P] [US1] Create `core/data/src/test/java/com/timhome/core/data/repository/DataStoreSessionRepositoryTest.kt`
   (Robolectric, with a temporary DataStore file). Cover S1–S4 from `contracts/session.md`:
@@ -405,55 +438,46 @@ their rules.
   - it is `true` after `markSignedIn()`, also in a new instance;
   - `clearData()` resets it to `false`;
   - only the key `isSignedIn` is written.
-- [ ] T031 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`
-  with cases R0a, R0b, R1, R2, R3, R4, R16, R19, R20 and R22 from `contracts/navigation-rules.md`,
-  plus the `startState` cases R0c–R0f. R0d (restored Sign In with the flag set → fresh tabs) is
-  the process-death case from FR-010. These are plain JVM tests with real states.
-- [ ] T032 [P] [US1] Create `feature/auth/src/test/java/com/timhome/auth/ui/signin/FakeSessionRepository.kt`,
-  backed by a `MutableStateFlow<Boolean>` and recording calls. Extend `SignInViewModelTest.kt`:
-  - on login success, `markSignedIn()` is called **before**
-    `IssuedCommand(ReplaceAll(Home), origin = SignIn)` is emitted;
-  - on failure, neither happens.
-- [ ] T033 [P] [US1] Extend `app/src/test/java/com/timhome/modularizationtest/ui/CO2WorkerTest.kt`
-  to check the posted notification's content intent, through Robolectric
-  `shadowOf(PendingIntent)`:
-  - it targets `MainActivity`;
-  - its flags contain `FLAG_ACTIVITY_NEW_TASK` and `FLAG_ACTIVITY_CLEAR_TASK` and do not contain
-    `FLAG_ACTIVITY_CLEAR_TOP`;
-  - `getBooleanExtra(MainActivity.EXTRA_OPENED_FROM_CO2_ALERT, false) == true`.
-- [ ] T034 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/StartPolicyTest.kt`
-  with cases D1–D4 from `contracts/navigation-rules.md`. The function returns `true` only for
-  `hasSavedState=false, openedFromAlert=true, launchedFromHistory=false`. Add a case for every
-  remaining combination of the three inputs (8 in total), so every branch is covered.
-
-### Implementation for User Story 1
-
-- [ ] T035 [P] [US1] In `core/datastore/src/main/java/com/timhome/core/datastore/DataStoreManager.kt`:
+- [ ] T031 [P] [US1] In `core/datastore/src/main/java/com/timhome/core/datastore/DataStoreManager.kt`:
   - add `IS_SIGNED_IN = booleanPreferencesKey("isSignedIn")` to `PreferencesKeys`;
   - add `fun isSignedIn(): Flow<Boolean> = dataStore.data.map { it[IS_SIGNED_IN] ?: false }`;
   - add `suspend fun setSignedIn(value: Boolean)`.
 
   The value is a boolean only: "no credentials, tokens, or personal data are stored for it"
   (FR-023).
-- [ ] T036 [US1] Create:
+- [ ] T032 [US1] Create:
   - `core/data/src/main/java/com/timhome/core/data/repository/SessionRepository.kt`:
     `interface SessionRepository { val isSignedIn: Flow<Boolean>; suspend fun markSignedIn() }`;
   - `core/data/src/main/java/com/timhome/core/data/repository/DataStoreSessionRepository.kt`:
-    `internal class … @Inject constructor(private val dataStore: DataStoreManager)`;
+    `internal class DataStoreSessionRepository(private val dataStore: DataStoreManager) : SessionRepository`,
+    with no `@Inject`;
   - `core/data/src/main/java/com/timhome/core/data/di/SessionModule.kt`:
-    `@Module interface SessionModule { @Binds fun bind(impl: DataStoreSessionRepository): SessionRepository }`.
+    `@Module object SessionModule { @Provides fun provideSessionRepository(dataStore: DataStoreManager): SessionRepository = DataStoreSessionRepository(dataStore) }`.
 
+  Don't use `@Binds` here. `SessionModule` must be public, because `AuthenticationComponent` and
+  `AppComponent` live in other modules. A public `@Binds fun bind(impl: DataStoreSessionRepository)`
+  would expose the `internal` class, and Kotlin rejects that ("public function exposes its internal
+  parameter type"). With `@Provides`, the `internal` class appears only in the function body.
   T030 must pass.
-- [ ] T037 [US1] Add `implementation(project(":core:data"))` to `feature/auth/build.gradle.kts`,
+- [ ] T033 [P] [US1] Create `feature/auth/src/test/java/com/timhome/auth/ui/signin/FakeSessionRepository.kt`,
+  backed by a `MutableStateFlow<Boolean>` and recording calls. Extend `SignInViewModelTest.kt`:
+  - on login success, `markSignedIn()` is called **before**
+    `IssuedCommand(ReplaceAll(Home), origin = SignIn)` is emitted;
+  - on failure, neither happens.
+- [ ] T034 [US1] Add `implementation(project(":core:data"))` to `feature/auth/build.gradle.kts`,
   and add `SessionModule::class` to `modules` in
   `feature/auth/src/main/java/com/timhome/auth/di/AuthenticationComponent.kt`.
-- [ ] T038 [US1] In `feature/auth/…/auth/ui/signin/SignInViewModel.kt`, inject
+- [ ] T035 [US1] In `feature/auth/…/auth/ui/signin/SignInViewModel.kt`, inject
   `SessionRepository` (a normal `@Inject` constructor parameter next to the `@Assisted` ones). In
   `goHomeScreen()`, run
   `viewModelScope.launch { sessionRepository.markSignedIn(); navigator.replaceAll(Home) }`. Make
-  sure it runs only once per successful sign-in, even if the state is emitted again. T032 must
+  sure it runs only once per successful sign-in, even if the state is emitted again. T033 must
   pass.
-- [ ] T039 [US1] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, complete
+- [ ] T036 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`
+  with cases R0a, R0b, R1, R2, R3, R4, R16, R19, R20 and R22 from `contracts/navigation-rules.md`,
+  plus the `startState` cases R0c–R0f. R0d (restored Sign In with the flag set → fresh tabs) is
+  the process-death case from FR-010. These are plain JVM tests with real states.
+- [ ] T037 [US1] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, complete
   `initialState(isSignedIn)`: `false` → `SignedOut(listOf(SignIn))`, `true` → `FreshTabs`. Then
   implement:
   - R1: `Back` while `SignedOut` → `Exit`;
@@ -464,20 +488,24 @@ their rules.
   - R20: `ReplaceAll(SignIn)` → `SignedOut([SignIn])`;
   - R22: `ReplaceAll(r)` where `r` is neither `Home` nor `SignIn` → `Ignore`.
 
-  Add `fun startState(restored: NavigationState?, isSignedIn: Boolean?): NavigationState?` with
-  rules R0c–R0f: a restored `SignedIn` state is returned as it was; with no flag yet it returns
-  `null`; with no restored state it returns `initialState(isSignedIn)`; a restored `SignedOut` with
-  the flag set gives `FreshTabs`, and without the flag set it is returned as it was.
+  Complete `startState` (T021 added R0c and R0f): with no restored state it returns
+  `initialState(isSignedIn)` (R0a/R0b); a restored `SignedOut` with the flag set gives `FreshTabs`
+  (R0d), and without the flag set it is returned as it was (R0e). Keep the R0c and R0f checks
+  first.
 
-  T031 must pass.
+  T036 must pass.
+- [ ] T038 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/StartPolicyTest.kt`
+  with cases D1–D4 from `contracts/navigation-rules.md`. The function returns `true` only for
+  `hasSavedState=false, openedFromAlert=true, launchedFromHistory=false`. Add a case for every
+  remaining combination of the three inputs (8 in total), so every branch is covered.
+- [ ] T039 [P] [US1] Create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/StartPolicy.kt`
+  with
+  `internal object StartPolicy { fun shouldDiscardPendingNavigation(hasSavedState: Boolean, openedFromAlert: Boolean, launchedFromHistory: Boolean): Boolean = openedFromAlert && !hasSavedState && !launchedFromHistory }`
+  (research R13). T038 must pass.
 - [ ] T040 [US1] Add a `modules` array with `SessionModule::class` to the `@Component` in
   `app/src/main/java/com/timhome/modularizationtest/di/AppComponent.kt`, and inject
   `SessionRepository` into `MainActivity`.
-- [ ] T041 [P] [US1] Create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/StartPolicy.kt`
-  with
-  `internal object StartPolicy { fun shouldDiscardPendingNavigation(hasSavedState: Boolean, openedFromAlert: Boolean, launchedFromHistory: Boolean): Boolean = openedFromAlert && !hasSavedState && !launchedFromHistory }`
-  (research R13). T034 must pass.
-- [ ] T042 [US1] Update the start of `app/…/modularizationtest/ui/MainActivity.kt`:
+- [ ] T041 [US1] Update the start of `app/…/modularizationtest/ui/MainActivity.kt`:
   - add `companion object { const val EXTRA_OPENED_FROM_CO2_ALERT = "com.timhome.modularizationtest.OPENED_FROM_CO2_ALERT" }`;
   - in `onCreate`, **before** `setContent`, call `channelNavigator.discardPending()` when
     `StartPolicy.shouldDiscardPendingNavigation(savedInstanceState != null, intent.getBooleanExtra(EXTRA_OPENED_FROM_CO2_ALERT, false), intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0)`
@@ -488,18 +516,53 @@ their rules.
     `null`, which happens **regardless of `savedInstanceState`**, read
     `sessionRepository.isSignedIn.first()` once in a `LaunchedEffect` and call
     `navigationViewModel.start(NavigationReducer.startState(navigationViewModel.restored, flag)!!)`.
-    Render only the themed background until then. Don't use `runBlocking` (research R12);
-  - start collecting navigation commands only after the state is not `null`, so buffered
+    Render nothing until then. T044 keeps the splash screen over the window for that time
+    (FR-029). Don't use `runBlocking` (research R12);
+  - keep `NavigationHost` (T028) composed only after the state is not `null`, so buffered
     commands are applied on top of the start state (FR-015);
-  - make sure every `true` from `dispatch` calls `finish()`.
+  - make sure every `true` from `dispatch` reaches `onExit = ::finish`.
+- [ ] T042 [US1] Extend `app/src/test/java/com/timhome/modularizationtest/ui/CO2WorkerTest.kt`
+  to check the posted notification's content intent, through Robolectric
+  `shadowOf(PendingIntent)`:
+  - it targets `MainActivity`;
+  - its flags contain `FLAG_ACTIVITY_NEW_TASK` and `FLAG_ACTIVITY_CLEAR_TASK` and do not contain
+    `FLAG_ACTIVITY_CLEAR_TOP`;
+  - `getBooleanExtra(MainActivity.EXTRA_OPENED_FROM_CO2_ALERT, false) == true`.
 - [ ] T043 [US1] In `app/src/main/java/com/timhome/modularizationtest/ui/CO2Worker.kt`, replace
   `intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)` with
   `intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)`, and add
   `intent.putExtra(MainActivity.EXTRA_OPENED_FROM_CO2_ALERT, true)` (research R13). Change
-  nothing else in the worker. T033 must pass.
+  nothing else in the worker. T042 must pass.
+- [ ] T044 [US1] Keep the system splash screen up until the start screen is ready (FR-029, SC-008,
+  research R12):
+  - add the version `coreSplashscreen = "1.2.0"` and the library `androidx-core-splashscreen`
+    (`androidx.core:core-splashscreen`, version.ref `coreSplashscreen`) to
+    `gradle/libs.versions.toml`, and `implementation(libs.androidx.core.splashscreen)` to
+    `app/build.gradle.kts`. 1.2.0 also has the Android 15 fix for crashes on launch caused by
+    the display cutout;
+  - in `app/src/main/res/values/themes.xml` and `app/src/main/res/values-night/themes.xml`, add
+    `Theme.ModularizationTest.Starting` with parent `Theme.SplashScreen`,
+    `windowSplashScreenBackground` from the existing window background color,
+    `windowSplashScreenAnimatedIcon` = `@mipmap/ic_launcher`, and
+    `postSplashScreenTheme` = `@style/Theme.ModularizationTest`;
+  - in `app/src/main/AndroidManifest.xml`, set `android:theme="@style/Theme.ModularizationTest.Starting"`
+    on the `MainActivity` `<activity>`. Leave the `<application>` theme as it is;
+  - in `MainActivity.onCreate`, call `installSplashScreen()` **before** `super.onCreate()` and
+    then `splashScreen.setKeepOnScreenCondition { navigationViewModel.state.value == null }`.
+    Dagger injection already runs in `attachBaseContext`. Do not touch `navigationViewModel`
+    before `super.onCreate()`: its `SavedStateHandle` can only be created after the saved state
+    is restored. The condition lambda is only evaluated later, before each frame is drawn;
+  - a restored `SignedIn` state is non-null from the start, so the splash leaves at once on that
+    path (R0c).
 
-**Checkpoint**: US1 works end to end: first launch, sign-in, exit, relaunch to Home, and the
-notification reset that discards pending requests.
+  Check SC-008 with the quickstart's "Launch splash" row: 10 fresh launches per test device, each
+  recorded with `adb shell screenrecord` and checked frame by frame. If a blank frame shows between the
+  splash and the start screen, keep the splash until `NavigationHost`'s first `SideEffect`
+  instead, using a flag in `NavigationViewModel`.
+
+**Checkpoint**: US1 works end to end: first launch, sign-in, exit, relaunch to Home, the
+notification reset that discards pending requests, and the splash screen staying up until the
+start screen is ready.
 
 ---
 
@@ -520,22 +583,14 @@ notification reset that discards pending requests.
 - `NavigationReducerTest` (R5, R6, R6a, R6b, R7, R12, R13), `DeviceRepositoryTest`,
   `DeviceDetailViewModelTest` and `BuyModuleViewModelTest`.
 
-### Tests for User Story 2
+**Order**: the tasks are listed in execution order (see "Tests" at the top). `:feature:device`
+runs T045–T052 in that order; T047 and T049 need T046's nullable `getDeviceById`, so that
+their fake repository can return `null`. The `:app` pair T053 → T054 can go at any point in
+the phase.
 
-- [ ] T044 [US2] Add cases R5, R6, R6a, R6b, R7, R12 and R13 from `contracts/navigation-rules.md` to
-  `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`. R6a
-  (`GoTo(DD(2))` on top of `DD(1)` → `Ignore`) and R6b (`GoTo(BM(2))` on top of `BM(1)` →
-  `Ignore`) are the FR-026 cases. Also add a case for the device-list sequence
-  `GoTo(DD(1))`, `GoTo(DD(2))` from `D=[Devices]`: the result is `D=[Devices, DD(1)]`.
-- [ ] T045 [P] [US2] Extend `feature/device/src/test/…/device/ui/device/DeviceDetailViewModelTest.kt`:
-  - when the repository returns `null` for the route's `deviceId`,
-    `uiState.isDeviceMissing == true` and `device == null`;
-  - when it returns a device, `isDeviceMissing == false`;
-  - `goBack()` emits `IssuedCommand(Back, origin = DeviceDetail(id))`.
-- [ ] T046 [P] [US2] Extend `feature/device/src/test/…/device/ui/buyModule/BuyModuleViewModelTest.kt`
-  in the same way: `isDeviceMissing` is `true` when `getDeviceById` returns `null` and `false`
-  otherwise. The existing price and module tests must stay green.
-- [ ] T047 [P] [US2] Create `feature/device/src/test/java/com/timhome/device/data/repository/DeviceRepositoryTest.kt`
+### Tasks (in execution order)
+
+- [ ] T045 [P] [US2] Create `feature/device/src/test/java/com/timhome/device/data/repository/DeviceRepositoryTest.kt`
   (Robolectric), using an in-memory `AppDatabase`
   (`Room.inMemoryDatabaseBuilder(…).allowMainThreadQueries()`), the real `DeviceMapper` and
   `GenerateDate`. Cover:
@@ -546,10 +601,7 @@ notification reset that discards pending requests.
 
   Close the database in `@After`. The target is at least 80% line coverage of `DeviceRepository`
   (constitution III, research R16).
-
-### Implementation for User Story 2
-
-- [ ] T048 [US2] Make the device lookup nullable. This changes signatures only; the schema does
+- [ ] T046 [US2] Make the device lookup nullable. This changes signatures only; the schema does
   not change:
   - `suspend fun getDeviceById(deviceId: Int): DeviceEntity?` in
     `core/database/src/main/java/com/timhome/core/database/dao/DeviceDao.kt`;
@@ -558,15 +610,23 @@ notification reset that discards pending requests.
   - `?.let { mapper.convertEntityToModel(it) }` in
     `feature/device/src/main/java/com/timhome/device/data/repository/DeviceRepository.kt`.
 
-  Fix the callers. T047 must pass.
-- [ ] T049 [US2] In `feature/device/…/device/ui/device/DeviceDetailViewModel.kt`, add
+  Fix the callers. T045 must pass.
+- [ ] T047 [US2] Extend `feature/device/src/test/…/device/ui/device/DeviceDetailViewModelTest.kt`:
+  - when the repository returns `null` for the route's `deviceId`,
+    `uiState.isDeviceMissing == true` and `device == null`;
+  - when it returns a device, `isDeviceMissing == false`;
+  - `goBack()` emits `IssuedCommand(Back, origin = DeviceDetail(id))`.
+- [ ] T048 [US2] In `feature/device/…/device/ui/device/DeviceDetailViewModel.kt`, add
   `val isDeviceMissing: Boolean = false` to `DeviceDetailUiState`. Set it to `true` when
   `repository.getDeviceById(route.deviceId)` returns `null`. Rules from `data-model.md`:
   "`device == null && !isDeviceMissing` means still loading", and "`isDeviceMissing == true`
-  always wins when rendering". T045 must pass.
+  always wins when rendering". T047 must pass.
+- [ ] T049 [US2] Extend `feature/device/src/test/…/device/ui/buyModule/BuyModuleViewModelTest.kt`
+  in the same way: `isDeviceMissing` is `true` when `getDeviceById` returns `null` and `false`
+  otherwise. The existing price and module tests must stay green.
 - [ ] T050 [US2] In `feature/device/…/device/ui/buyModule/BuyModuleViewModel.kt`, add
   `val isDeviceMissing: Boolean = false` to `BuyModuleUiState`. In `init`, check
-  `repository.getDeviceById(route.deviceId) == null` once and set the flag. T046 must pass.
+  `repository.getDeviceById(route.deviceId) == null` once and set the flag. T049 must pass.
 - [ ] T051 [P] [US2] Add `<string name="device_not_found">Device not found</string>` and, if it
   does not exist yet, `<string name="back">Back</string>` to
   `feature/device/src/main/res/values/strings.xml`.
@@ -579,14 +639,19 @@ notification reset that discards pending requests.
 
   Use the `:core:designsystem` theme tokens. Keep the loading early-return only for
   `device == null && !isDeviceMissing` (FR-025, contract E6).
-- [ ] T053 [US2] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, implement:
+- [ ] T053 [US2] Add cases R5, R6, R6a, R6b, R7, R12 and R13 from `contracts/navigation-rules.md` to
+  `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`. R6a
+  (`GoTo(DD(2))` on top of `DD(1)` → `Ignore`) and R6b (`GoTo(BM(2))` on top of `BM(1)` →
+  `Ignore`) are the FR-026 cases. Also add a case for the device-list sequence
+  `GoTo(DD(1))`, `GoTo(DD(2))` from `D=[Devices]`: the result is `D=[Devices, DD(1)]`.
+- [ ] T054 [US2] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, implement:
   - the same-kind check, **before** any push rule: `GoTo(r)` with
     `r::class == currentRoute::class` → `Ignore`, whatever the arguments (R3, R6, R6a, R6b;
-    FR-026, research R18). Replace T039's narrower R3 check with it;
+    FR-026, research R18). Replace T037's narrower R3 check with it;
   - R5/R7: push a non-top-level route onto the current tab;
   - R12/R13: `Back` pops within the current tab while its stack size is greater than 1.
 
-  T044 must pass.
+  T053 must pass.
 
 **Checkpoint**: The device flow works on its own, including missing devices and quick taps on
 one or several rows.
@@ -611,9 +676,17 @@ Covers FR-006 to FR-009 and FR-011.
 - Quickstart §2: the "US3", "US3 back", "US3 re-visit" and "US3 first screen kept" rows.
 - `NavigationReducerTest` (R8–R11, R14, R15, R17, R18, R21, and the invariant property test).
 
-### Tests for User Story 3
+**Order**: the tasks are listed in execution order. T055 adds the quickstart row that this
+phase's Independent Test needs.
 
-- [ ] T054 [US3] Add cases R8, R9, R10, R11, R14, R15, R17, R18 and R21 to
+### Tasks (in execution order)
+
+- [ ] T055 [P] [US3] Add a "US3 first screen kept" row to the §2 table in
+  `specs/002-navigation3-migration/quickstart.md`: "Devices list → scroll down → Home (bar) →
+  back from Home's first screen, then back from the Devices list's first screen, so Devices
+  leaves the tab visit history → Devices (bar)". Expected: "the Devices list opens at the same
+  scroll position, with its data still loaded" (FR-011, clarified 2026-10-10).
+- [ ] T056 [US3] Add cases R8, R9, R10, R11, R14, R15, R17, R18 and R21 to
   `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`.
   Also add a seeded-random property test: 500 random command sequences starting from
   `FreshTabs`. Draw commands from `GoTo`, `Back` and `ReplaceAll` over a sample of **every**
@@ -627,10 +700,7 @@ Covers FR-006 to FR-009 and FR-011.
      `TopLevelRoute`s";
   4. "Within a single stack, no two adjacent entries have the same route type";
   5. "A tab that is not in `visitOrder` has a stack equal to `[tab]`".
-
-### Implementation for User Story 3
-
-- [ ] T055 [US3] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`:
+- [ ] T057 [US3] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`:
   - `GoTo(TopLevelRoute)` equal to `currentTab` → `Ignore`, on any screen of that tab (R8,
     FR-007);
   - any other `GoTo(TopLevelRoute)` → move that tab to the end of `visitOrder` without
@@ -640,13 +710,13 @@ Covers FR-006 to FR-009 and FR-011.
   - `Back` at the root when `visitOrder.size == 1` → `Exit` (R16, R18);
   - `GoTo(SignIn)` while `SignedIn` → `Ignore` (R21).
 
-  T054 must pass.
-- [ ] T056 [US3] In `app/…/modularizationtest/ui/MainActivity.kt`, update `BottomNavigationBar`:
+  T056 must pass.
+- [ ] T058 [US3] In `app/…/modularizationtest/ui/MainActivity.kt`, update `BottomNavigationBar`:
   - set `selected = item.route == (state as? SignedIn)?.currentTab` (FR-009);
   - make `onClick` always call `channelNavigator.navigate(item.route)` and let the reducer decide
     whether to ignore it;
   - remove the old `hierarchy`/`hasRoute` logic.
-- [ ] T057 [US3] In `app/…/modularizationtest/ui/navigation/NavigationEntries.kt`, make sure
+- [ ] T059 [US3] In `app/…/modularizationtest/ui/navigation/NavigationEntries.kt`, make sure
   `rememberNavigationEntries` calls `rememberDecoratedNavEntries` for **all three** tab stacks on every
   recomposition, including tabs that are not in `visitOrder`. This keeps the ViewModels and
   saved UI state of screens in inactive tabs alive (FR-006, FR-011, research R4), and keeps a tab's
@@ -676,7 +746,7 @@ screen keeping its state all behave as clarified.
 
 ### Tests for User Story 4
 
-- [ ] T058 [P] [US4] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationStateJsonTest.kt`.
+- [ ] T060 [P] [US4] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationStateJsonTest.kt`.
   For every state reached in R0a–R22 (reuse the builders from `NavigationReducerTest`), check that
   `NavigationJson.decodeFromString(NavigationState.serializer(), NavigationJson.encodeToString(...))`
   equals the original. Cover `DeviceDetail(n)`/`BuyModule(n)` arguments and a non-trivial
@@ -687,7 +757,7 @@ screen keeping its state all behave as clarified.
 
 ### Implementation for User Story 4
 
-- [ ] T059 [US4] In `app/…/modularizationtest/ui/navigation/NavigationViewModel.kt`, store the
+- [ ] T061 [US4] In `app/…/modularizationtest/ui/navigation/NavigationViewModel.kt`, store the
   state in the `SavedStateHandle` (constitution II, research R3):
   - after every state change (`start`, `dispatch`, and later `applyHeld`), write
     `savedStateHandle[KEY_STATE] = NavigationJson.encodeToString(NavigationState.serializer(), state)`.
@@ -695,15 +765,15 @@ screen keeping its state all behave as clarified.
   - at creation, set `restored` to the decoded `savedStateHandle.get<String>(KEY_STATE)`, or to
     `null` when nothing was saved.
 
-  T042's `startState(restored, …)` then decides the start: a restored `SignedIn` state is used as
+  T041's `startState(restored, …)` then decides the start: a restored `SignedIn` state is used as
   it was without reading the flag (clarified 2026-10-09). A restored `SignedOut` state waits for
-  the flag (R0d/R0e), and nothing restored gives `initialState(flag)`. T058 must pass.
-- [ ] T060 [P] [US4] Add keep rules for the serialized navigation types to
+  the flag (R0d/R0e), and nothing restored gives `initialState(flag)`. T060 must pass.
+- [ ] T062 [P] [US4] Add keep rules for the serialized navigation types to
   `app/proguard-rules.pro` (research R10):
   - `-keep class com.timhome.core.common.navigation.** { *; }`;
   - `-keep class com.timhome.modularizationtest.ui.navigation.NavigationState* { *; }`;
   - `-keepclassmembers` rules for their `Companion` and `$serializer`.
-- [ ] T061 [US4] With "Don't keep activities" turned on, verify that the entry-scoped
+- [ ] T063 [US4] With "Don't keep activities" turned on, verify that the entry-scoped
   `SavedStateHandle` still restores `LOGIN_VIEW_STATE` in `SignInViewModel` and the IP field in
   `SettingViewModel` (FR-013). If either is lost, fix the decorator order in
   `NavigationEntries.kt`: the saveable-state decorator must come before the ViewModel-store
@@ -724,75 +794,165 @@ place.
   gesture changes nothing.
 - Navigation requests issued during a predictive back gesture are held until it ends, then
   applied only if the screen that issued them is still shown (FR-027).
+- Bottom-bar taps during a predictive back gesture are ignored, during the gesture and after it
+  (FR-028).
 
-Covers FR-005, FR-014 and FR-027.
+Covers FR-005, FR-014, FR-027 and FR-028.
 
 **Independent Test**:
 
-- Quickstart §2: the "US5", "US5 tabs" and "US5 predictive" rows, and the "Gesture hold,
-  canceled" and "Gesture hold, completed" rows, on API 36.
-- `TransitionSelectionTest`, the `NavigationReducerTest` H1–H7 cases and `NavigationViewModelTest`
-  V8.
+- Quickstart §2: the "US5", "US5 tabs" and "US5 predictive" rows, and the "Bottom-bar tap during
+  swipe, canceled" and "Bottom-bar tap during swipe, completed" rows, on API 36.
+- `TransitionSelectionTest`, the `NavigationReducerTest` H1–H7 cases, `NavigationViewModelTest`
+  V8, `NavigationCommandRouterTest` W1–W8 (T071) and `NavigationHostGestureTest` (T073).
 
-### Tests for User Story 5
+**Order**: the tasks are listed in execution order (see "Tests" at the top). Everything is in
+`:app`. Each test comes right before the task that makes it pass: T064 → T065, T068 → T069,
+V8 inside T070, T071 → T072, T073 → T074. T066 needs T065; T067 can go at any point. T073
+refers only to `NavigationHost` (T028), so it compiles whenever it is written; confirm that
+its "completed" case fails before T074.
 
-- [ ] T062 [P] [US5] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/TransitionSelectionTest.kt`:
+### Tasks (in execution order)
+
+- [ ] T064 [P] [US5] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/TransitionSelectionTest.kt`:
   - T1–T4: `transitionStyleFor(targetMetadata)` returns `Slide` for the `SignIn` and `Home`
     entries and `Scale` for `Devices`, `Setting`, `DeviceDetail` and `BuyModule`;
   - T5/E1/E5: build the real
     `entryProvider { signInEntries(); homeEntries(); deviceEntries(); settingEntries() }` and,
     for one sample of every `Route` subtype, assert
     `entryProvider(route).metadata.transitionStyle() != null`. Entry content is not invoked.
-- [ ] T063 [US5] Add cases H1–H7 from `contracts/navigation-rules.md` ("Releasing commands held
-  during a predictive back gesture") to
-  `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`.
-  Assert `state`, `exit`, `applied` and `dropped` of the `HeldResult` for each case. Include H2
-  (a `Back` from `BM(1)` after the gesture completed is dropped, so there is no double back) and
-  H5 (the origin is checked against the state **at that step**).
-
-### Implementation for User Story 5
-
-- [ ] T064 [US5] Add `internal fun transitionStyleFor(metadata: Map<String, Any>): TransitionStyle`
+- [ ] T065 [US5] Add `internal fun transitionStyleFor(metadata: Map<String, Any>): TransitionStyle`
   in `app/…/modularizationtest/ui/navigation/TransitionSelection.kt`. If the style is missing,
-  fail with `error(...)`. T062 must pass.
-- [ ] T065 [US5] In `app/…/modularizationtest/ui/MainActivity.kt`, give `NavDisplay`:
+  fail with `error(...)`. T064 must pass.
+- [ ] T066 [US5] In `app/…/modularizationtest/ui/navigation/NavigationHost.kt`, give `NavDisplay`:
   - `transitionSpec = { transitionStyleFor(targetState.metadata).toContentTransform() }`;
   - the same lambda for `popTransitionSpec`;
   - the same lambda for `predictivePopTransitionSpec`, which also receives the swipe edge.
 
   The style always comes from the **target** scene, "the style of the screen being shown"
   (FR-005, research R7).
-- [ ] T066 [P] [US5] Add `android:enableOnBackInvokedCallback="true"` to the `<application>`
+- [ ] T067 [P] [US5] Add `android:enableOnBackInvokedCallback="true"` to the `<application>`
   element in `app/src/main/AndroidManifest.xml` (research R8). Confirm that no
   `onBackPressed()` override is left in the repo.
-- [ ] T067 [US5] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, add
+- [ ] T068 [US5] Add cases H1–H7 from `contracts/navigation-rules.md` ("Releasing commands held
+  during a predictive back gesture") to
+  `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`.
+  Assert `state`, `exit`, `applied` and `dropped` of the `HeldResult` for each case. Include H2
+  (a `Back` from `BM(1)` after the gesture completed is dropped, so there is no double back) and
+  H5 (the origin is checked against the state **at that step**).
+- [ ] T069 [US5] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, add
   `internal data class HeldResult(val state: NavigationState, val exit: Boolean, val applied: Int, val dropped: Int)`
   and `fun applyHeld(state: NavigationState, held: List<IssuedCommand>): HeldResult`. Walk `held`
-  in order. "A held command is applied when `origin == null` or `origin == currentRoute` of the
-  state at that step, which already includes the commands applied before it. Otherwise it is
-  dropped" (data-model "HeldResult"). Applied commands go through `reduce`, so `Ignore` keeps
-  the state and still counts as applied. Stop at the first `Exit` and set `exit = true`. T063
+  in order. "A held command is applied when `origin == currentRoute` of the state at that step,
+  which already includes the commands applied before it. Otherwise it is dropped. A command with
+  origin `null` (bottom bar) is always dropped" (data-model "HeldResult", rule H4, FR-028). Applied commands go through `reduce`, so `Ignore` keeps
+  the state and still counts as applied. Stop at the first `Exit` and set `exit = true`. T068
   must pass.
-- [ ] T068 [US5] In `app/…/modularizationtest/ui/navigation/NavigationViewModel.kt`, add
-  `fun applyHeld(held: List<IssuedCommand>): Boolean`. It calls `NavigationReducer.applyHeld`,
-  replaces (and saves, T059) the state when it changed, returns `exit`, and does nothing
-  (returning `false`) while the state is `null` or `held` is empty. Add case V8 to
+- [ ] T070 [US5] In `app/…/modularizationtest/ui/navigation/NavigationViewModel.kt`, add
+  `fun applyHeld(held: List<IssuedCommand>): HeldResult?`. It calls `NavigationReducer.applyHeld`,
+  replaces (and saves, T061) the state when it changed, and returns the `HeldResult`. It does
+  nothing and returns `null` while the state is `null` or `held` is empty. Add case V8 to
   `NavigationViewModelTest.kt` first.
-- [ ] T069 [US5] In `app/…/modularizationtest/ui/MainActivity.kt`, add the gesture hold
-  (research R20, contract navigator "Wiring"):
-  - in the command collector from T028/T042, read
-    `navigationEventDispatcher.transitionState.value` **synchronously** for each collected
-    command. When it is `NavigationEventTransitionState.InProgress`, call
-    `channelNavigator.hold(issued)` instead of dispatching;
+- [ ] T071 [US5] Create
+  `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationCommandRouterTest.kt`,
+  a plain JVM test with a real `ChannelNavigator` and a real
+  `NavigationViewModel(SavedStateHandle())` (no mocks). Cover cases W1–W8 from
+  `contracts/navigation-rules.md` ("Routing collected commands"):
+  - W1–W3: `onCollected` applies a command when no gesture is in progress, parks it (state
+    unchanged, `takeHeld()` returns it) when one is, and returns `true` on `Exit`;
+  - W4–W6: `releaseHeld` drops a stale `Back` and empties the parked list, returns `null` when
+    nothing is parked, and reports `exit = true`;
+  - W7: `releaseHeld` while the ViewModel state is `null` returns `null` and leaves the parked
+    commands in place;
+  - W8: `onCollected` for a bottom-bar command (origin `null`) while a gesture is in progress
+    drops it: the state is unchanged and `takeHeld()` is empty (FR-028).
+- [ ] T072 [US5] Create
+  `app/src/main/java/com/timhome/modularizationtest/ui/navigation/NavigationCommandRouter.kt`
+  (research R20, contract navigator "Wiring"). It is a plain class, `internal` to `:app`, with no
+  Compose or Android types:
+
+  ```kotlin
+  internal class NavigationCommandRouter(
+      private val navigator: ChannelNavigator,
+      private val viewModel: NavigationViewModel,
+  ) {
+      /** During a back gesture, drops a bottom-bar command and parks any other; otherwise applies it. Returns true to finish. */
+      fun onCollected(issued: IssuedCommand, gestureInProgress: Boolean): Boolean
+      /** Applies the parked commands (H1–H7). Returns null when nothing was released. */
+      fun releaseHeld(): HeldResult?
+  }
+  ```
+
+  - `onCollected`: when `gestureInProgress` is true, return `false` after either dropping the
+    command when `issued.origin == null` (bottom bar, FR-028) or calling `navigator.hold(issued)`;
+    otherwise return `viewModel.dispatch(issued.command)`;
+  - `releaseHeld`: return `null` **without** calling `takeHeld()` while `viewModel.state.value` is
+    `null`, so parked commands are not lost before the start state exists. Otherwise return
+    `viewModel.applyHeld(navigator.takeHeld())`.
+
+  This is where the "apply, hold or drop" decision lives, so it is JVM-tested (constitution III).
+  `NavigationHost` keeps only the Compose timing (T074). T071 must pass.
+- [ ] T073 [US5] Create
+  `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationHostGestureTest.kt`, a
+  Robolectric Compose test of the release **order** that H2 assumes: the gesture's own `Back` must
+  be applied before held commands are released (FR-027, research R20, plan risk "Releasing held
+  commands before `NavDisplay` applies the gesture's own `Back`").
+  - Dependencies: add `androidx-compose-ui-test-junit4` (`androidx.compose.ui:ui-test-junit4`) and
+    `androidx-compose-ui-test-manifest` (`androidx.compose.ui:ui-test-manifest`) to
+    `gradle/libs.versions.toml`, with no version (Compose BOM). In `app/build.gradle.kts` add
+    `testImplementation(platform(libs.androidx.compose.bom))`,
+    `testImplementation(libs.androidx.compose.ui.test.junit4)` and
+    `debugImplementation(libs.androidx.compose.ui.test.manifest)`.
+  - Setup: `createAndroidComposeRule<ComponentActivity>()`, a real `ChannelNavigator`, a real
+    `NavigationViewModel(SavedStateHandle())`, and a small test `entryProvider` with one
+    `entry<…>` per `Route` subtype (a `Text` as content and `scaleTransition()` metadata). Start the
+    ViewModel, then `setContent { NavigationHost(state, …, onExit = { exited = true }) }`.
+  - Drive the gesture through `composeRule.activity.onBackPressedDispatcher`:
+    `dispatchOnBackStarted(BackEventCompat(…))` and `dispatchOnBackProgressed(…)` to start,
+    `onBackPressed()` to complete, `dispatchOnBackCancelled()` to cancel. Call
+    `composeRule.waitForIdle()` after each step.
+  - Cases:
+    - **completed**: start from `D=[Devices, DD(1), BM(1)]`, `v=[Home, Devices]`; start the
+      gesture; send `channelNavigator.issuedFrom(BM(1)).back()`; assert the state still has
+      `BM(1)` on top (nothing moves while the finger is down); complete the gesture; assert
+      `D=[Devices, DD(1)]`, **not** `[Devices]`, and `exited == false`;
+    - **canceled**: same start and held `Back`, then cancel; assert `D=[Devices, DD(1)]` (the held
+      command is applied once);
+    - **bottom bar during gesture, completed**: start from `D=[Devices, DD(1)]`,
+      `v=[Home, Devices]`; start the gesture; send `channelNavigator.navigate(Setting)`; complete;
+      assert `v=[Home, Devices]` and `D=[Devices]`: the gesture's own `Back` is applied and the tap
+      is ignored (FR-028, the quickstart "Bottom-bar tap during swipe, completed" row);
+    - **bottom bar during gesture, canceled**: same start and tap, then cancel; assert the state is
+      unchanged (`D=[Devices, DD(1)]`, `v=[Home, Devices]`);
+    - **no gesture**: send `channelNavigator.issuedFrom(BM(1)).back()` with no gesture; assert it
+      is applied right away.
+
+  Write it before T074 and confirm that the "completed" case fails. If Robolectric does not move
+  `navigationEventDispatcher.transitionState` to `InProgress` through these calls, drive the
+  `NavigationEventDispatcher` reached through `LocalNavigationEventDispatcherOwner` directly. If
+  that does not work under Robolectric either, move the same test to `app/src/androidTest` (with
+  `androidTestImplementation` for the two libraries) and run it with
+  `./gradlew :app:connectedDebugAndroidTest` on the API 36 emulator. Record which variant was used
+  in the test's KDoc.
+- [ ] T074 [US5] In `app/…/modularizationtest/ui/navigation/NavigationHost.kt`, add the gesture
+  hold through the router (research R20, contract navigator "Wiring"). Get the dispatcher from
+  `LocalNavigationEventDispatcherOwner` (not from `MainActivity`), so T073 can host it in a plain
+  `ComponentActivity`:
+  - create the router with
+    `remember(channelNavigator, navigationViewModel) { NavigationCommandRouter(channelNavigator, navigationViewModel) }`;
+  - in the command collector from T028, call `onExit()` when
+    `router.onCollected(issued, navigationEventDispatcher.transitionState.value is NavigationEventTransitionState.InProgress)`
+    returns `true`. Read the transition state **synchronously** for each collected command;
   - in a second `LaunchedEffect`, collect `navigationEventDispatcher.transitionState`. When it
     changes to `Idle`, wait one frame (`withFrameNanos { }`) so `NavDisplay`'s `onBack` for a
-    completed gesture has been applied, then call `finish()` if
-    `navigationViewModel.applyHeld(channelNavigator.takeHeld())` returns `true`;
+    completed gesture has been applied, then call `router.releaseHeld()`, and call `onExit()` when
+    its `exit` is `true`;
   - once, after the start state exists and **before** command collection starts, do the same.
     This releases commands held before an activity recreation, which cancels the gesture;
-  - log `applied` and `dropped` under the activity's tag when either is non-zero.
+  - log the `HeldResult`'s `applied` and `dropped` under a stable tag when either is non-zero.
 
-  Keep the `discardPending()` call from T042 where it is: it already clears held commands (N6).
+  No other branch on held commands goes in `NavigationHost`. Keep the `discardPending()` call
+  from T041 where it is: it already clears held commands (N6). T073 must pass.
 
 **Checkpoint**: All five stories are done.
 
@@ -803,28 +963,28 @@ Covers FR-005, FR-014 and FR-027.
 **Purpose**: Remove Navigation 2, prove nothing is left over, and run every gate (FR-020 to
 FR-022, SC-005 to SC-007).
 
-- [ ] T070 [P] In `app/`, `feature/*` and `core/*`, delete any remaining Navigation 2 imports and
+- [ ] T075 [P] In `app/`, `feature/*` and `core/*`, delete any remaining Navigation 2 imports and
   helpers: `toRoute`, `NavGraphBuilder`, `composable`, `NavController`, `NavHostController`,
   `hasRoute`, `hierarchy`, `findStartDestination`.
-- [ ] T071 [P] In the feature ViewModels' Dagger factory modules
+- [ ] T076 [P] In the feature ViewModels' Dagger factory modules
   (`feature/device/…/device/ui/device/DeviceDetailModule.kt`, `…/buyModule/BuyModule.kt`, and the
   modules for `SignInViewModel` and `DeviceListViewModel`), check that each assisted factory
   follows the `createFor` pattern from Phase 2, that no ViewModel `@Inject`s a `Navigator`
   (`git grep -n "Navigator" -- 'feature/**/src/main/**'` shows only `@Assisted` parameters and
   imports), and that no `toRoute` is left.
-- [ ] T072 Remove the `androidx-navigation-compose` line from
+- [ ] T077 Remove the `androidx-navigation-compose` line from
   `build-logic/src/main/kotlin/AndroidLibraryConventionPlugin.kt`, and remove
   `implementation(libs.androidx.navigation.compose)` from `app/build.gradle.kts`.
-- [ ] T073 Run `./gradlew assembleDebug` to confirm that no module still needs Navigation 2.
+- [ ] T078 Run `./gradlew assembleDebug` to confirm that no module still needs Navigation 2.
   `:core:common` must compile without any navigation library (research R2).
-- [ ] T074 Remove `androidxNavigation`, `androidx-navigation-compose` and
+- [ ] T079 Remove `androidxNavigation`, `androidx-navigation-compose` and
   `androidx-navigation-testing` from `gradle/libs.versions.toml`.
-- [ ] T075 Delete `core/common/src/main/java/com/timhome/core/common/NavigationDispatcher.kt`.
+- [ ] T080 Delete `core/common/src/main/java/com/timhome/core/common/NavigationDispatcher.kt`.
   Remove `provideNavDispatcher` from `core/…/core/di/AppModule.kt`, and remove
   `navigationDispatcher` from `CoreComponent.kt` and `BaseComponent.kt`. Update the comment in
   `core/build.gradle.kts` (line 11) that names `NavigationDispatcher`, so it names
   `ChannelNavigator` instead.
-- [ ] T076 Run the SC-007 leftover check from `quickstart.md` §1. Both commands must print
+- [ ] T081 Run the SC-007 leftover check from `quickstart.md` §1. Both commands must print
   nothing:
 
   ```bash
@@ -834,31 +994,31 @@ FR-022, SC-005 to SC-007).
 
   The generated baseline profile is left out: it lists library classes such as
   `DynamicNavHostFragment` and is not a build file or a source import.
-- [ ] T077 Run `./gradlew ktlintFormat`, then
+- [ ] T082 Run `./gradlew ktlintFormat`, then
   `./gradlew ktlintCheck detektDebug lintDebug testDebugUnitTest :app:assembleRelease`.
   Everything must be green with R8 on (FR-022).
-- [ ] T078 Run
+- [ ] T083 Run
   `./gradlew :app:jacocoDebugReport :core:common:jacocoDebugReport :core:data:jacocoDebugReport :core:ui:jacocoDebugReport :feature:auth:jacocoDebugReport :feature:device:jacocoDebugReport`.
   Confirm at least 80% line coverage for `NavigationReducer` (including `applyHeld`),
-  `NavigationState`, `NavigationViewModel`, `StartPolicy`, `TransitionSelection`, `ChannelNavigator`,
+  `NavigationState`, `NavigationViewModel`, `NavigationCommandRouter`, `StartPolicy`,
+  `TransitionSelection`, `ChannelNavigator`,
   `DataStoreSessionRepository`, `DeviceRepository`, `ViewModelFactory`, and the changed
   ViewModels: `SignInViewModel`, `DeviceListViewModel`, `DeviceDetailViewModel` and
   `BuyModuleViewModel` (FR-021, SC-006, constitution III). Add tests for any gap.
-- [ ] T079 [P] Update the "Target libraries" assumption in
+- [ ] T084 [P] Update the "Target libraries" assumption in
   `specs/002-navigation3-migration/spec.md` to the planned versions: navigation3 1.1.7,
   lifecycle 2.10.0, compileSdk 36 (checklist CHK017/CHK018).
-- [ ] T080 [P] Add a "US3 first screen kept" row to the §2 table in
-  `specs/002-navigation3-migration/quickstart.md`: "Devices list → scroll down → Home (bar) →
-  back from Home's first screen, then back from the Devices list's first screen, so Devices
-  leaves the tab visit history → Devices (bar)". Expected: "the Devices list opens at the same
-  scroll position, with its data still loaded" (FR-011, clarified 2026-10-10).
-- [ ] T081 Run the manual validation in `specs/002-navigation3-migration/quickstart.md` §2–§4:
+- [ ] T085 Run the manual validation in `specs/002-navigation3-migration/quickstart.md` §2–§4:
   - the 22 acceptance scenarios on API 26 and API 36;
+  - the SC-008 launch check: 10 fresh launches per device, half signed in and half not, with no
+    empty background between the splash screen and the start screen, each recorded with
+    `adb shell screenrecord` and checked frame by frame;
   - 18 process-death runs and 9 tab-return runs;
-  - the added-behavior rows for FR-024/FR-025 and FR-026/FR-027 (the gesture rows on API 36
+  - the added-behavior rows for FR-024/FR-025 and FR-026/FR-028 (the bottom-bar rows on API 36
     only; record "not reproducible on this device" if a second finger's tap is not delivered
-    during a system back swipe);
-  - the "US3 first screen kept" row from T080;
+    during a system back swipe. That is acceptable only because rules W8 and H4 and T073 cover
+    the ignored tap automatically, so T073 must be green);
+  - the "US3 first screen kept" row from T055;
   - the release restore;
   - the stress session (monkey with seed `20261009`, then the 5-minute scripted cycle).
 
@@ -876,38 +1036,44 @@ FR-022, SC-005 to SC-007).
   T023–T027 → T028 → T029. T013 must finish before T014–T018, because the factory then requires a
   route at every creation site, and T014–T018 must all land in the same commit as T013 or right
   after it so no screen crashes. T012 must finish before T023–T026.
-- **US1 (Phase 3)**: after Foundational. T041 (StartPolicy) must come before T042 (MainActivity
-  start), and T042 must come before T043 (the worker uses `MainActivity.EXTRA_OPENED_FROM_CO2_ALERT`).
+- **US1 (Phase 3)**: after Foundational. Follow the phase's "Order": T039 (StartPolicy) before
+  T041 (MainActivity start), and T041 before T042 and T043 (both use
+  `MainActivity.EXTRA_OPENED_FROM_CO2_ALERT`) and before T044 (the splash waits for T041's
+  start-state read).
 - **US2 (Phase 4)**: after Foundational. It does not depend on US1, but when the stories run in
-  sequence T053 replaces US1's narrower R3 check in `NavigationReducer.kt`. T047 must come before
-  T048.
+  sequence T054 replaces US1's narrower R3 check in `NavigationReducer.kt`. Follow the phase's
+  "Order": T045 → T046 before T047 and T049.
 - **US3 (Phase 5)**: after Foundational. It edits `NavigationReducer.kt`, `MainActivity.kt` and
   `NavigationEntries.kt`.
-- **US4 (Phase 6)**: after Foundational. T059 builds on T042 (US1), which is where `restored`
+- **US4 (Phase 6)**: after Foundational. T061 builds on T041 (US1), which is where `restored`
   is consumed by `startState`.
-- **US5 (Phase 7)**: after Foundational. T069 builds on the command collector from T028 and, when
-  US1 is done, T042. T067 → T068 → T069.
-- **Polish (Phase 8)**: after all stories. Order: T072 → T073 → T074 → T075 → T076 → T077 →
-  T078 → T081. T080 must come before T081.
+- **US5 (Phase 7)**: after Foundational. T074 builds on the command collector in
+  `NavigationHost.kt` from T028. Follow the phase's "Order": T069 → T070 → T072 → T074, with each
+  test written just before its implementation (T068 before T069, T071 before T072, T073 before
+  T074).
+- **Polish (Phase 8)**: after all stories. Order: T077 → T078 → T079 → T080 → T081 → T082 →
+  T083 → T085. T075, T076 and T084 can go at any point in the phase.
 
 ### User Story Dependencies
 
 | Story | Depends on | Shares files with |
 |---|---|---|
-| US1 (P1) | Foundational | `NavigationReducer.kt`, `MainActivity.kt` |
+| US1 (P1) | Foundational | `NavigationReducer.kt`, `MainActivity.kt`, `AndroidManifest.xml`, `gradle/libs.versions.toml`, `app/build.gradle.kts` |
 | US2 (P1) | Foundational | `NavigationReducer.kt` |
 | US3 (P2) | Foundational | `NavigationReducer.kt`, `MainActivity.kt`, `NavigationEntries.kt` |
-| US4 (P2) | Foundational (+ US1 T042 for the start-state path) | `NavigationViewModel.kt`, `NavigationViewModelTest.kt` |
-| US5 (P3) | Foundational (+ US1 T042 for the collector it extends) | `NavigationReducer.kt`, `NavigationViewModel.kt`, `NavigationViewModelTest.kt`, `MainActivity.kt` |
+| US4 (P2) | Foundational (+ US1 T041 for the start-state path) | `NavigationViewModel.kt`, `NavigationViewModelTest.kt` |
+| US5 (P3) | Foundational | `NavigationReducer.kt`, `NavigationViewModel.kt`, `NavigationViewModelTest.kt`, `NavigationCommandRouter.kt`, `NavigationHost.kt`, `gradle/libs.versions.toml`, `app/build.gradle.kts` |
 
 The reducer, `NavigationViewModel` and `MainActivity` are shared, so implement the stories **one after
-another, in priority order** (US1 → US2 → US3 → US4 → US5). Test files in separate paths can still
-be written in parallel.
+another, in priority order** (US1 → US2 → US3 → US4 → US5). Tests in **different modules** can
+still be written in parallel. Within one module, follow the task IDs.
 
 ### Within Each User Story
 
-- Write the tests first and confirm they fail.
-- Then work in this order: data → repository → ViewModel → reducer rule → UI or host wiring.
+- Write each test first and confirm it fails, then implement it. Work through the tasks in ID
+  order: each test comes right before the task that makes it pass, so every module's tests
+  compile at each "must pass" check.
+- Work in this order: data → repository → ViewModel → reducer rule → UI or host wiring.
 - Each phase ends with a green `./gradlew testDebugUnitTest assembleDebug` and its Independent
   Test.
 
@@ -928,28 +1094,28 @@ T023 SignInEntries | T024 HomeEntries | T025 DeviceEntries | T026 SettingEntries
 ### User Story 1
 
 ```text
-T030 DataStoreSessionRepositoryTest | T031 NavigationReducerTest | T032 FakeSessionRepository + SignInViewModelTest
-T033 CO2WorkerTest (flags + extra)  | T034 StartPolicyTest (D1–D4, 8 combinations)
-T035 DataStoreManager key           | T041 StartPolicy.kt
+:core:data                | :feature:auth                | :app (one pair at a time)
+T030 → T031 → T032        | (after T032) T033 → T034 → T035 | T036 → T037, T038 → T039, T040, T041, T042 → T043, T044
 ```
 
 ### User Story 2
 
 ```text
-T045 DeviceDetailViewModelTest | T046 BuyModuleViewModelTest | T047 DeviceRepositoryTest | T051 strings.xml
+:feature:device (one pair at a time)                 | :app
+T045 → T046, T047 → T048, T049 → T050, T051 → T052 | T053 → T054
 ```
 
 ### User Stories 4 and 5
 
 ```text
-T058 NavigationStateJsonTest (+ V4–V6) | T060 proguard-rules.pro
-T062 TransitionSelectionTest  | T066 AndroidManifest.xml
+T060 NavigationStateJsonTest (+ V4–V6) | T062 proguard-rules.pro
+T067 AndroidManifest.xml | the US5 :app pairs, one at a time (T064 → T065, T068 → T069, T070, T071 → T072, T073 → T074)
 ```
 
 ### Polish
 
 ```text
-T070 Navigation 2 imports | T071 factory-module check | T079 spec assumption | T080 quickstart row
+T075 Navigation 2 imports | T076 factory-module check | T084 spec assumption
 ```
 
 ---
@@ -959,9 +1125,9 @@ T070 Navigation 2 imports | T071 factory-module check | T079 spec assumption | T
 ### MVP First (User Story 1)
 
 1. Phase 1 Setup, then Phase 2 Foundational. The app now runs on Navigation 3.
-2. Phase 3 (US1): first launch, sign-in, exit, remembered sign-in, and the notification reset
-   with pending requests discarded.
-3. **Stop and validate**: the quickstart rows US1, US1-4 and the notification rows.
+2. Phase 3 (US1): first launch, sign-in, exit, remembered sign-in, the notification reset with
+   pending requests discarded, and the splash screen until the start screen is ready.
+3. **Stop and validate**: the quickstart rows US1, US1-4, the notification rows and "Launch splash".
 
 ### Incremental Delivery
 
@@ -973,11 +1139,12 @@ T070 Navigation 2 imports | T071 factory-module check | T079 spec assumption | T
 4. US3: per-tab history, back to the previous tab, a tab's first screen keeping its state.
    Validate.
 5. US4: rotation, process death and the release restore. Validate.
-6. US5: transitions, predictive back, and requests held during the gesture. Validate.
+6. US5: transitions, predictive back, requests held during the gesture, and bottom-bar taps
+   ignored during it. Validate.
 7. Polish: remove Navigation 2, run the leftover grep, the gates and coverage, the full
    quickstart, and the stress session.
 
-Do not merge into `develop` before Polish (T081). The intermediate states are correct on this
+Do not merge into `develop` before Polish (T085). The intermediate states are correct on this
 branch, but they are not a navigation experience you can release.
 
 ---
@@ -993,9 +1160,9 @@ branch, but they are not a navigation experience you can release.
   `:core:common`, `:core:network`, `:core:database` and `:core:datastore` dependencies. Don't
   "right-size" them away when you touch `build.gradle.kts` files.
 - ktlint is wired into the build, so run `./gradlew ktlintFormat` after bulk import edits
-  (T070, T075).
+  (T075, T080).
 - `[P]` means different files and no dependency on an unfinished task. `[USx]` maps to the user
   stories in `spec.md`.
 - Analysis finding D1 is resolved with option A: the navigation state lives in the
   activity-scoped `NavigationViewModel`'s `SavedStateHandle` (constitution II, research R3). See
-  T022, T059 and T068.
+  T022, T061 and T070.

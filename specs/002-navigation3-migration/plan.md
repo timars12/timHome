@@ -1,9 +1,9 @@
 # Implementation Plan: Navigation 3 Migration
 
-**Branch**: `002-navigation3-migration` | **Date**: 2026-10-09, updated 2026-10-10 | **Spec**: [spec.md](spec.md)
+**Branch**: `002-navigation3-migration` | **Date**: 2026-10-09, updated 2026-10-10 and 2026-10-12 | **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from `specs/002-navigation3-migration/spec.md` (clarified
-2026-10-08, 2026-10-09 and 2026-10-10)
+2026-10-08, 2026-10-09, 2026-10-10 and 2026-10-12)
 
 ## Summary
 
@@ -21,6 +21,9 @@ The app moves from Navigation Compose 2.9.3 (`NavHost`/`NavController`) to Jetpa
   another of its kind (FR-026).
 - Requests issued during a predictive back gesture wait until it ends, and are dropped if the
   screen that issued them is no longer shown (FR-027).
+- Bottom-bar taps during a predictive back gesture are ignored (FR-028).
+- The splash screen stays up until the start screen is ready, so no empty background shows on
+  launch (FR-029).
 
 The technical approach:
 
@@ -44,15 +47,16 @@ The technical approach:
   `savedInstanceState`. A restored signed-in state is used as it was. Otherwise the flag is read
   first. A restored Sign In history with the flag set opens Home with fresh tabs, so a sign-in that
   finished just before process death is not lost (FR-010). The ViewModel starts in two phases, so
-  it can exist before its state does (data-model "ViewModel lifecycle").
+  it can exist before its state does (data-model "ViewModel lifecycle"). `core-splashscreen` keeps
+  the system splash screen up while the state is still `null` (FR-029, R12).
 - The state is saved as a `NavigationJson` string (`allowStructuredMapKeys = true`), because its
   `tabStacks` map is keyed by sealed route objects.
 - The reducer ignores `GoTo` of the same route type as the top (R18).
 - Every command carries its `origin`, the route of the issuing screen. `ViewModelFactory` gives
   each ViewModel a navigator scoped to its entry, and there is no unscoped `Navigator` binding
   (R19).
-- While `navigationEventDispatcher.transitionState` is `InProgress`, collected commands are parked
-  in `ChannelNavigator`. One frame after it returns to `Idle`, the pure
+- While `navigationEventDispatcher.transitionState` is `InProgress`, collected bottom-bar commands
+  (origin `null`) are dropped (FR-028) and the others are parked in `ChannelNavigator`. One frame after it returns to `Idle`, the pure
   `NavigationReducer.applyHeld` applies the ones whose origin is still shown and drops the rest
   (R20).
 
@@ -66,6 +70,7 @@ Details and rejected alternatives are in [research.md](research.md) (R1–R20).
 
 - Added: `androidx.navigation3:navigation3-runtime` and `navigation3-ui` 1.1.7, and
   `androidx.lifecycle:lifecycle-viewmodel-navigation3` 2.10.0.
+- Added: `androidx.core:core-splashscreen` 1.2.0, in `:app` only (FR-029, research R12).
 - Upgraded: the lifecycle bundle, 2.9.4 → 2.10.0.
 - Removed: `androidx.navigation:navigation-compose` and `navigation-testing` 2.9.3.
 - Unchanged: Compose BOM 2026.06.00, Dagger 2.57.2 (component dependencies with assisted-inject
@@ -90,6 +95,13 @@ Details and rejected alternatives are in [research.md](research.md) (R1–R20).
   `discardPending`) and `NavigationReducer.applyHeld` (H1–H7) are plain JVM tests.
 - `ViewModelFactoryTest` (`:core:ui`) covers the route and scoped-navigator hand-off. It uses
   Robolectric only if `createSavedStateHandle()` needs a real owner.
+- `NavigationCommandRouterTest` (W1–W8) is a plain JVM test of the apply, hold or drop decision, with a
+  real `ChannelNavigator` and a real `NavigationViewModel`.
+- `NavigationHostGestureTest` (`:app`, Robolectric Compose with `ui-test-junit4` from the Compose
+  BOM) drives a predictive back gesture through the activity's back dispatcher. It checks that held
+  commands are released only after `NavDisplay` has applied the gesture's own `Back`. To make that
+  testable without the Dagger graph, the `NavDisplay`, the command collector and the gesture hold
+  live in the `NavigationHost` composable, not in `MainActivity`.
 - The SC-005 stress session uses `adb shell monkey` with the fixed seed 20261009 plus a scripted
   manual cycle (research R17).
 - The reducer and navigator tests are plain JVM tests with real data. ViewModel tests use fakes
@@ -104,8 +116,9 @@ navigation3 1.1.7 and lifecycle 2.10.0 require (`minCompileSdk=36`).
 **Performance Goals**:
 
 - Transitions stay smooth (no dropped frames beyond today's baseline).
-- On a cold launch, the start screen appears after a single DataStore read (no more than one
-  frame of empty background, research R12).
+- On a cold launch, the system splash screen stays up while a single DataStore read chooses the
+  start screen. No empty background shows between the splash and the start screen (FR-029,
+  SC-008, research R12).
 - Restoring after process death shows the same screen on the first frame.
 
 **Constraints**:
@@ -130,26 +143,30 @@ navigation3 1.1.7 and lifecycle 2.10.0 require (`minCompileSdk=36`).
 |---|---|---|---|
 | **I. Layering** | Lower layers MUST NOT depend on higher ones; no feature-to-feature dependencies | ✅ Routes and `Navigator` in `:core:common`; the session flag in `:core:data` | ✅ `:core:common` *loses* its navigation library dependency. `:feature:auth` gains `:core:data`, which is downward and allowed. The reducer lives in `:app` |
 | **I. Narrow API** | Implementation classes are `internal`; repositories behind interfaces | ✅ Planned | ✅ `DataStoreSessionRepository` is `internal` behind `SessionRepository`. `NavigationReducer`, `NavigationState`, `NavigationViewModel` and `rememberNavigationEntries` are `internal` to `:app` |
-| **I. Build config** | Versions only in the catalog; wiring in convention plugins | ✅ | ✅ The `navigation3` bundle moves from the base library plugin to `AndroidLibraryComposeConventionPlugin` (R9). No new libraries for the session work |
+| **I. Build config** | Versions only in the catalog; wiring in convention plugins | ✅ | ✅ The `navigation3` bundle moves from the base library plugin to `AndroidLibraryComposeConventionPlugin` (R9). No new libraries for the session work. `core-splashscreen` (FR-029) is versioned in the catalog and declared in `app/build.gradle.kts`, like the app's other direct dependencies |
 | **I. New modules** | Only with a clear owner | ✅ None added | ✅ None added |
 | **II. UDF** | One `UiState` per screen; navigation as one-off events | ✅ | ✅ `isDeviceMissing` is added to the existing UiStates (R14). Navigation goes through channel commands, delivered exactly once (R5). Commands held during a gesture are applied at most once or dropped, never replayed (R20) |
 | **II. Routes** | Type-safe `@Serializable` routes, no string literals | ✅ | ✅ Sealed `Route` hierarchy (R2) |
 | **II. Process death** | State in `SavedStateHandle` or persisted storage | ✅ | ✅ `NavigationState` lives in the activity-scoped `NavigationViewModel`'s `SavedStateHandle` (R3; was `rememberSaveable` until analysis finding D1); the session flag is in DataStore. `NavigationViewModel` is not a screen ViewModel and has no `UiState`, so the `stateIn` rule does not apply to it |
-| **III. Tests** | ≥80% line coverage on new/changed logic; every branch tested; real classes or fakes over mocks | ✅ Planned | ✅ Rules R0a–R0f and R1–R22 (with R6a/R6b), H1–H7, T1–T5, D1–D4 and `NavigationViewModel` V1–V8, navigator N1–N9, `ViewModelFactoryTest` (the factory changes), session S1–S4, the device-missing branches, and a new `DeviceRepositoryTest`, since that repository changes and had no tests (closes analysis finding C1). `ChannelNavigator` replaces the `NavController` mocks |
+| **III. Tests** | ≥80% line coverage on new/changed logic; every branch tested; real classes or fakes over mocks | ✅ Planned | ✅ Rules R0a–R0f and R1–R22 (with R6a/R6b), H1–H7, T1–T5, D1–D4, `NavigationViewModel` V1–V8, `NavigationCommandRouter` W1–W8 (the apply, hold or drop branch, analysis finding C1), the gesture release order (`NavigationHostGestureTest`), navigator N1–N9, `ViewModelFactoryTest` (the factory changes), session S1–S4, the device-missing branches, and a new `DeviceRepositoryTest`, since that repository changes and had no tests (closes analysis finding C1). `ChannelNavigator` replaces the `NavController` mocks |
 | **III. Determinism** | Injectable dispatchers and clock | ✅ | ✅ The reducer is pure. The DataStore read stays in a coroutine (no `runBlocking`, R12) |
 | **IV. Quality gates** | ktlint, detekt, lint, unit tests, R8 release build | ✅ | ✅ Keep rules for serialized navigation types (R10); release restore check in the quickstart |
 | **V. Background work & user trust** | WorkManager rules, quiet hours, permission check, dedup | ✅ | ✅ Only the notification's tap `Intent` changes: its flags plus a marker extra (R13). Scheduling, quiet hours, the permission check and dedup are untouched, and a `CO2WorkerTest` assertion is added |
-| **Tech: DI** | Dagger component dependencies; no Hilt | ✅ | ✅ `CoreComponent`/`BaseComponent` swap `NavigationDispatcher` for `ChannelNavigator`. ViewModels get their entry-scoped `Navigator` as an `@Assisted` parameter from `ViewModelFactory` (R19), so assisted injection stays the only creation path for feature ViewModels. `NavigationViewModel` has no dependencies and is created with a lifecycle `viewModelFactory { initializer { … } }` (R3); that is neither Hilt nor a service locator. A `SessionModule` `@Binds` is included where needed |
+| **Tech: DI** | Dagger component dependencies; no Hilt | ✅ | ✅ `CoreComponent`/`BaseComponent` swap `NavigationDispatcher` for `ChannelNavigator`. ViewModels get their entry-scoped `Navigator` as an `@Assisted` parameter from `ViewModelFactory` (R19), so assisted injection stays the only creation path for feature ViewModels. `NavigationViewModel` has no dependencies and is created with a lifecycle `viewModelFactory { initializer { … } }` (R3); that is neither Hilt nor a service locator. A `SessionModule` (`@Provides`, so the `internal` implementation stays out of public signatures) is included where needed |
 | **Tech: Data / Secrets** | DataStore for preferences; no personal data in storage or logs | ✅ | ✅ A boolean only (FR-023, contract S4) |
 
-**Result**: PASS. Nothing goes in Complexity Tracking.
+**Result**: PASS, re-checked 2026-10-12 after FR-028, FR-029 and the `NavigationCommandRouter`
+design. One older deviation, which this feature does not change, is recorded in Complexity
+Tracking.
 
 **Notes**:
 
 - The compileSdk 35 → 36 bump is build configuration inside the convention plugin, which is
   allowed under Principle I.
-- The constitution says "Java 17 toolchain", but the build compiles to JVM 11. That mismatch
-  predates this feature and isn't touched here.
+- FR-028 adds no new type: it is one more branch in `NavigationCommandRouter` (W8) and one rule
+  change in `applyHeld` (H4), both JVM-tested (Principle III).
+- FR-029 adds one library (`core-splashscreen` 1.2.0), versioned in the catalog (Principle I). It
+  needs no keep rule (Principle IV): it uses no reflection or serialization.
 
 ## Project Structure
 
@@ -157,14 +174,14 @@ navigation3 1.1.7 and lifecycle 2.10.0 require (`minCompileSdk=36`).
 
 ```text
 specs/002-navigation3-migration/
-├── spec.md              # Feature spec (clarified 2026-10-08, 2026-10-09, 2026-10-10)
+├── spec.md              # Feature spec (clarified 2026-10-08, 2026-10-09, 2026-10-10, 2026-10-12)
 ├── plan.md              # This file
 ├── research.md          # Phase 0: decisions R1–R20
 ├── data-model.md        # Phase 1: Route, NavigationCommand, IssuedCommand, NavigationState, Transition, HeldResult, session flag, UiState additions
 ├── quickstart.md        # Phase 1: validation guide
 ├── contracts/
 │   ├── navigator.md         # Navigator / ChannelNavigator contract, N1–N9 (+ spec intent mapping)
-│   ├── navigation-rules.md  # Start policy D1–D4, start state R0a–R0f, rules R1–R22 (+R6a/R6b), held release H1–H7, transition styles T1–T5
+│   ├── navigation-rules.md  # Start policy D1–D4, start state R0a–R0f, rules R1–R22 (+R6a/R6b), held release H1–H7, router W1–W8, transition styles T1–T5
 │   ├── feature-entries.md   # How features register entries (E1–E6)
 │   └── session.md           # SessionRepository contract (S1–S4)
 ├── checklists/
@@ -196,7 +213,7 @@ core/datastore/src/main/java/com/timhome/core/datastore/DataStoreManager.kt   # 
 core/data/src/main/java/com/timhome/core/data/
 ├── repository/SessionRepository.kt           # interface
 ├── repository/DataStoreSessionRepository.kt  # internal impl
-└── di/SessionModule.kt                       # @Binds
+└── di/SessionModule.kt                       # @Provides (not @Binds: impl is internal)
 core/data/src/test/.../repository/DataStoreSessionRepositoryTest.kt
 
 core/ui/src/main/java/com/timhome/core/ui/
@@ -221,10 +238,11 @@ feature/device/.../navigation/DeviceRoute.kt → DeviceEntries.kt
 feature/settings/.../navigation/SettingRoute.kt → SettingEntries.kt
 feature/*/src/test/...ViewModelTest.kt        # ChannelNavigator / fakes instead of NavController mocks
 
-app/src/main/AndroidManifest.xml              # enableOnBackInvokedCallback="true" (R8)
+app/src/main/AndroidManifest.xml              # enableOnBackInvokedCallback="true" (R8); MainActivity starting theme (R12)
+app/src/main/res/values{,-night}/themes.xml   # Theme.ModularizationTest.Starting (parent Theme.SplashScreen)
 app/proguard-rules.pro                        # keep rules for serialized navigation types (R10)
 app/src/main/java/com/timhome/modularizationtest/ui/
-├── MainActivity.kt                           # discard on alert launch; start state; NavDisplay; bottom bar; gesture hold/release
+├── MainActivity.kt                           # discard on alert launch; start state; bottom bar; calls NavigationHost
 ├── CO2Worker.kt                              # notification intent: NEW_TASK | CLEAR_TASK + marker extra (R13)
 └── navigation/
     ├── StartPolicy.kt                        # pure shouldDiscardPendingNavigation (D1–D4)
@@ -233,12 +251,16 @@ app/src/main/java/com/timhome/modularizationtest/ui/
     ├── TransitionSelection.kt                # transitionStyleFor(metadata) (T1–T5)
     ├── NavigationViewModel.kt                # two-phase start, SavedStateHandle, dispatch/applyHeld
     ├── NavigationEntries.kt                  # rememberNavigationEntries: per-tab rememberDecoratedNavEntries
+    ├── NavigationCommandRouter.kt            # apply, hold or drop decision, releaseHeld (W1–W8)
+    ├── NavigationHost.kt                     # NavDisplay, command collector, gesture timing
     └── TopLevelTabs.kt                       # bottom-bar items (icon, label, testTag)
 app/src/test/java/com/timhome/modularizationtest/ui/
 ├── navigation/NavigationReducerTest.kt
 ├── navigation/NavigationStateJsonTest.kt
 ├── navigation/NavigationViewModelTest.kt     # V1–V8, plain JVM with SavedStateHandle()
 ├── navigation/StartPolicyTest.kt
+├── navigation/NavigationCommandRouterTest.kt # W1–W8, plain JVM
+├── navigation/NavigationHostGestureTest.kt   # Robolectric Compose: release order after a gesture
 ├── navigation/TransitionSelectionTest.kt
 └── CO2WorkerTest.kt                          # + intent-flags assertion
 ```
@@ -275,10 +297,16 @@ app/src/test/java/com/timhome/modularizationtest/ui/
    - the `StartPolicy` discard before `setContent`;
    - the start state from `startState(restored, flag)`, reading the flag unless a signed-in state
      was restored;
-   - `NavDisplay` with per-tab decorated entries and target-style transitions;
+   - the splash screen (`installSplashScreen()` before `super.onCreate()`), kept up while the
+     state is `null` (FR-029, R12);
    - the bottom bar from state, sending through `channelNavigator`;
-   - the gesture hold: park commands while `transitionState` is `InProgress`, and release them
-     with `applyHeld` one frame after `Idle` and once before collection starts (R20).
+   - the `NavigationHost` composable, once the state exists. `NavigationHost` holds:
+     - `NavDisplay` with per-tab decorated entries and target-style transitions;
+     - the command collector;
+     - the gesture hold, through `NavigationCommandRouter`: park commands while `transitionState`
+       is `InProgress`, and release them with `applyHeld` one frame after `Idle` and once before
+       collection starts (R20). The router's decision is tested by `NavigationCommandRouterTest`,
+       and the timing by `NavigationHostGestureTest`.
 
    Plus the manifest opt-in, and the `CO2Worker` intent flags and marker extra.
 8. **Cleanup**: remove navigation-compose, `NavigationDispatcher` and `toRoute`; keep rules;
@@ -289,16 +317,18 @@ app/src/test/java/com/timhome/modularizationtest/ui/
 
 | Risk | Mitigation |
 |---|---|
-| A one-frame empty background on a cold launch while the flag is read (R12) | Measure in the quickstart. If noticeable, add `core-splashscreen` as a follow-up |
+| The splash leaves one frame before the first composition is drawn, which shows a blank frame and fails SC-008 (R12) | The quickstart's "Launch splash" row checks 10 launches per device, recorded with `adb shell screenrecord` and checked frame by frame. If a blank frame shows, keep the splash until `NavigationHost`'s first `SideEffect` |
 | Remembered sign-in means existing users who update skip Sign In only *after* signing in once on the new version (no stored flag yet) | Expected. The first launch after the update shows Sign In once. Mention it in the release notes |
 | `CLEAR_TASK` from a notification discards unsaved screen input (for example, a half-typed IP in Settings) | Accepted by FR-024 ("discarding any current or saved history") |
 | The notification's marker extra stays on the task's base intent, so a later rotation or a reopen from Recents could discard again | `StartPolicy` ignores the extra when there is saved state (D3) or when the launch came from history (D4). Both are unit-tested |
 | Reordering entries in `NavDisplay` when switching tabs animates as a "push" | Expected. The style comes from the target screen (T2/T3). Verify in the US5 tabs row |
-| The ViewModel store decorator in lifecycle 2.10.0 has the `removeViewModelStoreOnPop` workaround that 2.11 deprecated | Use the default. State is cleared only when an entry leaves its own tab stack (R4). The US4 rotation check covers configuration changes |
+| The ViewModel store decorator in lifecycle 2.10.0 has the `removeViewModelStoreOnPop` workaround that 2.11 deprecated | Use the default. In 2.10.0 it runs only when an entry is popped from the stack its own decorator sees, so state is cleared only when an entry leaves its own tab stack (R4, verified 2026-10-12). T059 calls `rememberDecoratedNavEntries` for all three tabs on every recomposition. The US4 rotation check and the quickstart's "US3 first screen kept" row cover it on a device |
 | A missing keep rule shows up only in release builds | Quickstart section 3 runs the release restore check |
-| Releasing held commands before `NavDisplay` applies the gesture's own `Back` would bring back the double back that FR-027 forbids | Release one frame after `Idle`, not inside the `transitionState` callback (R20). The quickstart's "Gesture hold, completed" row checks the order |
+| Releasing held commands before `NavDisplay` applies the gesture's own `Back` would bring back the double back that FR-027 forbids | Release one frame after `Idle`, not inside the `transitionState` callback (R20). `NavigationHostGestureTest` checks the order automatically. It can't be checked by hand, because a screen can't be made to send a request mid-swipe on cue |
 | `navigationEventDispatcher` is not on the classpath through activity 1.12.0 | Check in step 1. If it is missing, add `androidx.navigationevent:navigationevent` to the catalog and the bundle (R20) |
 
 ## Complexity Tracking
 
-No constitution violations, so this section is empty.
+| Deviation | Why it is accepted | Simpler alternative rejected because |
+|---|---|---|
+| The build targets JVM 11 (`KotlinAndroid.kt`: `JavaVersion.VERSION_11`, `JvmTarget.JVM_11`), while the constitution's Technology section names a "Java 17 toolchain" | It predates this feature, and this feature does not change it. T002 edits the same file only to bump compileSdk | Raising the target to 17 changes every module's bytecode level and desugaring setup. It belongs in its own build change, not in a navigation migration |

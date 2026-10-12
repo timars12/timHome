@@ -101,8 +101,9 @@ research R18).
 ## Releasing commands held during a predictive back gesture (`NavigationReducer.applyHeld`)
 
 `fun applyHeld(state: NavigationState, held: List<IssuedCommand>): HeldResult` is pure. It walks
-`held` in order. A command is applied with `reduce` when its `origin` is `null` or equals the
-current route **at that step**. Otherwise it is dropped. The walk stops at the first `Exit`
+`held` in order. A command is applied with `reduce` when its `origin` equals the current route
+**at that step**. Otherwise it is dropped. A command with origin `null` (bottom bar) is always
+dropped: the router never holds one (FR-028, W8), so this only guards against misuse. The walk stops at the first `Exit`
 (research R20, FR-027). `MainActivity` calls it one frame after the gesture ends, so `state`
 already includes the gesture's own `Back` when the gesture was completed.
 
@@ -111,9 +112,9 @@ already includes the gesture's own `Back` when the gesture was completed.
 | H1 | `D=[Devices, DD(1), BM(1)]` (gesture canceled) | `Back` from `BM(1)` | applied → `D=[Devices, DD(1)]`; applied 1, dropped 0 | FR-027 (cancel) |
 | H2 | `D=[Devices, DD(1)]` (gesture completed from `BM(1)`) | `Back` from `BM(1)` | dropped; state unchanged; applied 0, dropped 1 | FR-027 (no double back) |
 | H3 | `D=[Devices, DD(1)]` (gesture completed from `BM(1)`) | `GoTo(BM(1))` from `DD(1)` | applied → `D=[Devices, DD(1), BM(1)]` | FR-027 (issuer is shown) |
-| H4 | `S=[Setting]`, `v=[Home, Setting]` | `GoTo(Devices)` with origin `null` (bottom bar) | applied → `v=[Home, Setting, Devices]` | FR-027, R9 |
+| H4 | `S=[Setting]`, `v=[Home, Setting]` | `GoTo(Devices)` with origin `null` (bottom bar) | dropped; state unchanged; applied 0, dropped 1 | FR-028 |
 | H5 | `D=[Devices, DD(1)]` | `GoTo(BM(1))` from `DD(1)`, then `Back` from `DD(1)` | 1st applied (top is now `BM(1)`); 2nd dropped (its origin `DD(1)` is no longer shown); applied 1, dropped 1 | FR-027 ("then-current" screen) |
-| H6 | `H=[Home]`, `v=[Home]` | `Back` from `Home`, then `GoTo(Devices)` with origin `null` | 1st returns `Exit`: `exit = true`, the 2nd is not looked at | FR-027, R16 |
+| H6 | `H=[Home]`, `v=[Home]` | `Back` from `Home`, then `GoTo(DD(1))` from `Home` | 1st returns `Exit`: `exit = true`, the 2nd is not looked at | FR-027, R16 |
 | H7 | any | empty list | state identical; applied 0, dropped 0 | contract completeness |
 
 Applied commands follow every other rule in this file, so a held `GoTo` of the same kind as the
@@ -161,4 +162,25 @@ state change, and decodes it into `restored` when it is created (research R3). T
 | V5 | a handle holding the V4 string (process death) | create a new ViewModel | `restored` and `state` equal the V4 state, with no `start` call (R0c) | FR-010 |
 | V6 | a handle holding `SignedOut([SignIn])` | create | `restored == SignedOut([SignIn])`, `state == null` until `start` (R0d/R0e) | FR-010 |
 | V7 | `H=[Home]`, `v=[Home]` | `dispatch(Back)` | returns `true` (R16) | US1-3 |
-| V8 | started, `D=[Devices, DD(1)]` | `applyHeld([Back from BM(1)])` | returns `false`; state unchanged (H2) | FR-027 |
+| V8 | started, `D=[Devices, DD(1)]` | `applyHeld([Back from BM(1)])` | returns `HeldResult(exit = false, applied = 0, dropped = 1)`; state unchanged (H2) | FR-027 |
+
+## Routing collected commands (`NavigationCommandRouter`, `:app`)
+
+`NavigationHost` passes every collected command to
+`NavigationCommandRouter.onCollected(issued, gestureInProgress)`. When the gesture ends, it calls
+`releaseHeld()`. The router owns the "apply, hold or drop" decision, so it is tested without a device,
+with a real `ChannelNavigator` and a real `NavigationViewModel(SavedStateHandle())`, in
+`NavigationCommandRouterTest`. `NavigationHost` keeps only the Compose timing: one frame after
+`Idle`, and once before collection starts (research R20). `NavigationHostGestureTest` covers that
+timing.
+
+| # | Given | Action | Result | Spec |
+|---|---|---|---|---|
+| W1 | started with `FreshTabs`, no gesture | `onCollected(GoTo(Devices) from null, false)` | applied: `v=[Home, Devices]`; returns `false`; `takeHeld()` is empty | FR-015 |
+| W2 | `D=[Devices, DD(1), BM(1)]`, gesture in progress | `onCollected(Back from BM(1), true)` | parked: state unchanged; returns `false`; `takeHeld()` returns that command | FR-027 |
+| W3 | `H=[Home]`, `v=[Home]`, no gesture | `onCollected(Back from Home, false)` | returns `true` (R16) | US1-3 |
+| W4 | `D=[Devices, DD(1)]`, `Back from BM(1)` parked | `releaseHeld()` | `HeldResult(exit = false, applied = 0, dropped = 1)`; state unchanged; `takeHeld()` is empty afterwards (H2) | FR-027 |
+| W5 | started, nothing parked | `releaseHeld()` | `null`; state unchanged (H7) | contract completeness |
+| W6 | `H=[Home]`, `v=[Home]`, `Back from Home` parked | `releaseHeld()` | `exit = true` (H6) | FR-027, R16 |
+| W7 | ViewModel state `null`, one command parked | `releaseHeld()` | `null`; the parked command is still returned by `takeHeld()` | FR-015 |
+| W8 | `D=[Devices, DD(1)]`, gesture in progress | `onCollected(GoTo(Setting) from null, true)` (bottom-bar tap) | dropped: state unchanged; returns `false`; `takeHeld()` is empty, so nothing is applied after the gesture either | FR-028 |

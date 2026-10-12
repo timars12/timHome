@@ -82,7 +82,8 @@ on those needs Compose/SavedState in the test.
   `viewModelFactory { initializer { NavigationViewModel(createSavedStateHandle()) } }`. The
   ViewModel has no dependencies to inject, so it does not go through Dagger or the features'
   `ViewModelFactory`, which requires a route (R19).
-- `dispatch` and `applyHeld` return `true` when nothing is left to go back to. `MainActivity`
+- `dispatch` returns `true`, and `applyHeld` returns a `HeldResult` with `exit = true`, when
+  nothing is left to go back to. `MainActivity`
   then finishes, so the app goes to the background. The ViewModel never holds the activity.
 - The per-tab decorated entries stay in Compose (`rememberNavigationEntries`, R4), because the
   decorators are composables. They read the state from the ViewModel and own no navigation state.
@@ -121,11 +122,24 @@ on those needs Compose/SavedState in the test.
 
 **Rationale**:
 
-- Lifecycle 2.11 release notes: "All decorator state, including ViewModels, must now be cleared at
-  the same time on pop. To keep decorator state around outside of when that back stack is passed to
-  a NavDisplay, use the `rememberDecoratedNavEntries` API." Decorating per tab means screens in an
-  inactive tab keep their ViewModels and saveable state (FR-006, FR-011). An entry's state is
-  cleared only when it leaves its own tab stack.
+- This holds on the pinned versions (verified 2026-10-12, closing analysis finding U1):
+  - navigation3 has had `rememberDecoratedNavEntries` since 1.0.0-alpha09, plus a `NavDisplay`
+    overload that takes already-decorated entries (alpha10). The Navigation 3 decorator guide
+    recommends it for "multiple back stacks, each with its own set of decorators", which is this
+    design.
+  - In lifecycle 2.10.0, `rememberViewModelStoreNavEntryDecorator`'s `removeViewModelStoreOnPop`
+    callback runs only when an entry is **popped from the back stack the decorator is given**
+    (renamed from `shouldRemoveViewModelStore` in 2.10.0-alpha05 to say exactly that). Each tab's
+    stack goes to its own `rememberDecoratedNavEntries` call, so an entry in an inactive tab, or a
+    tab's first screen after the tab left the visit order, is never popped from that stack. It
+    keeps its ViewModel and saveable state (FR-006, FR-011). An entry's state is cleared only
+    when it leaves its own tab stack.
+  - Forward compatibility: the lifecycle 2.11 release notes confirm the same model ("To keep
+    decorator state around outside of when that back stack is passed to a NavDisplay, use the
+    `rememberDecoratedNavEntries` API"), so a later upgrade does not change this design.
+- Condition: `rememberDecoratedNavEntries` must be called for **all three** tab stacks on every
+  recomposition, including tabs not in the visit order (T059). Skipping a tab's call would drop
+  its decorators and release its state.
 - With the visit order flattened, "the entry below the top" is always where back goes:
   - inside a tab, the previous screen;
   - at a tab's first screen, the last screen of the previously visited tab.
@@ -296,7 +310,9 @@ neither primitives nor enums, at runtime.
 - Expose it through a new `interface SessionRepository` in `:core:data`:
   `val isSignedIn: Flow<Boolean>` and `suspend fun markSignedIn()`. Its implementation is
   `DataStoreSessionRepository`.
-- A Dagger `@Binds` module, `SessionModule`, lives in `:core:data`. It is included by the
+- A Dagger `@Provides` module, `SessionModule`, lives in `:core:data`. It constructs the
+  `internal` `DataStoreSessionRepository` in its body. A `@Binds` module would have to expose that
+  internal class in a public signature, which Kotlin rejects. It is included by the
   components that need it: `AuthenticationComponent` and `AppComponent` (which injects
   `MainActivity`).
 - `SignInViewModel` calls `markSignedIn()` **before** `navigator.replaceAll(Home)`.
@@ -321,7 +337,7 @@ neither primitives nor enums, at runtime.
 - A concrete `@Inject` class without an interface, like the existing `SettingRepository`.
   Rejected: the constitution asks for interfaces, and a fake keeps ViewModel tests mock-free.
 
-## R12. Choosing the start state: wait for the stored flag, without a splash library
+## R12. Choosing the start state: wait for the stored flag behind the splash screen
 
 **Decision**:
 
@@ -334,7 +350,7 @@ neither primitives nor enums, at runtime.
 - On a configuration change the ViewModel survives, so its state is already set and nothing is
   read again. After process death, a restored `SignedIn` state is used directly and the flag is
   not read (FR-010, the 2026-10-09 clarification).
-- Otherwise the state is still `null`. `MainActivity` shows only the themed background, reads
+- Otherwise the state is still `null`. `MainActivity` renders nothing, reads
   `sessionRepository.isSignedIn.first()`, and calls
   `navigationViewModel.start(startState(navigationViewModel.restored, flag)!!)`. That gives
   `initialState(flag)` when nothing was restored. A restored Sign In history with the flag set gives fresh tabs: a sign-in that finished
@@ -349,21 +365,39 @@ neither primitives nor enums, at runtime.
   never a problem, because the ViewModel survives it.
 - Navigation command collection (R5) starts only after the ViewModel's state is set. Commands buffered
   before that are applied on top of the start state (FR-015), unless R13 discarded them first.
+- The system splash screen covers the wait (FR-029, clarified 2026-10-12).
+  `androidx.core:core-splashscreen` 1.2.0 is added. `MainActivity` calls `installSplashScreen()`
+  before `super.onCreate()`, and then
+  `setKeepOnScreenCondition { navigationViewModel.state.value == null }`. A `MainActivity`-only
+  starting theme, `Theme.ModularizationTest.Starting` (parent `Theme.SplashScreen`), switches to
+  the app theme through `postSplashScreenTheme`.
 
 **Rationale**:
 
-- DataStore reads are asynchronous. A single preference read takes a few milliseconds, so the
-  gap is no longer than one frame on mid-range devices.
-- No new dependency is added, and no `runBlocking` call is added on the main thread. (The
-  existing `isUseMockDate()` does that, and this design does not copy it.)
+- DataStore reads are asynchronous. A single preference read usually takes a few milliseconds,
+  but FR-029 allows no empty background at all, however short. The splash screen is already on
+  screen at launch, and keeping it up has no gap to measure.
+- The library backports the Android 12+ splash API to minSdk 26, so both test devices (API 26 and
+  API 36) behave the same. 1.2.0 is the current stable release (5 November 2025). It also includes
+  the Android 15 fix for crashes on launch caused by the display cutout.
+- The condition is a lambda the library evaluates before each frame is drawn, after `onCreate`.
+  So it can read the ViewModel lazily, even though the ViewModel's `SavedStateHandle` can only be
+  created after `super.onCreate()`. A restored `SignedIn` state is non-null from the start, so the
+  splash leaves at once on that path.
+- No `runBlocking` call is added on the main thread. (The existing `isUseMockDate()` does that,
+  and this design does not copy it.)
 - The initial state is computed by a pure function, which is unit-testable (FR-019).
 
 **Alternatives considered**:
 
-- `androidx.core:core-splashscreen` with `setKeepOnScreenCondition`. Rejected for now: it is a
-  new dependency and theme work for a one-frame gap. It is a good follow-up if the gap is
-  noticeable.
+- Show the themed background while the flag is read (the previous decision). Rejected by the
+  2026-10-12 clarification: any empty background between the splash and the start screen fails
+  FR-029.
 - `runBlocking` in `onCreate`. Rejected: it blocks the main thread and risks an ANR.
+
+**Verify during implementation**: if the SC-008 check finds a blank frame between the splash and
+the start screen, because the condition flips before the first composition is drawn, keep the
+splash until `NavigationHost`'s first `SideEffect` instead (a flag in `NavigationViewModel`).
 
 ## R13. Notification tap: a fresh task, marked so pending commands are discarded
 
@@ -539,22 +573,33 @@ adjacent entries are equal" to "no two adjacent entries have the same type".
 
 **Decision**:
 
-- For each command it collects, `MainActivity` reads `navigationEventDispatcher.transitionState.value`
+- For each command it collects, the `NavigationHost` composable (called by `MainActivity`) reads `navigationEventDispatcher.transitionState.value`
   **synchronously** (`androidx.navigationevent`, through activity 1.12; the value is `Idle` or
-  `InProgress`). When it is `InProgress`, the command is not applied. It is parked with
-  `channelNavigator.hold(issued)`.
+  `InProgress`). It passes the command and `gestureInProgress` to
+  `NavigationCommandRouter.onCollected`. While a gesture is in progress, the router does not apply
+  the command: it parks it with `channelNavigator.hold(issued)`.
 - A second collector watches `transitionState`. When it changes to `Idle`, it waits for the next
-  frame and then calls `navigationViewModel.applyHeld(channelNavigator.takeHeld())`.
+  frame and then calls `router.releaseHeld()`, which is
+  `navigationViewModel.applyHeld(channelNavigator.takeHeld())`.
+- `NavigationCommandRouter` is a plain class in `:app`. It is the only place that decides between
+  holding and applying, and it takes no Compose or Android types. It is not part of
+  `NavigationViewModel`, because the ViewModel would then need `ChannelNavigator` as a dependency.
+  It would also have to look after the app-wide parked list as well as its own activity-scoped
+  state. A pure `if (inProgress) Hold else Apply` function was rejected too: its test would only
+  repeat the `if`, while the bugs that matter are in the wiring (parking instead of applying,
+  passing an exit on, emptying the list).
 - `NavigationReducer.applyHeld(state, held)` is pure. It applies held commands in order, each one
-  only if its `origin` is `null` or equals the **then-current** route, and drops the rest (rules
-  H1–H7). It stops at the first `Exit`.
+  only if its `origin` equals the **then-current** route, and drops the rest, including any with
+  origin `null` (rules H1–H7).
+  It stops at the first `Exit`.
 - Parked commands live in the process-wide `ChannelNavigator`, not in the activity:
   - If the activity is recreated during a gesture (which cancels the gesture), the host calls
     `takeHeld()` and `applyHeld` once, before it starts collecting.
   - `discardPending()` also clears parked commands (FR-024).
   - Like the channel, parked commands do not survive process death (FR-015).
-- The bottom bar sends through `channelNavigator` (origin `null`), so a tap during a gesture is
-  held too and applied after release.
+- The bottom bar sends through `channelNavigator` (origin `null`), so the router sees bottom-bar
+  taps too. During a gesture it drops them instead of holding them, so they do nothing, during
+  the gesture or after it (FR-028, clarified 2026-10-12).
 
 **Rationale**:
 
@@ -564,9 +609,12 @@ adjacent entries are equal" to "no two adjacent entries have the same type".
 - On completion, `NavDisplay` applies the gesture's own `Back` inside the completion callback.
   Releasing on the next frame after `Idle` guarantees `applyHeld` sees the state *after* that
   `Back`. That is what makes a stale `back()` from Buy Module find Device Detail on top and get
-  dropped. The quickstart checks this order by hand (section 2, "Gesture hold").
-- Every decision (hold or deliver, apply or drop) is in a pure function or in the plain
-  `ChannelNavigator`, so all of them are JVM-tested (constitution III).
+  dropped. `NavigationHostGestureTest` checks this order automatically, and the quickstart checks
+  the ignored bottom-bar tap by hand (section 2, "Bottom-bar tap during swipe").
+- Every decision is JVM-tested (constitution III): apply, hold or drop in `NavigationCommandRouter`
+  (W1–W8), apply or drop in the pure `NavigationReducer.applyHeld` (H1–H7), and the parked list in
+  `ChannelNavigator` (N6–N9). `NavigationHost` keeps only the Compose timing, which
+  `NavigationHostGestureTest` covers.
 
 **Alternatives considered**:
 
@@ -576,6 +624,8 @@ adjacent entries are equal" to "no two adjacent entries have the same type".
   survive process death, which FR-015 rules out.
 - Using `NavDisplay`'s own state. Rejected: navigation3-ui 1.1.7 does not expose whether a
   predictive back is in progress. The dispatcher's state is the documented source.
+- Holding bottom-bar taps and applying them after the gesture (the previous design). Rejected by
+  the 2026-10-12 clarification (FR-028): the tap is ignored.
 
 **Verify during implementation**: `ComponentActivity.navigationEventDispatcher` and
 `NavigationEventTransitionState` should be on the classpath through activity 1.12.0, which
