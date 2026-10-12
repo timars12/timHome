@@ -272,10 +272,12 @@ and Compose `BackHandler`/`NavDisplay` use the new callback API.
   and add `androidx-lifecycle-viewmodel-navigation3` (version ref `androidxLifecycle`).
 - Add `[bundles] navigation3 = [runtime, ui, lifecycle-viewmodel-navigation3]`.
 - Remove the navigation dependency from `AndroidLibraryConventionPlugin`, which today adds it to
-  **every** library, including `:core:database`. Add the `navigation3` bundle in
-  `AndroidLibraryComposeConventionPlugin`, which is applied only to `:core:ui`,
-  `:core:designsystem` and the four features.
-- In `:app`, replace `libs.androidx.navigation.compose` with `libs.bundles.navigation3`.
+  **every** library, including `:core:database`. Add the `navigation3` bundle in the
+  shared `configureAndroidCompose` helper (`AndroidCompose.kt`), next to the `compose` bundle. Both
+  compose convention plugins call it, so it reaches only `:core:ui`, `:core:designsystem`, the four
+  features and `:app`.
+- In `:app`, remove `libs.androidx.navigation.compose`. The bundle comes from the compose
+  convention plugin, so `app/build.gradle.kts` needs no navigation3 line.
 
 **Rationale**:
 

@@ -68,10 +68,11 @@ depends on it. Each story phase then adds the rules and behaviors that belong to
   `AndroidTestConventionPlugin.kt`. Leave the JVM 11 target in this file unchanged: it is a known,
   older mismatch with the constitution and is out of scope (plan "Notes").
 - [X] T003 [P] Add the `navigation3` bundle as an `implementation` dependency in
-  `build-logic/src/main/kotlin/AndroidLibraryComposeConventionPlugin.kt`, using
-  `libs.findBundle("navigation3")` through the existing `libs` helper. Add
-  `implementation(libs.bundles.navigation3)` to `app/build.gradle.kts`, next to the existing
-  navigation-compose line.
+  `configureAndroidCompose`
+  (`build-logic/src/main/kotlin/com/timhome/build_logic/helpers/AndroidCompose.kt`), next to the
+  `compose` bundle, using `libs.findBundle("navigation3")`. Both compose convention plugins call
+  this helper (`AndroidLibraryComposeConventionPlugin` and `ApplicationComposeConventionPlugin`),
+  so `:app` gets the bundle too and needs no line of its own in `app/build.gradle.kts`.
 - [X] T004 Run `./gradlew assembleDebug testDebugUnitTest lintDebug detektDebug ktlintCheck` and
   confirm everything is green with both libraries on the classpath. If compileSdk 36 brings new
   lint findings, fix them instead of suppressing them (constitution IV). Also confirm that

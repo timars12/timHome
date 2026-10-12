@@ -143,7 +143,7 @@ navigation3 1.1.7 and lifecycle 2.10.0 require (`minCompileSdk=36`).
 |---|---|---|---|
 | **I. Layering** | Lower layers MUST NOT depend on higher ones; no feature-to-feature dependencies | ✅ Routes and `Navigator` in `:core:common`; the session flag in `:core:data` | ✅ `:core:common` *loses* its navigation library dependency. `:feature:auth` gains `:core:data`, which is downward and allowed. The reducer lives in `:app` |
 | **I. Narrow API** | Implementation classes are `internal`; repositories behind interfaces | ✅ Planned | ✅ `DataStoreSessionRepository` is `internal` behind `SessionRepository`. `NavigationReducer`, `NavigationState`, `NavigationViewModel` and `rememberNavigationEntries` are `internal` to `:app` |
-| **I. Build config** | Versions only in the catalog; wiring in convention plugins | ✅ | ✅ The `navigation3` bundle moves from the base library plugin to `AndroidLibraryComposeConventionPlugin` (R9). No new libraries for the session work. `core-splashscreen` (FR-029) is versioned in the catalog and declared in `app/build.gradle.kts`, like the app's other direct dependencies |
+| **I. Build config** | Versions only in the catalog; wiring in convention plugins | ✅ | ✅ The `navigation3` bundle moves from the base library plugin to the shared `configureAndroidCompose` helper, which both compose convention plugins call (R9). No new libraries for the session work. `core-splashscreen` (FR-029) is versioned in the catalog and declared in `app/build.gradle.kts`, like the app's other direct dependencies |
 | **I. New modules** | Only with a clear owner | ✅ None added | ✅ None added |
 | **II. UDF** | One `UiState` per screen; navigation as one-off events | ✅ | ✅ `isDeviceMissing` is added to the existing UiStates (R14). Navigation goes through channel commands, delivered exactly once (R5). Commands held during a gesture are applied at most once or dropped, never replayed (R20) |
 | **II. Routes** | Type-safe `@Serializable` routes, no string literals | ✅ | ✅ Sealed `Route` hierarchy (R2) |
@@ -196,7 +196,7 @@ specs/002-navigation3-migration/
 gradle/libs.versions.toml                     # −navigation 2.9.3, +navigation3 1.1.7, lifecycle 2.10.0, bundle
 build-logic/src/main/kotlin/
 ├── AndroidLibraryConventionPlugin.kt         # remove navigation-compose
-├── AndroidLibraryComposeConventionPlugin.kt  # add navigation3 bundle
+├── com/timhome/build_logic/helpers/AndroidCompose.kt  # add navigation3 bundle (configureAndroidCompose)
 └── com/timhome/build_logic/helpers/KotlinAndroid.kt   # compileSdk 36
 
 core/common/src/main/java/com/timhome/core/common/
