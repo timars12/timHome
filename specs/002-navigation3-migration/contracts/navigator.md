@@ -87,14 +87,20 @@ class ChannelNavigator : Navigator {
   `RouteExtrasKey`, and calls the ViewModel's `create(handle, route, channelNavigator.issuedFrom(route))`
   ([feature-entries.md](feature-entries.md)).
 - The bottom bar in `MainActivity` calls `channelNavigator.navigate(tab)` (origin `null`).
-- `MainActivity` collects `channelNavigator.commands` with `flowWithLifecycle(lifecycle, RESUMED)`.
-  Collection starts only after the start state exists (research R12). For each command:
-  - if `navigationEventDispatcher.transitionState.value` is `InProgress`, it calls
-    `channelNavigator.hold(issued)`;
-  - otherwise it forwards `issued.command` to the [navigation rules](navigation-rules.md).
-- When `transitionState` changes to `Idle`, `MainActivity` waits one frame and calls
-  `navigationViewModel.applyHeld(channelNavigator.takeHeld())` (rules H1–H7). It does the same once before it
-  starts collecting, which releases commands parked before an activity recreation (research R20).
+- The `NavigationHost` composable (`:app`, called by `MainActivity`) collects
+  `channelNavigator.commands` with `flowWithLifecycle(lifecycle, RESUMED)`. It is composed only
+  after the start state exists, so collection starts only then (research R12). It passes each
+  command to `NavigationCommandRouter.onCollected(issued, gestureInProgress)`, where
+  `gestureInProgress` is `navigationEventDispatcher.transitionState.value is InProgress`, read
+  synchronously:
+  - while a gesture is in progress, the router drops a bottom-bar command (origin `null`,
+    FR-028) and calls `channelNavigator.hold(issued)` for any other;
+  - otherwise it forwards `issued.command` to the [navigation rules](navigation-rules.md) through
+    `navigationViewModel.dispatch`.
+- When `transitionState` changes to `Idle`, `NavigationHost` waits one frame and calls
+  `router.releaseHeld()`, which is `navigationViewModel.applyHeld(channelNavigator.takeHeld())`
+  (rules H1–H7, router cases W1–W8). It does the same once before it starts collecting, which
+  releases commands parked before an activity recreation (research R20).
 - `discardPending()` is called only by `MainActivity.onCreate`, and only when `StartPolicy` says
   the launch came from the CO2 notification (rules table D1–D4, FR-015, FR-024). It,
   `issuedFrom`, `hold` and `takeHeld` are deliberately absent from `Navigator`, so feature code
