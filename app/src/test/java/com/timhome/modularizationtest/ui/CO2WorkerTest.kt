@@ -5,6 +5,7 @@ import android.app.Application
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Intent
 import androidx.work.Configuration
 import androidx.work.ListenableWorker
 import androidx.work.NetworkType
@@ -148,6 +149,22 @@ class CO2WorkerTest {
             )
             assertTrue(CO2Worker.isDangerCO2LevelsInRoom)
             coVerify(exactly = 1) { dao.saveCO2LevelToDB(any()) }
+        }
+
+    @Test
+    fun `the push opens MainActivity in a fresh task, marked as opened from the alert`() =
+        runTest {
+            buildWorker(success(INDICATOR_CO2_LOW_DANGER_LEVEL)).doWork()
+
+            val intent = shadowOf(postedNotifications.single().contentIntent).savedIntent
+
+            assertEquals(MainActivity::class.java.name, intent.component?.className)
+            assertEquals(
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK,
+                intent.flags and (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+            )
+            assertEquals(0, intent.flags and Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            assertTrue(intent.getBooleanExtra(MainActivity.EXTRA_OPENED_FROM_CO2_ALERT, false))
         }
 
     @Test

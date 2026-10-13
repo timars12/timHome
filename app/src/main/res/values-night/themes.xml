@@ -5,4 +5,11 @@
         <item name="colorPrimary">@color/purple_200</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!-- MainActivity only: the system splash stays up until the start screen is chosen. -->
+    <style name="Theme.ModularizationTest.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.ModularizationTest</item>
+    </style>
 </resources>

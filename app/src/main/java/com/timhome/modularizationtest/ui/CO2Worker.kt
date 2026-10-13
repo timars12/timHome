@@ -149,7 +149,8 @@ class CO2Worker(
         val channelId = applicationContext.getString(R.string.notification_channel_id)
         // Create the PendingIntent
         val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        intent.putExtra(MainActivity.EXTRA_OPENED_FROM_CO2_ALERT, true)
 
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(

@@ -25,6 +25,7 @@
 
         <activity
             android:name=".ui.MainActivity"
+            android:theme="@style/Theme.ModularizationTest.Starting"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
