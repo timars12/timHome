@@ -438,20 +438,20 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030â€
 
 ### Tasks (in execution order)
 
-- [ ] T030 [P] [US1] Create `core/data/src/test/java/com/timhome/core/data/repository/DataStoreSessionRepositoryTest.kt`
+- [X] T030 [P] [US1] Create `core/data/src/test/java/com/timhome/core/data/repository/DataStoreSessionRepositoryTest.kt`
   (Robolectric, with a temporary DataStore file). Cover S1â€“S4 from `contracts/session.md`:
   - the default is `false`;
   - it is `true` after `markSignedIn()`, also in a new instance;
   - `clearData()` resets it to `false`;
   - only the key `isSignedIn` is written.
-- [ ] T031 [P] [US1] In `core/datastore/src/main/java/com/timhome/core/datastore/DataStoreManager.kt`:
+- [X] T031 [P] [US1] In `core/datastore/src/main/java/com/timhome/core/datastore/DataStoreManager.kt`:
   - add `IS_SIGNED_IN = booleanPreferencesKey("isSignedIn")` to `PreferencesKeys`;
   - add `fun isSignedIn(): Flow<Boolean> = dataStore.data.map { it[IS_SIGNED_IN] ?: false }`;
   - add `suspend fun setSignedIn(value: Boolean)`.
 
   The value is a boolean only: "no credentials, tokens, or personal data are stored for it"
   (FR-023).
-- [ ] T032 [US1] Create:
+- [X] T032 [US1] Create:
   - `core/data/src/main/java/com/timhome/core/data/repository/SessionRepository.kt`:
     `interface SessionRepository { val isSignedIn: Flow<Boolean>; suspend fun markSignedIn() }`;
   - `core/data/src/main/java/com/timhome/core/data/repository/DataStoreSessionRepository.kt`:
@@ -465,7 +465,7 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030â€
   would expose the `internal` class, and Kotlin rejects that ("public function exposes its internal
   parameter type"). With `@Provides`, the `internal` class appears only in the function body.
   T030 must pass.
-- [ ] T033 [P] [US1] Create `feature/auth/src/test/java/com/timhome/auth/ui/signin/FakeSessionRepository.kt`,
+- [X] T033 [P] [US1] Create `feature/auth/src/test/java/com/timhome/auth/ui/signin/FakeSessionRepository.kt`,
   backed by a `MutableStateFlow<Boolean>` and recording calls. Extend `SignInViewModelTest.kt`:
   - on login success, `markSignedIn()` is called **before**
     `IssuedCommand(ReplaceAll(Home), origin = SignIn)` is emitted;
@@ -475,10 +475,10 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030â€
   - when `markSignedIn()` throws (make `FakeSessionRepository` able to fail), the error is logged
     and `IssuedCommand(ReplaceAll(Home), origin = SignIn)` is still emitted (contract S5). If the
     ViewModel logs with `android.util.Log`, run this test class with Robolectric.
-- [ ] T034 [US1] Add `implementation(project(":core:data"))` to `feature/auth/build.gradle.kts`,
+- [X] T034 [US1] Add `implementation(project(":core:data"))` to `feature/auth/build.gradle.kts`,
   and add `SessionModule::class` to `modules` in
   `feature/auth/src/main/java/com/timhome/auth/di/AuthenticationComponent.kt`.
-- [ ] T035 [US1] In `feature/auth/â€¦/auth/ui/signin/SignInViewModel.kt`, inject
+- [X] T035 [US1] In `feature/auth/â€¦/auth/ui/signin/SignInViewModel.kt`, inject
   `SessionRepository` (a normal `@Inject` constructor parameter next to the `@Assisted` ones). In
   `goHomeScreen()`, run
   `viewModelScope.launch { sessionRepository.markSignedIn(); navigator.replaceAll(Home) }`. Make
@@ -486,11 +486,11 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030â€
   `markSignedIn()` throws, log the error under a stable tag and still call
   `navigator.replaceAll(Home)`; rethrow `CancellationException` (contract S5). Log no personal
   data. T033 must pass.
-- [ ] T036 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`
+- [X] T036 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`
   with cases R0a, R0b, R1, R2, R3, R4, R16, R19, R20 and R22 from `contracts/navigation-rules.md`,
   plus the `startState` cases R0câ€“R0f. R0d (restored Sign In with the flag set â†’ fresh tabs) is
   the process-death case from FR-010. These are plain JVM tests with real states.
-- [ ] T037 [US1] In `app/â€¦/modularizationtest/ui/navigation/NavigationReducer.kt`, complete
+- [X] T037 [US1] In `app/â€¦/modularizationtest/ui/navigation/NavigationReducer.kt`, complete
   `initialState(isSignedIn)`: `false` â†’ `SignedOut(listOf(SignIn))`, `true` â†’ `FreshTabs`. Then
   implement:
   - R1: `Back` while `SignedOut` â†’ `Exit`;
@@ -507,18 +507,18 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030â€
   first.
 
   T036 must pass.
-- [ ] T038 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/StartPolicyTest.kt`
+- [X] T038 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/StartPolicyTest.kt`
   with cases D1â€“D4 from `contracts/navigation-rules.md`. The function returns `true` only for
   `hasSavedState=false, openedFromAlert=true, launchedFromHistory=false`. Add a case for every
   remaining combination of the three inputs (8 in total), so every branch is covered.
-- [ ] T039 [P] [US1] Create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/StartPolicy.kt`
+- [X] T039 [P] [US1] Create `app/src/main/java/com/timhome/modularizationtest/ui/navigation/StartPolicy.kt`
   with
   `internal object StartPolicy { fun shouldDiscardPendingNavigation(hasSavedState: Boolean, openedFromAlert: Boolean, launchedFromHistory: Boolean): Boolean = openedFromAlert && !hasSavedState && !launchedFromHistory }`
   (research R13). T038 must pass.
-- [ ] T040 [US1] Add a `modules` array with `SessionModule::class` to the `@Component` in
+- [X] T040 [US1] Add a `modules` array with `SessionModule::class` to the `@Component` in
   `app/src/main/java/com/timhome/modularizationtest/di/AppComponent.kt`, and inject
   `SessionRepository` into `MainActivity`.
-- [ ] T041 [US1] Update the start of `app/â€¦/modularizationtest/ui/MainActivity.kt`:
+- [X] T041 [US1] Update the start of `app/â€¦/modularizationtest/ui/MainActivity.kt`:
   - add `companion object { const val EXTRA_OPENED_FROM_CO2_ALERT = "com.timhome.modularizationtest.OPENED_FROM_CO2_ALERT" }`;
   - in `onCreate`, **before** `setContent`, call `channelNavigator.discardPending()` when
     `StartPolicy.shouldDiscardPendingNavigation(savedInstanceState != null, intent.getBooleanExtra(EXTRA_OPENED_FROM_CO2_ALERT, false), intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0)`
@@ -534,14 +534,14 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030â€
   - keep `NavigationHost` (T028) composed only after the state is not `null`, so buffered
     commands are applied on top of the start state (FR-015);
   - make sure every `true` from `dispatch` reaches `onExit = ::finish`.
-- [ ] T042 [US1] Extend `app/src/test/java/com/timhome/modularizationtest/ui/CO2WorkerTest.kt`
+- [X] T042 [US1] Extend `app/src/test/java/com/timhome/modularizationtest/ui/CO2WorkerTest.kt`
   to check the posted notification's content intent, through Robolectric
   `shadowOf(PendingIntent)`:
   - it targets `MainActivity`;
   - its flags contain `FLAG_ACTIVITY_NEW_TASK` and `FLAG_ACTIVITY_CLEAR_TASK` and do not contain
     `FLAG_ACTIVITY_CLEAR_TOP`;
   - `getBooleanExtra(MainActivity.EXTRA_OPENED_FROM_CO2_ALERT, false) == true`.
-- [ ] T043 [US1] In `app/src/main/java/com/timhome/modularizationtest/ui/CO2Worker.kt`, replace
+- [X] T043 [US1] In `app/src/main/java/com/timhome/modularizationtest/ui/CO2Worker.kt`, replace
   `intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)` with
   `intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)`, and add
   `intent.putExtra(MainActivity.EXTRA_OPENED_FROM_CO2_ALERT, true)` (research R13). Change
@@ -572,6 +572,9 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030â€
   recorded with `adb shell screenrecord` and checked frame by frame. If a blank frame shows between the
   splash and the start screen, keep the splash until `NavigationHost`'s first `SideEffect`
   instead, using a flag in `NavigationViewModel`.
+  *2026-10-13: the code is in and all gates are green. On the Pixel_10 emulator (API 37), a clean
+  install opens Sign In, and a cold start after sign-in opens Home. Still open, so the task stays
+  unchecked: the SC-008 frame-by-frame check (10 launches per device, API 26 and API 36).*
 
 **Checkpoint**: US1 works end to end: first launch, sign-in, exit, relaunch to Home, the
 notification reset that discards pending requests, and the splash screen staying up until the
