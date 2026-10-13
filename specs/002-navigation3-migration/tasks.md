@@ -770,7 +770,7 @@ screen keeping its state all behave as clarified.
 
 ### Tests for User Story 4
 
-- [ ] T060 [P] [US4] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationStateJsonTest.kt`.
+- [X] T060 [P] [US4] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationStateJsonTest.kt`.
   For every state reached in R0a–R22 (reuse the builders from `NavigationReducerTest`), check that
   `NavigationJson.decodeFromString(NavigationState.serializer(), NavigationJson.encodeToString(...))`
   equals the original. Cover `DeviceDetail(n)`/`BuyModule(n)` arguments and a non-trivial
@@ -781,7 +781,7 @@ screen keeping its state all behave as clarified.
 
 ### Implementation for User Story 4
 
-- [ ] T061 [US4] In `app/…/modularizationtest/ui/navigation/NavigationViewModel.kt`, store the
+- [X] T061 [US4] In `app/…/modularizationtest/ui/navigation/NavigationViewModel.kt`, store the
   state in the `SavedStateHandle` (constitution II, research R3):
   - after every state change (`start`, `dispatch`, and later `applyHeld`), write
     `savedStateHandle[KEY_STATE] = NavigationJson.encodeToString(NavigationState.serializer(), state)`.
@@ -792,7 +792,7 @@ screen keeping its state all behave as clarified.
   T041's `startState(restored, …)` then decides the start: a restored `SignedIn` state is used as
   it was without reading the flag (clarified 2026-10-09). A restored `SignedOut` state waits for
   the flag (R0d/R0e), and nothing restored gives `initialState(flag)`. T060 must pass.
-- [ ] T062 [P] [US4] Add keep rules for the serialized navigation types to
+- [X] T062 [P] [US4] Add keep rules for the serialized navigation types to
   `app/proguard-rules.pro` (research R10):
   - `-keep class com.timhome.core.common.navigation.** { *; }`;
   - `-keep class com.timhome.modularizationtest.ui.navigation.NavigationState* { *; }`;
@@ -802,6 +802,21 @@ screen keeping its state all behave as clarified.
   `SettingViewModel` (FR-013). If either is lost, fix the decorator order in
   `NavigationEntries.kt`: the saveable-state decorator must come before the ViewModel-store
   decorator.
+  *2026-10-14: T060–T062 are in and all gates are green. Checked on the Pixel_10 emulator (API 37)
+  with `adb shell am kill` after pressing Home, because "Don't keep activities" could not be turned
+  on through adb. One run each:*
+  - *debug build: Devices → Device Detail reopens on the same Device Detail in a new process; back
+    goes to the Devices list, then to Home;*
+  - *minified `benchmark` build (the release keep rules, debug-signed): the same, with no crash;*
+  - *Settings: the tab is restored. The typed IP was lost, but not because of the decorators:
+    `SettingViewModel` replaced the restored value with the stored one every time it was created.
+    It now loads the stored values only when nothing was restored (`SettingViewModelTest`), and
+    the typed IP survives the kill. The decorator order was already correct and did not change.*
+
+  *Still open, so the task stays unchecked: the sign-in form (`LOGIN_VIEW_STATE`) was not checked
+  on a device, because that needs the app data cleared; and "Don't keep activities" itself was
+  not used. Also not run: the quickstart "US4" row (rotation, dark mode), the 18 runs of
+  "US4 death", and §3 on a real release build.*
 
 **Checkpoint**: Rotation, process death and the release-build restore all keep the user in
 place.

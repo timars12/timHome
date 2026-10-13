@@ -15,17 +15,22 @@ import kotlinx.coroutines.flow.asStateFlow
  *
  * It starts in two phases, so it can exist before its state does: the state is `null` until
  * [start] is called, unless a signed-in state was restored.
+ *
+ * Every state is also written to the [SavedStateHandle], so it comes back after process death.
  */
 internal class NavigationViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
     /** The state saved before process death, or `null` when nothing was saved. */
-    val restored: NavigationState? = null
+    val restored: NavigationState? =
+        savedStateHandle.get<String>(KEY_STATE)?.let {
+            NavigationJson.decodeFromString(NavigationState.serializer(), it)
+        }
 
     private val _state = MutableStateFlow(NavigationReducer.startState(restored, isSignedIn = null))
     val state: StateFlow<NavigationState?> = _state.asStateFlow()
 
     /** Sets the start state. Does nothing once a state exists. */
     fun start(state: NavigationState) {
-        _state.compareAndSet(null, state)
+        if (_state.compareAndSet(null, state)) save(state)
     }
 
     /**
@@ -37,11 +42,16 @@ internal class NavigationViewModel(private val savedStateHandle: SavedStateHandl
         return when (val transition = NavigationReducer.reduce(current, command)) {
             is Transition.Update -> {
                 _state.value = transition.state
+                save(transition.state)
                 false
             }
             Transition.Exit -> true
             Transition.Ignore -> false
         }
+    }
+
+    private fun save(state: NavigationState) {
+        savedStateHandle[KEY_STATE] = NavigationJson.encodeToString(NavigationState.serializer(), state)
     }
 
     companion object {

@@ -323,11 +323,11 @@ class NavigationReducerTest {
 
     // endregion
 
-    private companion object {
-        const val SEED = 20261013
-        const val SEQUENCES = 500
-        const val COMMANDS_PER_SEQUENCE = 40
-        const val COMMAND_KINDS = 3
+    internal companion object {
+        private const val SEED = 20261013
+        private const val SEQUENCES = 500
+        private const val COMMANDS_PER_SEQUENCE = 40
+        private const val COMMAND_KINDS = 3
 
         val signedOut = SignedOut(listOf(SignIn))
 
