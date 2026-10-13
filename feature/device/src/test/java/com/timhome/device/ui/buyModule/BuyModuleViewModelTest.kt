@@ -7,6 +7,8 @@ import com.timhome.core.common.navigation.IssuedCommand
 import com.timhome.core.common.navigation.NavigationCommand.Back
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
+import com.timhome.device.domain.models.DeviceModel
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -19,6 +21,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +35,8 @@ class BuyModuleViewModelTest {
     private val repository: IDeviceRepository = mockk(relaxed = true)
     private val channelNavigator = ChannelNavigator()
 
+    private val device =
+        DeviceModel(id = 1, image = 0, title = "Device", totalPrice = "$10", dateCreated = "today")
     private val moduleA =
         ModuleModel(id = 1, title = "A", price = "$3", link = "l", isSelectToBuy = true)
     private val moduleB =
@@ -39,6 +45,7 @@ class BuyModuleViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
+        coEvery { repository.getDeviceById(any()) } returns device
         every { repository.getSelectedModuleToBuyByDeviceId(any()) } returns flowOf(emptyList())
     }
 
@@ -62,6 +69,28 @@ class BuyModuleViewModelTest {
 
             assertEquals(BigDecimal(7), viewModel.uiState.value.totalPrice)
             assertEquals(listOf(moduleA, moduleB), viewModel.uiState.value.modules)
+        }
+
+    @Test
+    fun `a device that exists is not reported missing`() =
+        runTest {
+            val viewModel = createViewModel(deviceId = 1)
+            dispatcher.scheduler.advanceUntilIdle()
+
+            assertFalse(viewModel.uiState.value.isDeviceMissing)
+            coVerify(exactly = 1) { repository.getDeviceById(1) }
+        }
+
+    @Test
+    fun `a device that does not exist is reported missing`() =
+        runTest {
+            coEvery { repository.getDeviceById(7) } returns null
+
+            val viewModel = createViewModel(deviceId = 7)
+            assertFalse(viewModel.uiState.value.isDeviceMissing)
+            dispatcher.scheduler.advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.isDeviceMissing)
         }
 
     @Test

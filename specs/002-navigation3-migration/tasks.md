@@ -484,7 +484,8 @@ at the top). Tasks in different modules can run in parallel: `:core:data` T030�
   `viewModelScope.launch { sessionRepository.markSignedIn(); navigator.replaceAll(Home) }`. Make
   sure it runs only once per successful sign-in, even if the state is emitted again. If
   `markSignedIn()` throws, log the error under a stable tag and still call
-  `navigator.replaceAll(Home)`; rethrow `CancellationException` (contract S5). Log no personal
+  `navigator.replaceAll(Home)`. `CancellationException` is not rethrown (contract S5, changed
+  2026-10-13). Log no personal
   data. T033 must pass.
 - [X] T036 [P] [US1] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`
   with cases R0a, R0b, R1, R2, R3, R4, R16, R19, R20 and R22 from `contracts/navigation-rules.md`,
@@ -606,7 +607,7 @@ the phase.
 
 ### Tasks (in execution order)
 
-- [ ] T045 [P] [US2] Create `feature/device/src/test/java/com/timhome/device/data/repository/DeviceRepositoryTest.kt`
+- [X] T045 [P] [US2] Create `feature/device/src/test/java/com/timhome/device/data/repository/DeviceRepositoryTest.kt`
   (Robolectric), using an in-memory `AppDatabase`
   (`Room.inMemoryDatabaseBuilder(…).allowMainThreadQueries()`), the real `DeviceMapper` and
   `GenerateDate`. Cover:
@@ -617,7 +618,7 @@ the phase.
 
   Close the database in `@After`. The target is at least 80% line coverage of `DeviceRepository`
   (constitution III, research R16).
-- [ ] T046 [US2] Make the device lookup nullable. This changes signatures only; the schema does
+- [X] T046 [US2] Make the device lookup nullable. This changes signatures only; the schema does
   not change:
   - `suspend fun getDeviceById(deviceId: Int): DeviceEntity?` in
     `core/database/src/main/java/com/timhome/core/database/dao/DeviceDao.kt`;
@@ -627,26 +628,26 @@ the phase.
     `feature/device/src/main/java/com/timhome/device/data/repository/DeviceRepository.kt`.
 
   Fix the callers. T045 must pass.
-- [ ] T047 [US2] Extend `feature/device/src/test/…/device/ui/device/DeviceDetailViewModelTest.kt`:
+- [X] T047 [US2] Extend `feature/device/src/test/…/device/ui/device/DeviceDetailViewModelTest.kt`:
   - when the repository returns `null` for the route's `deviceId`,
     `uiState.isDeviceMissing == true` and `device == null`;
   - when it returns a device, `isDeviceMissing == false`;
   - `goBack()` emits `IssuedCommand(Back, origin = DeviceDetail(id))`.
-- [ ] T048 [US2] In `feature/device/…/device/ui/device/DeviceDetailViewModel.kt`, add
+- [X] T048 [US2] In `feature/device/…/device/ui/device/DeviceDetailViewModel.kt`, add
   `val isDeviceMissing: Boolean = false` to `DeviceDetailUiState`. Set it to `true` when
   `repository.getDeviceById(route.deviceId)` returns `null`. Rules from `data-model.md`:
   "`device == null && !isDeviceMissing` means still loading", and "`isDeviceMissing == true`
   always wins when rendering". T047 must pass.
-- [ ] T049 [US2] Extend `feature/device/src/test/…/device/ui/buyModule/BuyModuleViewModelTest.kt`
+- [X] T049 [US2] Extend `feature/device/src/test/…/device/ui/buyModule/BuyModuleViewModelTest.kt`
   in the same way: `isDeviceMissing` is `true` when `getDeviceById` returns `null` and `false`
   otherwise. The existing price and module tests must stay green.
-- [ ] T050 [US2] In `feature/device/…/device/ui/buyModule/BuyModuleViewModel.kt`, add
+- [X] T050 [US2] In `feature/device/…/device/ui/buyModule/BuyModuleViewModel.kt`, add
   `val isDeviceMissing: Boolean = false` to `BuyModuleUiState`. In `init`, check
   `repository.getDeviceById(route.deviceId) == null` once and set the flag. T049 must pass.
-- [ ] T051 [P] [US2] Add `<string name="device_not_found">Device not found</string>` and, if it
+- [X] T051 [P] [US2] Add `<string name="device_not_found">Device not found</string>` and, if it
   does not exist yet, `<string name="back">Back</string>` to
   `feature/device/src/main/res/values/strings.xml`.
-- [ ] T052 [US2] In `feature/device/…/device/ui/device/DeviceDetailScreen.kt` and
+- [X] T052 [US2] In `feature/device/…/device/ui/device/DeviceDetailScreen.kt` and
   `feature/device/…/device/ui/buyModule/BuyModuleScreen.kt`, when `state.isDeviceMissing` is
   `true`, render:
   - a centered `Text(stringResource(R.string.device_not_found))`;
@@ -655,12 +656,12 @@ the phase.
 
   Use the `:core:designsystem` theme tokens. Keep the loading early-return only for
   `device == null && !isDeviceMissing` (FR-025, contract E6).
-- [ ] T053 [US2] Add cases R5, R6, R6a, R6b, R7, R12 and R13 from `contracts/navigation-rules.md` to
+- [X] T053 [US2] Add cases R5, R6, R6a, R6b, R7, R12 and R13 from `contracts/navigation-rules.md` to
   `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`. R6a
   (`GoTo(DD(2))` on top of `DD(1)` → `Ignore`) and R6b (`GoTo(BM(2))` on top of `BM(1)` →
   `Ignore`) are the FR-026 cases. Also add a case for the device-list sequence
   `GoTo(DD(1))`, `GoTo(DD(2))` from `D=[Devices]`: the result is `D=[Devices, DD(1)]`.
-- [ ] T054 [US2] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, implement:
+- [X] T054 [US2] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, implement:
   - the same-kind check, **before** any push rule: `GoTo(r)` with
     `r::class == currentRoute::class` → `Ignore`, whatever the arguments (R3, R6, R6a, R6b;
     FR-026, research R18). Replace T037's narrower R3 check with it;
@@ -668,6 +669,9 @@ the phase.
   - R12/R13: `Back` pops within the current tab while its stack size is greater than 1.
 
   T053 must pass.
+  *2026-10-13: T045–T054 are in and all gates are green (113 unit tests). Not run yet: the
+  quickstart rows "US2" and "Quick taps, different rows" on a device. The "Device not found"
+  screen was not seen on a device either (gaps N1).*
 
 **Checkpoint**: The device flow works on its own, including missing devices and quick taps on
 one or several rows.

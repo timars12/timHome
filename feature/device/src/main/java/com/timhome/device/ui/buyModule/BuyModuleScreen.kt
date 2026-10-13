@@ -45,6 +45,7 @@ import com.timhome.device.R
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.ui.buyModule.composables.OrderInfo
 import com.timhome.device.ui.device.composables.DeviceDetailImage
+import com.timhome.device.ui.device.composables.DeviceNotFound
 import com.timhome.device.ui.device.composables.ModuleItemContent
 import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
@@ -64,6 +65,10 @@ internal fun BuyModuleScreen(
         val totalPrice = state.totalPrice
         val modules = state.modules
 
+        if (state.isDeviceMissing) {
+            DeviceNotFound(onBackClick = viewModel::goBack)
+            return@HomeTheme
+        }
         Scaffold(
             topBar = {
                 TopAppBar(

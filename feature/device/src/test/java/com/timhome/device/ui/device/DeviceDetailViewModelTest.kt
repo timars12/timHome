@@ -22,6 +22,9 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -72,6 +75,40 @@ class DeviceDetailViewModelTest {
             assertEquals(device, viewModel.uiState.value.device)
             assertEquals(listOf(module), viewModel.uiState.value.modules)
             coVerify { repository.getDeviceById(1) }
+        }
+
+    @Test
+    fun `a device that exists is not reported missing`() =
+        runTest {
+            val viewModel = createViewModel(deviceId = 1)
+            dispatcher.scheduler.advanceUntilIdle()
+
+            assertFalse(viewModel.uiState.value.isDeviceMissing)
+        }
+
+    @Test
+    fun `a device that does not exist is reported missing`() =
+        runTest {
+            coEvery { repository.getDeviceById(7) } returns null
+
+            val viewModel = createViewModel(deviceId = 7)
+            dispatcher.scheduler.advanceUntilIdle()
+
+            assertTrue(viewModel.uiState.value.isDeviceMissing)
+            assertNull(viewModel.uiState.value.device)
+            assertTrue(viewModel.uiState.value.modules.isEmpty())
+        }
+
+    @Test
+    fun `goBack still works when the device is missing`() =
+        runTest {
+            coEvery { repository.getDeviceById(7) } returns null
+            val viewModel = createViewModel(deviceId = 7)
+            dispatcher.scheduler.advanceUntilIdle()
+
+            viewModel.goBack()
+
+            assertEquals(IssuedCommand(Back, origin = DeviceDetail(7)), channelNavigator.commands.first())
         }
 
     @Test
