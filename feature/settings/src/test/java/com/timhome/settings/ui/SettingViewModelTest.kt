@@ -66,6 +66,23 @@ class SettingViewModelTest {
         }
 
     @Test
+    fun `values restored after process death are kept instead of the persisted ones`() =
+        runTest {
+            coEvery { repository.getHomeIpAddress() } returns "192.168.0.1"
+            every { repository.checkIsUseMock() } returns true
+            val restoredHandle = SavedStateHandle(mapOf("ipHomeAddress" to "10.0.0.5", "isUseMock" to false))
+
+            val viewModel = SettingViewModel(repository, restoredHandle)
+            val job = launch { viewModel.uiState.collect {} }
+            dispatcher.scheduler.advanceUntilIdle()
+
+            assertEquals("10.0.0.5", viewModel.uiState.value.ipAddress)
+            assertEquals(false, viewModel.uiState.value.isUseMock)
+
+            job.cancel()
+        }
+
+    @Test
     fun `onIpAddressEntered updates ui state`() =
         runTest {
             coEvery { repository.getHomeIpAddress() } returns ""
