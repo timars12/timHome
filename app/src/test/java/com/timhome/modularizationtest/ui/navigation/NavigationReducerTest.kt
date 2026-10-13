@@ -14,9 +14,12 @@ import com.timhome.core.common.navigation.TopLevelRoute
 import com.timhome.modularizationtest.ui.navigation.NavigationState.SignedIn
 import com.timhome.modularizationtest.ui.navigation.NavigationState.SignedOut
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.random.Random
 
 /** One case per row of `contracts/navigation-rules.md`, named by its rule number. */
 class NavigationReducerTest {
@@ -145,6 +148,142 @@ class NavigationReducerTest {
     }
 
     @Test
+    fun `R8 going to the current tab is ignored on any of its screens`() {
+        listOf(signedIn(visitOrder = listOf(Home, Devices)), onDeviceDetail, onBuyModule).forEach { state ->
+            assertEquals("from ${state.currentRoute}", Transition.Ignore, NavigationReducer.reduce(state, GoTo(Devices)))
+        }
+        assertEquals(Transition.Ignore, NavigationReducer.reduce(FreshTabs, GoTo(Home)))
+    }
+
+    @Test
+    fun `R9 going to another tab adds it to the visit history and keeps the stacks`() {
+        assertEquals(
+            Transition.Update(signedIn(visitOrder = listOf(Home, Devices))),
+            NavigationReducer.reduce(FreshTabs, GoTo(Devices)),
+        )
+    }
+
+    @Test
+    fun `R10 going to a visited tab moves it to most recent without duplicating it`() {
+        val state = signedIn(visitOrder = listOf(Home, Devices, Setting))
+
+        assertEquals(
+            Transition.Update(signedIn(visitOrder = listOf(Devices, Setting, Home))),
+            NavigationReducer.reduce(state, GoTo(Home)),
+        )
+    }
+
+    @Test
+    fun `R11 a tab keeps its history while another tab is shown`() {
+        val onSetting = (NavigationReducer.reduce(onDeviceDetail, GoTo(Setting)) as Transition.Update).state
+        val backOnDevices = (NavigationReducer.reduce(onSetting, GoTo(Devices)) as Transition.Update).state as SignedIn
+
+        assertEquals(listOf(Devices, DeviceDetail(1)), backOnDevices.tabStacks[Devices])
+        assertEquals(DeviceDetail(1), backOnDevices.currentRoute)
+        assertEquals(listOf(Home, Setting, Devices), backOnDevices.visitOrder)
+    }
+
+    @Test
+    fun `R14 back on a tab's first screen returns to the previously visited tab`() {
+        val state = signedIn(visitOrder = listOf(Home, Devices, Setting))
+
+        assertEquals(
+            Transition.Update(signedIn(visitOrder = listOf(Home, Devices))),
+            NavigationReducer.reduce(state, Back),
+        )
+    }
+
+    @Test
+    fun `R15 backing out of a tab releases its history`() {
+        val state = signedIn(devices = listOf(Devices, DeviceDetail(1)), visitOrder = listOf(Home, Setting, Devices))
+
+        val afterFirstBack = (NavigationReducer.reduce(state, Back) as Transition.Update).state
+
+        assertEquals(signedIn(visitOrder = listOf(Home, Setting, Devices)), afterFirstBack)
+        assertEquals(
+            Transition.Update(signedIn(visitOrder = listOf(Home, Setting))),
+            NavigationReducer.reduce(afterFirstBack, Back),
+        )
+    }
+
+    @Test
+    fun `R17 back on Home's first screen returns to the previously visited tab`() {
+        val state = signedIn(visitOrder = listOf(Devices, Home))
+
+        assertEquals(Transition.Update(signedIn(visitOrder = listOf(Devices))), NavigationReducer.reduce(state, Back))
+    }
+
+    @Test
+    fun `R18 back on the first screen of the only tab left leaves the app`() {
+        assertEquals(Transition.Exit, NavigationReducer.reduce(signedIn(visitOrder = listOf(Setting)), Back))
+    }
+
+    @Test
+    fun `R21 going to Sign In while signed in is ignored`() {
+        listOf(FreshTabs, onDeviceDetail, signedIn(visitOrder = listOf(Home, Setting))).forEach { state ->
+            assertEquals("from ${state.currentRoute}", Transition.Ignore, NavigationReducer.reduce(state, GoTo(SignIn)))
+        }
+    }
+
+    @Test
+    fun `the invariants hold after every update of random command sequences`() {
+        val random = Random(SEED)
+        val routes =
+            listOf(SignIn, Home, Devices, Setting, DeviceDetail(1), DeviceDetail(2), BuyModule(1), BuyModule(2))
+
+        repeat(SEQUENCES) { sequence ->
+            var state: NavigationState = FreshTabs
+            repeat(COMMANDS_PER_SEQUENCE) { step ->
+                val command =
+                    when (random.nextInt(COMMAND_KINDS)) {
+                        0 -> GoTo(routes.random(random))
+                        1 -> Back
+                        else -> ReplaceAll(routes.random(random))
+                    }
+                val transition = NavigationReducer.reduce(state, command)
+                if (transition is Transition.Update) {
+                    state = transition.state
+                    assertInvariants("sequence $sequence, step $step, after $command", state)
+                }
+            }
+        }
+    }
+
+    /** Invariants 1–5 of `data-model.md`. */
+    private fun assertInvariants(
+        where: String,
+        state: NavigationState,
+    ) {
+        when (state) {
+            is SignedOut -> {
+                assertTrue("$where: 1. the signed-out stack is not empty", state.stack.isNotEmpty())
+                assertNoAdjacentSameKind(where, state.stack)
+            }
+            is SignedIn -> {
+                assertEquals("$where: 2. exactly the three tabs", setOf(Home, Devices, Setting), state.tabStacks.keys)
+                state.tabStacks.forEach { (tab, stack) ->
+                    assertEquals("$where: 2. the $tab stack starts with its own tab", tab, stack.firstOrNull())
+                    assertNoAdjacentSameKind(where, stack)
+                    if (tab !in state.visitOrder) {
+                        assertEquals("$where: 5. $tab is not visited, so it has no history", listOf<Route>(tab), stack)
+                    }
+                }
+                assertTrue("$where: 3. the visit order is not empty", state.visitOrder.isNotEmpty())
+                assertEquals("$where: 3. the visit order has no duplicates", state.visitOrder.distinct(), state.visitOrder)
+            }
+        }
+    }
+
+    private fun assertNoAdjacentSameKind(
+        where: String,
+        stack: List<Route>,
+    ) {
+        stack.zipWithNext().forEach { (below, above) ->
+            assertNotEquals("$where: 4. $above is stacked on $below", below::class, above::class)
+        }
+    }
+
+    @Test
     fun `R16 back on Home's first screen with only Home visited leaves the app`() {
         assertEquals(Transition.Exit, NavigationReducer.reduce(FreshTabs, Back))
     }
@@ -185,6 +324,11 @@ class NavigationReducerTest {
     // endregion
 
     private companion object {
+        const val SEED = 20261013
+        const val SEQUENCES = 500
+        const val COMMANDS_PER_SEQUENCE = 40
+        const val COMMAND_KINDS = 3
+
         val signedOut = SignedOut(listOf(SignIn))
 
         /** A signed-in state; every tab left out is at its first screen. */

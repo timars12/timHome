@@ -69,6 +69,7 @@ Quick map:
 | US3 | Devices → DD(X); Settings; Devices. Repeat 3× per tab (9 runs, SC-003) | DD(X) restored; tapping Devices again does nothing. 9/9 pass |
 | US3 back | Home → Devices → Settings, back ×3 | Settings → Devices (last screen) → Home → app goes to the background |
 | US3 re-visit | Home → Devices → Home → Settings, back ×3 | Home → Devices → app goes to the background |
+| US3 first screen kept | Devices list → scroll down → Home (bar) → back from Home's first screen, then back from the Devices list's first screen, so Devices leaves the tab visit history → Devices (bar) | The Devices list opens at the same scroll position, with its data still loaded (FR-011, clarified 2026-10-10) |
 | US4 | Devices → DD(X) → BM(X); rotate; switch to dark mode | Same screen, tab and history |
 | US4 death | Same path, press Home, `adb shell am kill com.timhome.modularizationtest`, reopen from recents. Repeat 3× per screen for all 6 screens (18 runs, SC-002) | BM(X) shown; back → DD(X) → Devices. 18/18 pass |
 | US5 | Move between all screens | Slide for Sign In/Home; scale for Devices, Settings, Device Detail and Buy Module |

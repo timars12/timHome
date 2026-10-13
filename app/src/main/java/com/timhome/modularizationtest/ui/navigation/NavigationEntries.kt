@@ -17,6 +17,11 @@ import com.timhome.modularizationtest.ui.navigation.NavigationState.SignedOut
  *
  * Each stack is decorated on its own, so a screen's ViewModel and saved UI state are released
  * only when the screen leaves its own stack, not when the user switches tabs.
+ *
+ * All three tab stacks are decorated on every recomposition, including the tabs that are not in
+ * the visit order. A stack that stopped being decorated would release everything it holds. This
+ * way a tab's first screen, which never leaves its stack, keeps its ViewModel and saved UI state
+ * even after the user backs out of the tab (FR-006, FR-011).
  */
 @Composable
 internal fun rememberNavigationEntries(
