@@ -63,10 +63,14 @@ internal object NavigationReducer {
                 // The tabs are reachable only through ReplaceAll after sign-in.
                 is SignedOut -> Transition.Ignore
                 is SignedIn ->
-                    if (route is TopLevelRoute) {
-                        Transition.Update(state.copy(visitOrder = state.visitOrder - route + route))
-                    } else {
-                        Transition.Update(state.withCurrentStack(state.currentStack + route))
+                    when {
+                        // Reselecting the current tab does nothing on any of its screens (FR-007).
+                        route == state.currentTab -> Transition.Ignore
+                        // The tab becomes the most recent one. Its history is kept.
+                        route is TopLevelRoute -> Transition.Update(state.copy(visitOrder = state.visitOrder - route + route))
+                        // Sign In is reachable only through ReplaceAll.
+                        route == SignIn -> Transition.Ignore
+                        else -> Transition.Update(state.withCurrentStack(state.currentStack + route))
                     }
             }
         }
@@ -75,10 +79,12 @@ internal object NavigationReducer {
         when (state) {
             is SignedOut -> Transition.Exit
             is SignedIn ->
-                if (state.currentStack.size > 1) {
-                    Transition.Update(state.withCurrentStack(state.currentStack.dropLast(1)))
-                } else {
-                    Transition.Exit
+                when {
+                    state.currentStack.size > 1 -> Transition.Update(state.withCurrentStack(state.currentStack.dropLast(1)))
+                    // On a tab's first screen: leave the tab for the previously visited one. Its
+                    // stack is already `[tab]`, so nothing else is released.
+                    state.visitOrder.size > 1 -> Transition.Update(state.copy(visitOrder = state.visitOrder.dropLast(1)))
+                    else -> Transition.Exit
                 }
         }
 

@@ -701,12 +701,12 @@ phase's Independent Test needs.
 
 ### Tasks (in execution order)
 
-- [ ] T055 [P] [US3] Add a "US3 first screen kept" row to the §2 table in
+- [X] T055 [P] [US3] Add a "US3 first screen kept" row to the §2 table in
   `specs/002-navigation3-migration/quickstart.md`: "Devices list → scroll down → Home (bar) →
   back from Home's first screen, then back from the Devices list's first screen, so Devices
   leaves the tab visit history → Devices (bar)". Expected: "the Devices list opens at the same
   scroll position, with its data still loaded" (FR-011, clarified 2026-10-10).
-- [ ] T056 [US3] Add cases R8, R9, R10, R11, R14, R15, R17, R18 and R21 to
+- [X] T056 [US3] Add cases R8, R9, R10, R11, R14, R15, R17, R18 and R21 to
   `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`.
   Also add a seeded-random property test: 500 random command sequences starting from
   `FreshTabs`. Draw commands from `GoTo`, `Back` and `ReplaceAll` over a sample of **every**
@@ -720,7 +720,7 @@ phase's Independent Test needs.
      `TopLevelRoute`s";
   4. "Within a single stack, no two adjacent entries have the same route type";
   5. "A tab that is not in `visitOrder` has a stack equal to `[tab]`".
-- [ ] T057 [US3] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`:
+- [X] T057 [US3] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`:
   - `GoTo(TopLevelRoute)` equal to `currentTab` → `Ignore`, on any screen of that tab (R8,
     FR-007);
   - any other `GoTo(TopLevelRoute)` → move that tab to the end of `visitOrder` without
@@ -731,17 +731,21 @@ phase's Independent Test needs.
   - `GoTo(SignIn)` while `SignedIn` → `Ignore` (R21).
 
   T056 must pass.
-- [ ] T058 [US3] In `app/…/modularizationtest/ui/MainActivity.kt`, update `BottomNavigationBar`:
+- [X] T058 [US3] In `app/…/modularizationtest/ui/MainActivity.kt`, update `BottomNavigationBar`:
   - set `selected = item.route == (state as? SignedIn)?.currentTab` (FR-009);
   - make `onClick` always call `channelNavigator.navigate(item.route)` and let the reducer decide
     whether to ignore it;
   - remove the old `hierarchy`/`hasRoute` logic.
-- [ ] T059 [US3] In `app/…/modularizationtest/ui/navigation/NavigationEntries.kt`, make sure
+- [X] T059 [US3] In `app/…/modularizationtest/ui/navigation/NavigationEntries.kt`, make sure
   `rememberNavigationEntries` calls `rememberDecoratedNavEntries` for **all three** tab stacks on every
   recomposition, including tabs that are not in `visitOrder`. This keeps the ViewModels and
   saved UI state of screens in inactive tabs alive (FR-006, FR-011, research R4), and keeps a tab's
   first screen (which never leaves its stack) alive after the user backs out of the tab. Explain
   why in a KDoc note.
+  *2026-10-13: T055–T059 are in and all gates are green (122 unit tests). T058 and the three
+  `rememberDecoratedNavEntries` calls of T059 were already in place from T028, so T058 changed no
+  code and T059 added only the KDoc note. Not run yet: the quickstart rows "US3", "US3 back",
+  "US3 re-visit" and "US3 first screen kept" on a device.*
 
 **Checkpoint**: Tabs, tapping the current tab, back to the previous tab, and a tab's first
 screen keeping its state all behave as clarified.
