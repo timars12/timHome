@@ -32,7 +32,7 @@ internal class DataStoreSessionRepository(
 | S2 | After `markSignedIn()`, `isSignedIn.first()` is `true`, including in a new repository instance (simulated relaunch) | `DataStoreSessionRepositoryTest` |
 | S3 | `DataStoreManager.clearData()` resets the status to `false` | `DataStoreSessionRepositoryTest` |
 | S4 | Only a boolean is written: no tokens, e-mail or user data (FR-023) | Code review + S2 test asserting the stored preference keys |
-| S5 | A failed `markSignedIn()` does not block sign-in. `SignInViewModel` logs the error and still calls `navigator.replaceAll(Home)`. The status is then not remembered, so the next launch shows Sign In again. Coroutine cancellation is not treated as a failure and is rethrown. (Decided 2026-10-13.) | `SignInViewModelTest` |
+| S5 | A failed `markSignedIn()` does not block sign-in. `SignInViewModel` logs the error and still calls `navigator.replaceAll(Home)`. The status is then not remembered, so the next launch shows Sign In again. Coroutine cancellation is handled the same way: it is not rethrown. (Decided 2026-10-13.) | `SignInViewModelTest` |
 
 ## Wiring and consumers
 

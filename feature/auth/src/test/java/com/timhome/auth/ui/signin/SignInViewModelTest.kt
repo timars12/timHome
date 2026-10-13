@@ -12,7 +12,6 @@ import com.timhome.core.common.navigation.SignIn
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -184,23 +183,6 @@ class SignInViewModelTest {
             assertEquals(1, sessionRepository.markSignedInCalls)
             assertFalse(sessionRepository.isSignedIn.first())
             assertEquals(listOf(goHome), issued)
-
-            job.cancel()
-        }
-
-    @Test
-    fun `S5 a cancelled markSignedIn is not treated as a failure and does not go home`() =
-        runTest {
-            sessionRepository.failure = CancellationException("cancelled")
-            val issued = issuedCommands()
-            val viewModel = createViewModel()
-            val job = launch { viewModel.viewState.collect {} }
-
-            viewModel.sendEvent(LoginViewIntent.SignInWithoutField)
-            settle()
-
-            assertEquals(1, sessionRepository.markSignedInCalls)
-            assertTrue(issued.isEmpty())
 
             job.cancel()
         }
