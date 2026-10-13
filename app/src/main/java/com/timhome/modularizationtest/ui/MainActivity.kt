@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -55,11 +56,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import com.timhome.auth.ui.signin.navigation.signInEntries
 import com.timhome.base.DaggerBaseComponent
 import com.timhome.core.coreComponent
+import com.timhome.core.data.repository.SessionRepository
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.common.navigation.ChannelNavigator
 import com.timhome.core.common.navigation.Route
@@ -72,13 +75,20 @@ import com.timhome.modularizationtest.ui.navigation.NavigationHost
 import com.timhome.modularizationtest.ui.navigation.NavigationReducer
 import com.timhome.modularizationtest.ui.navigation.NavigationState
 import com.timhome.modularizationtest.ui.navigation.NavigationViewModel
+import com.timhome.modularizationtest.ui.navigation.StartPolicy
 import com.timhome.modularizationtest.ui.navigation.topLevelTabs
 import com.timhome.settings.ui.navigation.settingEntries
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+
+private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var channelNavigator: ChannelNavigator
+
+    @Inject
+    lateinit var sessionRepository: SessionRepository
 
     private val navigationViewModel: NavigationViewModel by viewModels { NavigationViewModel.Factory }
 
@@ -93,7 +103,11 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalComposeUiApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Must come before super.onCreate(). The ViewModel is only read later, by the condition.
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        splashScreen.setKeepOnScreenCondition { navigationViewModel.state.value == null }
+        discardPendingNavigationIfOpenedFromAlert(hasSavedState = savedInstanceState != null)
 
         setContent {
             val state by navigationViewModel.state.collectAsStateWithLifecycle()
@@ -119,8 +133,11 @@ class MainActivity : ComponentActivity() {
 
             CheckNotificationPermission(requestPermissionLauncher)
             LaunchedEffect(state == null) {
-                // T041 replaces this with the remembered signed-in flag.
-                if (state == null) navigationViewModel.start(NavigationReducer.initialState(isSignedIn = false))
+                // Nothing signed-in was restored, so the stored flag chooses the start screen.
+                if (state == null) {
+                    val isSignedIn = sessionRepository.isSignedIn.first()
+                    navigationViewModel.start(NavigationReducer.startState(navigationViewModel.restored, isSignedIn)!!)
+                }
             }
 
             HomeTheme {
@@ -175,6 +192,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * The CO2 notification opens the app with fresh history, so requests buffered while the app
+     * was in the background must not land on top of it. Every other launch keeps them.
+     */
+    private fun discardPendingNavigationIfOpenedFromAlert(hasSavedState: Boolean) {
+        val shouldDiscard =
+            StartPolicy.shouldDiscardPendingNavigation(
+                hasSavedState = hasSavedState,
+                openedFromAlert = intent.getBooleanExtra(EXTRA_OPENED_FROM_CO2_ALERT, false),
+                launchedFromHistory = intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0,
+            )
+        if (shouldDiscard) {
+            val dropped = channelNavigator.discardPending()
+            Log.d(TAG, "onCreate() opened from the CO2 alert, dropped $dropped pending navigation request(s)")
+        }
+    }
+
     @Composable
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun CheckNotificationPermission(requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>) {
@@ -219,6 +253,11 @@ class MainActivity : ComponentActivity() {
                 }
             },
         )
+    }
+
+    companion object {
+        /** Set on the CO2 notification's intent, so that launch discards pending navigation requests. */
+        const val EXTRA_OPENED_FROM_CO2_ALERT = "com.timhome.modularizationtest.OPENED_FROM_CO2_ALERT"
     }
 }
 

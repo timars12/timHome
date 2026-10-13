@@ -25,6 +25,10 @@ internal object NavigationReducer {
     /**
      * The state to start with, or `null` while it cannot be chosen yet: [isSignedIn] is `null`
      * until the stored flag has been read.
+     *
+     * A restored signed-in state is used as it was, without the flag. A restored Sign In history
+     * with the flag set means the sign-in finished just before the process died, so it gives
+     * fresh tabs.
      */
     fun startState(
         restored: NavigationState?,
@@ -33,6 +37,7 @@ internal object NavigationReducer {
         when {
             restored is SignedIn -> restored
             isSignedIn == null -> null
+            restored is SignedOut -> if (isSignedIn) FreshTabs else restored
             else -> initialState(isSignedIn)
         }
 
@@ -51,7 +56,8 @@ internal object NavigationReducer {
         route: Route,
     ): Transition =
         when (state) {
-            is SignedOut -> if (route is TopLevelRoute) Transition.Ignore else Transition.Update(SignedOut(state.stack + route))
+            // The tabs are reachable only through ReplaceAll after sign-in.
+            is SignedOut -> Transition.Ignore
             is SignedIn ->
                 if (route is TopLevelRoute) {
                     Transition.Update(state.copy(visitOrder = state.visitOrder - route + route))
@@ -62,7 +68,7 @@ internal object NavigationReducer {
 
     private fun back(state: NavigationState): Transition =
         when (state) {
-            is SignedOut -> if (state.stack.size > 1) Transition.Update(SignedOut(state.stack.dropLast(1))) else Transition.Exit
+            is SignedOut -> Transition.Exit
             is SignedIn ->
                 if (state.currentStack.size > 1) {
                     Transition.Update(state.withCurrentStack(state.currentStack.dropLast(1)))
@@ -71,7 +77,12 @@ internal object NavigationReducer {
                 }
         }
 
-    private fun replaceAll(route: Route): Transition = if (route == Home) Transition.Update(FreshTabs) else Transition.Ignore
+    private fun replaceAll(route: Route): Transition =
+        when (route) {
+            Home -> Transition.Update(FreshTabs)
+            SignIn -> Transition.Update(SignedOut(listOf(SignIn)))
+            else -> Transition.Ignore
+        }
 
     private val SignedIn.currentStack: List<Route> get() = tabStacks.getValue(currentTab)
 

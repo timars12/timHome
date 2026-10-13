@@ -1,6 +1,7 @@
 package com.timhome.auth.di
 
 import com.timhome.auth.ui.signin.di.SignInModule
+import com.timhome.core.data.di.SessionModule
 import com.timhome.core.di.CoreComponent
 import com.timhome.core.ui.di.ViewModelFactoryContainer
 import com.timhome.core.common.FeatureScope
@@ -9,7 +10,7 @@ import dagger.Component
 @FeatureScope
 @Component(
     dependencies = [CoreComponent::class],
-    modules = [LoginModule::class, SignInModule::class],
+    modules = [LoginModule::class, SignInModule::class, SessionModule::class],
 )
 internal interface AuthenticationComponent {
     @Component.Factory
