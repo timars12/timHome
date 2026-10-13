@@ -55,15 +55,20 @@ internal object NavigationReducer {
         state: NavigationState,
         route: Route,
     ): Transition =
-        when (state) {
-            // The tabs are reachable only through ReplaceAll after sign-in.
-            is SignedOut -> Transition.Ignore
-            is SignedIn ->
-                if (route is TopLevelRoute) {
-                    Transition.Update(state.copy(visitOrder = state.visitOrder - route + route))
-                } else {
-                    Transition.Update(state.withCurrentStack(state.currentStack + route))
-                }
+        if (route::class == state.currentRoute::class) {
+            // A screen is never stacked on another of its kind, whatever its arguments (FR-026).
+            Transition.Ignore
+        } else {
+            when (state) {
+                // The tabs are reachable only through ReplaceAll after sign-in.
+                is SignedOut -> Transition.Ignore
+                is SignedIn ->
+                    if (route is TopLevelRoute) {
+                        Transition.Update(state.copy(visitOrder = state.visitOrder - route + route))
+                    } else {
+                        Transition.Update(state.withCurrentStack(state.currentStack + route))
+                    }
+            }
         }
 
     private fun back(state: NavigationState): Transition =

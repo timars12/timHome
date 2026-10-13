@@ -26,6 +26,8 @@ import java.math.BigDecimal
 internal data class BuyModuleUiState(
     val totalPrice: BigDecimal = BigDecimal.ZERO,
     val modules: ImmutableList<ModuleModel> = persistentListOf(),
+    /** The routed device does not exist. */
+    val isDeviceMissing: Boolean = false,
 )
 
 internal class BuyModuleViewModel
@@ -41,6 +43,12 @@ internal class BuyModuleViewModel
 
         init {
             val selectedModules = repository.getSelectedModuleToBuyByDeviceId(route.deviceId)
+
+            viewModelScope.launch {
+                if (repository.getDeviceById(route.deviceId) == null) {
+                    _uiState.update { it.copy(isDeviceMissing = true) }
+                }
+            }
 
             viewModelScope.launch {
                 selectedModules.stateIn(viewModelScope).collect { list ->

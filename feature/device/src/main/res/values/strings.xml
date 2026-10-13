@@ -6,4 +6,6 @@
     <string name="order_summary">Order Summary</string>
     <string name="estimated_total">Estimated total:</string>
     <string name="confirm_order">Confirm order</string>
+    <string name="device_not_found">Device not found</string>
+    <string name="back">Back</string>
 </resources>

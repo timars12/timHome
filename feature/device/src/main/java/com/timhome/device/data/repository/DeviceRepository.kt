@@ -57,8 +57,8 @@ internal class DeviceRepository
             }
         }
 
-        override suspend fun getDeviceById(deviceId: Int): DeviceModel {
-            return database.deviceDao().getDeviceById(deviceId).let {
+        override suspend fun getDeviceById(deviceId: Int): DeviceModel? {
+            return database.deviceDao().getDeviceById(deviceId)?.let {
                 mapper.convertEntityToModel(it)
             }
         }

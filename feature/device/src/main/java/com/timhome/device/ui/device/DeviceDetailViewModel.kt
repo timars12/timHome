@@ -29,6 +29,8 @@ import kotlinx.coroutines.launch
 internal data class DeviceDetailUiState(
     val device: DeviceModel? = null,
     val modules: ImmutableList<ModuleModel> = persistentListOf(),
+    /** The routed device does not exist. While `false` with no [device], it is still loading. */
+    val isDeviceMissing: Boolean = false,
 )
 
 internal class DeviceDetailViewModel
@@ -52,7 +54,9 @@ internal class DeviceDetailViewModel
         }
 
         private suspend fun getSelectedDeviceById(deviceId: Int) {
-            _uiState.update { it.copy(device = repository.getDeviceById(deviceId)) }
+            val device = repository.getDeviceById(deviceId)
+            _uiState.update { it.copy(device = device, isDeviceMissing = device == null) }
+            if (device == null) return
             repository.getModuleToBuyByDeviceId(deviceId).stateIn(viewModelScope).collect { modules ->
                 _uiState.update { it.copy(modules = modules.toImmutableList()) }
             }

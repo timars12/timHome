@@ -91,6 +91,60 @@ class NavigationReducerTest {
     // region signed in
 
     @Test
+    fun `R5 going to Device Detail pushes it onto the Devices tab`() {
+        val state = signedIn(visitOrder = listOf(Home, Devices))
+
+        assertEquals(
+            Transition.Update(state.copy(tabStacks = state.tabStacks + (Devices to listOf(Devices, DeviceDetail(1))))),
+            NavigationReducer.reduce(state, GoTo(DeviceDetail(1))),
+        )
+    }
+
+    @Test
+    fun `R6 going to the screen that is already on top is ignored`() {
+        assertEquals(Transition.Ignore, NavigationReducer.reduce(onDeviceDetail, GoTo(DeviceDetail(1))))
+    }
+
+    @Test
+    fun `R6a going to Device Detail of another device from Device Detail is ignored`() {
+        assertEquals(Transition.Ignore, NavigationReducer.reduce(onDeviceDetail, GoTo(DeviceDetail(2))))
+    }
+
+    @Test
+    fun `R6b going to Buy Module of another device from Buy Module is ignored`() {
+        assertEquals(Transition.Ignore, NavigationReducer.reduce(onBuyModule, GoTo(BuyModule(2))))
+        assertEquals(Transition.Ignore, NavigationReducer.reduce(onBuyModule, GoTo(BuyModule(1))))
+    }
+
+    @Test
+    fun `R6a quick taps on two device rows open only the first device`() {
+        val onDevices = signedIn(visitOrder = listOf(Home, Devices))
+
+        val afterFirstTap = (NavigationReducer.reduce(onDevices, GoTo(DeviceDetail(1))) as Transition.Update).state
+
+        assertEquals(onDeviceDetail, afterFirstTap)
+        assertEquals(Transition.Ignore, NavigationReducer.reduce(afterFirstTap, GoTo(DeviceDetail(2))))
+    }
+
+    @Test
+    fun `R7 going to Buy Module from Device Detail pushes it`() {
+        assertEquals(Transition.Update(onBuyModule), NavigationReducer.reduce(onDeviceDetail, GoTo(BuyModule(1))))
+    }
+
+    @Test
+    fun `R12 back from Buy Module returns to Device Detail`() {
+        assertEquals(Transition.Update(onDeviceDetail), NavigationReducer.reduce(onBuyModule, Back))
+    }
+
+    @Test
+    fun `R13 back from Device Detail returns to the Devices list`() {
+        assertEquals(
+            Transition.Update(signedIn(visitOrder = listOf(Home, Devices))),
+            NavigationReducer.reduce(onDeviceDetail, Back),
+        )
+    }
+
+    @Test
     fun `R16 back on Home's first screen with only Home visited leaves the app`() {
         assertEquals(Transition.Exit, NavigationReducer.reduce(FreshTabs, Back))
     }
@@ -140,5 +194,12 @@ class NavigationReducerTest {
             setting: List<Route> = listOf(Setting),
             visitOrder: List<TopLevelRoute> = listOf(Home),
         ) = SignedIn(tabStacks = mapOf(Home to home, Devices to devices, Setting to setting), visitOrder = visitOrder)
+
+        /** `D=[Devices, DD(1)]`, with Devices as the current tab. */
+        val onDeviceDetail = signedIn(devices = listOf(Devices, DeviceDetail(1)), visitOrder = listOf(Home, Devices))
+
+        /** `D=[Devices, DD(1), BM(1)]`, with Devices as the current tab. */
+        val onBuyModule =
+            signedIn(devices = listOf(Devices, DeviceDetail(1), BuyModule(1)), visitOrder = listOf(Home, Devices))
     }
 }

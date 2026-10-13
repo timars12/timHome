@@ -19,14 +19,14 @@ fixed in this feature).
 | B4 | All screen changes use the library's default fade. The slide and scale styles are declared on the entries but not applied. | US5: T064–T066 | `TransitionSelectionTest`; quickstart rows "US5" and "US5 tabs" | Open |
 | B5 | The navigation state is lost on process death, so the user returns to Sign In. It survives rotation. | US4: T060, T061 | `NavigationStateJsonTest`, `NavigationViewModelTest` V4–V6; quickstart row "US4 death" | Open |
 | B6 | Release builds have no keep rules for the serialized navigation types. Harmless until B5 is fixed, then a release-only crash risk. | US4: T062 | Quickstart §3 (release restore) | Open |
-| B7 | A second quick tap on a device row pushes a second Device Detail. Two entries with the same route may also crash the display; this was not tried. | US2: T053, T054 (rules R6, R6a, R6b) | `NavigationReducerTest` R6/R6a/R6b; quickstart row "Quick taps, different rows" | Open |
-| B8 | Tapping the current tab produces a state update instead of being ignored. Nothing visible changes. | US3: T057 (rule R8) | `NavigationReducerTest` R8 | Open |
+| B7 | A second quick tap on a device row pushes a second Device Detail. Two entries with the same route may also crash the display; this was not tried. | US2: T053, T054 (rules R6, R6a, R6b) | `NavigationReducerTest` R6/R6a/R6b; quickstart row "Quick taps, different rows" | Open. 2026-10-13 (Phase 4): `NavigationReducerTest` R6/R6a/R6b pass; the quickstart row is not run yet |
+| B8 | Tapping the current tab produces a state update instead of being ignored. Nothing visible changes. | US3: T057 (rule R8) | `NavigationReducerTest` R8 | Open. 2026-10-13 (Phase 4): the same-kind check (T054) already ignores the tap on a tab's first screen; deeper screens still wait for T057 |
 | B9 | The predictive back gesture is not enabled in the manifest. | US5: T067 | Quickstart row "US5 predictive" on API 36 | Open |
 | B10 | Navigation requests issued during a predictive back gesture are applied at once, and bottom-bar taps during it are not ignored. | US5: T068–T074 | `NavigationCommandRouterTest` W1–W8, `NavigationHostGestureTest` | Open |
 | B11 | Tapping the CO2 notification still recreates the activity with `CLEAR_TOP` and shows Sign In. Pending navigation requests are not discarded. | US1: T038–T043 | `StartPolicyTest`, `CO2WorkerTest`; quickstart notification rows | Open. 2026-10-13 (Phase 3): the automated checks pass; the quickstart notification rows are not run yet |
 | B12 | A successful sign-in is not guarded against issuing `replaceAll(Home)` more than once. | US1: T033, T035 | `SignInViewModelTest` (repeated success state) | Closed 2026-10-13: `SignInViewModelTest` passes, and fails without the guard |
 | B13 | Rules with no caller today are still at their baseline: `ReplaceAll(SignIn)` is ignored, and `GoTo(SignIn)` while signed in would push Sign In onto a tab. | US1: T037 (R20, R22); US3: T057 (R21) | `NavigationReducerTest` R20–R22 and the invariant property test | Open. R20 and R22 closed 2026-10-13 (`NavigationReducerTest`); R21 waits for US3 |
-| B14 | Device Detail and Buy Module show a blank screen for a device that does not exist. This is older than the migration. | US2: T045–T052 | `DeviceDetailViewModelTest`, `BuyModuleViewModelTest`; quickstart row "Device not found" (see N1) | Open |
+| B14 | Device Detail and Buy Module show a blank screen for a device that does not exist. This is older than the migration. | US2: T045–T052 | `DeviceDetailViewModelTest`, `BuyModuleViewModelTest`; quickstart row "Device not found" (see N1) | Open. 2026-10-13 (Phase 4): `DeviceRepositoryTest`, `DeviceDetailViewModelTest` and `BuyModuleViewModelTest` pass; the screen was not seen on a device |
 
 ## Cleanup gaps
 
@@ -41,6 +41,7 @@ fixed in this feature).
 | # | Gap | Fixed by | How to confirm | Status |
 |---|---|---|---|---|
 | V1 | The real screens, with their Dagger wiring, were not exercised on Navigation 3 on a device. The emulator froze, then exited. Only the launch to Sign In was seen, on the intermediate bridge build. `NavigationHostTest` covers the host with stub screens. | T029 (still unchecked) | Sign in, open all three tabs, Devices → Device Detail → Buy Module → back → back, with no crash | Closed 2026-10-13: the developer ran the smoke test on a device and it passed |
+| V3 | `:app:jacocoDebugReport` reports 0% for every class in `:app`, although `testDebugUnitTest.exec` is written and the tests pass. The `:feature:device` report works (2026-10-13: `DeviceRepository` 28/30 lines, `DeviceDetailViewModel` and `BuyModuleViewModel` 100%). So coverage of `NavigationReducer` and the other `:app` classes cannot be measured yet. | Before T083 | `:app:jacocoDebugReport` shows non-zero coverage for `NavigationReducer` | Open |
 | V2 | Lint output was not compared with the report from before the compileSdk 36 bump. The lint task passes. | – | Compare `app/build/reports/lint-results-debug.html` with a build of `develop` | Open |
 
 ## Not covered by any task

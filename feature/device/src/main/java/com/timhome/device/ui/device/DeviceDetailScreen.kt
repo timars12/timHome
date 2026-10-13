@@ -24,6 +24,7 @@ import com.timhome.core.designsystem.theme.cornerRoundedShapes
 import com.timhome.core.common.navigation.DeviceDetail
 import com.timhome.core.ui.viewmodel.ViewModelFactory
 import com.timhome.core.ui.viewmodel.routeExtras
+import com.timhome.device.ui.device.composables.DeviceNotFound
 import com.timhome.device.ui.device.composables.LazyColumnWithParallax
 
 @Composable
@@ -37,6 +38,11 @@ internal fun DeviceDetailScreen(
         val device = state.device
         val modules = state.modules
 
+        if (state.isDeviceMissing) {
+            DeviceNotFound(onBackClick = viewModel::goBack)
+            return@HomeTheme
+        }
+        // Still loading.
         if (device == null) return@HomeTheme
         Scaffold(
             floatingActionButton = {

@@ -25,7 +25,7 @@ interface DeviceDao {
 
     @Transaction
     @Query("select * from devices where devices.id = :deviceId")
-    suspend fun getDeviceById(deviceId: Int): DeviceEntity
+    suspend fun getDeviceById(deviceId: Int): DeviceEntity?
 
     @Query("UPDATE modules SET isSelectToBuy = :isSelectToBuy WHERE id =:moduleId")
     suspend fun updateModuleInDB(
