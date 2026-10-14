@@ -35,6 +35,8 @@ class ViewModelFactoryTest {
 
     private class PlainViewModel : ViewModel()
 
+    private class UnboundViewModel : ViewModel()
+
     private class RecordingFactory : ViewModelAssistedFactory<RoutedViewModel> {
         var route: Route? = null
         var navigator: Navigator? = null
@@ -98,6 +100,13 @@ class ViewModelFactoryTest {
     fun `a missing route fails with IllegalStateException`() {
         assertThrows(IllegalStateException::class.java) {
             create(RoutedViewModel::class.java) { it.defaultViewModelCreationExtras }
+        }
+    }
+
+    @Test
+    fun `a ViewModel with no bound factory fails with IllegalStateException`() {
+        assertThrows(IllegalStateException::class.java) {
+            create(UnboundViewModel::class.java, ::routeExtrasOf)
         }
     }
 }
