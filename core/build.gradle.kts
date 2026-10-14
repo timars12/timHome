@@ -8,7 +8,7 @@ android {
 }
 
 dependencies {
-    // Referenced by CoreComponent/AppModule (NavigationDispatcher, NetworkModule,
+    // Referenced by CoreComponent/AppModule (ChannelNavigator, NetworkModule,
     // DatabaseModule + the exposed AppDatabase/DataStoreManager/ArduinoApi types).
     implementation(project(":core:common"))
     implementation(project(":core:network"))

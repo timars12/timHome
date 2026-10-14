@@ -5,7 +5,6 @@ import com.timhome.core.datastore.DataStoreManager
 import com.timhome.core.data.repository.ArduinoRepository
 import com.timhome.core.di.CoreComponent
 import com.timhome.core.common.FeatureScope
-import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.navigation.ChannelNavigator
 import com.timhome.core.common.di.DefaultDispatcher
 import com.timhome.core.common.di.IoDispatcher
@@ -24,7 +23,6 @@ interface BaseComponent {
     val dataStore: DataStoreManager
     val arduinoRepository: ArduinoRepository
     val firebaseAnalytics: FirebaseAnalytics
-    val navigationDispatcher: NavigationDispatcher
     val channelNavigator: ChannelNavigator
 
     @IoDispatcher

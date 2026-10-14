@@ -38,7 +38,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findBundle("retrofit").get())
                 add("implementation", libs.findBundle("room").get())
                 add("implementation", libs.findLibrary("dagger").get())
-                add("implementation", libs.findLibrary("androidx-navigation-compose").get())
                 add("implementation", libs.findLibrary("kotlinx-serialization-json").get())
                 add("androidTestImplementation", kotlin("test"))
                 add("testImplementation", kotlin("test"))

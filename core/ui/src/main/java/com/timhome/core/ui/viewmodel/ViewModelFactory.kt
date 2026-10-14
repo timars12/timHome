@@ -24,8 +24,9 @@ class ViewModelFactory
             extras: CreationExtras,
         ): T {
             val route = checkNotNull(extras[RouteExtrasKey]) { "ViewModel created outside a navigation entry" }
+            val factory = checkNotNull(factories[modelClass]) { "No ViewModelAssistedFactory bound for ${modelClass.name}" }
             // Create a SavedStateHandle for this ViewModel from extras
             val savedStateHandle = extras.createSavedStateHandle()
-            return factories[modelClass]?.create(savedStateHandle, route, channelNavigator.issuedFrom(route))!! as T
+            return factory.create(savedStateHandle, route, channelNavigator.issuedFrom(route)) as T
         }
     }
