@@ -81,6 +81,7 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:network"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:ui"))
     implementation(project(":core:data"))
     implementation(project(":core:database"))
     implementation(project(":base"))
@@ -112,7 +113,6 @@ dependencies {
     testImplementation(libs.androidx.work.testing)
     testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.compose.ui.test.junit4)
-    testImplementation(project(":core:ui"))
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     baselineProfile(project(":benchmark"))

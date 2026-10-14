@@ -853,7 +853,7 @@ its "completed" case fails before T074.
 
 ### Tasks (in execution order)
 
-- [ ] T064 [P] [US5] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/TransitionSelectionTest.kt`:
+- [X] T064 [P] [US5] Create `app/src/test/java/com/timhome/modularizationtest/ui/navigation/TransitionSelectionTest.kt`:
   - T1–T4: `transitionStyleFor(targetMetadata)` returns `Slide` for the `SignIn` and `Home`
     entries and `Scale` for `Devices`, `Setting`, `DeviceDetail` and `BuyModule`;
   - T5/E1/E5: build the real
@@ -862,26 +862,29 @@ its "completed" case fails before T074.
     `entryProvider(route).metadata.transitionStyle() != null`. Entry content is not invoked;
   - missing style: `transitionStyleFor(emptyMap())` throws `IllegalStateException` (the T065
     `error(...)` branch, constitution III).
-- [ ] T065 [US5] Add `internal fun transitionStyleFor(metadata: Map<String, Any>): TransitionStyle`
+- [X] T065 [US5] Add `internal fun transitionStyleFor(metadata: Map<String, Any>): TransitionStyle`
   in `app/…/modularizationtest/ui/navigation/TransitionSelection.kt`. If the style is missing,
   fail with `error(...)`. T064 must pass.
-- [ ] T066 [US5] In `app/…/modularizationtest/ui/navigation/NavigationHost.kt`, give `NavDisplay`:
+- [X] T066 [US5] In `app/…/modularizationtest/ui/navigation/NavigationHost.kt`, give `NavDisplay`:
   - `transitionSpec = { transitionStyleFor(targetState.metadata).toContentTransform() }`;
   - the same lambda for `popTransitionSpec`;
   - the same lambda for `predictivePopTransitionSpec`, which also receives the swipe edge.
 
   The style always comes from the **target** scene, "the style of the screen being shown"
   (FR-005, research R7).
-- [ ] T067 [P] [US5] Add `android:enableOnBackInvokedCallback="true"` to the `<application>`
+  *2026-10-14: `:core:ui` is now an `implementation` dependency of `:app` (it was
+  `testImplementation`), because the styles live there. The label entries in `NavigationHostTest`
+  now declare a style, since an entry without one is an error.*
+- [X] T067 [P] [US5] Add `android:enableOnBackInvokedCallback="true"` to the `<application>`
   element in `app/src/main/AndroidManifest.xml` (research R8). Confirm that no
   `onBackPressed()` override is left in the repo.
-- [ ] T068 [US5] Add cases H1–H7 from `contracts/navigation-rules.md` ("Releasing commands held
+- [X] T068 [US5] Add cases H1–H7 from `contracts/navigation-rules.md` ("Releasing commands held
   during a predictive back gesture") to
   `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationReducerTest.kt`.
   Assert `state`, `exit`, `applied` and `dropped` of the `HeldResult` for each case. Include H2
   (a `Back` from `BM(1)` after the gesture completed is dropped, so there is no double back) and
   H5 (the origin is checked against the state **at that step**).
-- [ ] T069 [US5] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, add
+- [X] T069 [US5] In `app/…/modularizationtest/ui/navigation/NavigationReducer.kt`, add
   `internal data class HeldResult(val state: NavigationState, val exit: Boolean, val applied: Int, val dropped: Int)`
   and `fun applyHeld(state: NavigationState, held: List<IssuedCommand>): HeldResult`. Walk `held`
   in order. "A held command is applied when `origin == currentRoute` of the state at that step,
@@ -889,12 +892,12 @@ its "completed" case fails before T074.
   origin `null` (bottom bar) is always dropped" (data-model "HeldResult", rule H4, FR-028). Applied commands go through `reduce`, so `Ignore` keeps
   the state and still counts as applied. Stop at the first `Exit` and set `exit = true`. T068
   must pass.
-- [ ] T070 [US5] In `app/…/modularizationtest/ui/navigation/NavigationViewModel.kt`, add
+- [X] T070 [US5] In `app/…/modularizationtest/ui/navigation/NavigationViewModel.kt`, add
   `fun applyHeld(held: List<IssuedCommand>): HeldResult?`. It calls `NavigationReducer.applyHeld`,
   replaces (and saves, T061) the state when it changed, and returns the `HeldResult`. It does
   nothing and returns `null` while the state is `null` or `held` is empty. Add case V8 to
   `NavigationViewModelTest.kt` first.
-- [ ] T071 [US5] Create
+- [X] T071 [US5] Create
   `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationCommandRouterTest.kt`,
   a plain JVM test with a real `ChannelNavigator` and a real
   `NavigationViewModel(SavedStateHandle())` (no mocks). Cover cases W1–W8 from
@@ -907,7 +910,7 @@ its "completed" case fails before T074.
     commands in place;
   - W8: `onCollected` for a bottom-bar command (origin `null`) while a gesture is in progress
     drops it: the state is unchanged and `takeHeld()` is empty (FR-028).
-- [ ] T072 [US5] Create
+- [X] T072 [US5] Create
   `app/src/main/java/com/timhome/modularizationtest/ui/navigation/NavigationCommandRouter.kt`
   (research R20, contract navigator "Wiring"). It is a plain class, `internal` to `:app`, with no
   Compose or Android types:
@@ -933,7 +936,7 @@ its "completed" case fails before T074.
 
   This is where the "apply, hold or drop" decision lives, so it is JVM-tested (constitution III).
   `NavigationHost` keeps only the Compose timing (T074). T071 must pass.
-- [ ] T073 [US5] Create
+- [X] T073 [US5] Create
   `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationHostGestureTest.kt`, a
   Robolectric Compose test of the release **order** that H2 assumes: the gesture's own `Back` must
   be applied before held commands are released (FR-027, research R20, plan risk "Releasing held
@@ -976,7 +979,12 @@ its "completed" case fails before T074.
   `androidTestImplementation` for the two libraries) and run it with
   `./gradlew :app:connectedDebugAndroidTest` on the API 36 emulator. Record which variant was used
   in the test's KDoc.
-- [ ] T074 [US5] In `app/…/modularizationtest/ui/navigation/NavigationHost.kt`, add the gesture
+  *2026-10-14: the Robolectric variant through `onBackPressedDispatcher` works. Before T074, 4 of
+  the 6 cases failed, the "completed" one among them. A sixth case was added: commands held before
+  the host is recreated are released when it starts. One limit: the cases still pass with the
+  one-frame wait removed from T074, because navigationevent 1.1.2 applies the gesture's own `Back`
+  before it reports `Idle`. So the test checks the release order, not the frame wait itself.*
+- [X] T074 [US5] In `app/…/modularizationtest/ui/navigation/NavigationHost.kt`, add the gesture
   hold through the router (research R20, contract navigator "Wiring"). Get the dispatcher from
   `LocalNavigationEventDispatcherOwner` (not from `MainActivity`), so T073 can host it in a plain
   `ComponentActivity`:
@@ -995,6 +1003,11 @@ its "completed" case fails before T074.
 
   No other branch on held commands goes in `NavigationHost`. Keep the `discardPending()` call
   from T041 where it is: it already clears held commands (N6). T073 must pass.
+
+*2026-10-14: T064–T074 are in. `assembleDebug testDebugUnitTest lintDebug detektDebug ktlintCheck`
+is green. Not run yet: the quickstart "US5", "US5 tabs", "US5 predictive" and "Bottom-bar tap
+during swipe" rows on an API 36 device. Lint has one new warning (`UnusedAttribute`):
+`enableOnBackInvokedCallback` is only read from API 33, and minSdk is 26.*
 
 **Checkpoint**: All five stories are done.
 
