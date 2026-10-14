@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.timhome.core.common.navigation.IssuedCommand
 import com.timhome.core.common.navigation.NavigationCommand
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,6 +49,21 @@ internal class NavigationViewModel(private val savedStateHandle: SavedStateHandl
             Transition.Exit -> true
             Transition.Ignore -> false
         }
+    }
+
+    /**
+     * Releases the commands [held] during a predictive back gesture. Does nothing and returns
+     * `null` while there is no state yet or nothing is held.
+     */
+    fun applyHeld(held: List<IssuedCommand>): HeldResult? {
+        val current = _state.value
+        if (current == null || held.isEmpty()) return null
+        val result = NavigationReducer.applyHeld(current, held)
+        if (result.state != current) {
+            _state.value = result.state
+            save(result.state)
+        }
+        return result
     }
 
     private fun save(state: NavigationState) {

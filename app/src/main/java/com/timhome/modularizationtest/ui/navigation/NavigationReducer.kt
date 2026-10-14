@@ -1,6 +1,7 @@
 package com.timhome.modularizationtest.ui.navigation
 
 import com.timhome.core.common.navigation.Home
+import com.timhome.core.common.navigation.IssuedCommand
 import com.timhome.core.common.navigation.NavigationCommand
 import com.timhome.core.common.navigation.Route
 import com.timhome.core.common.navigation.SignIn
@@ -17,6 +18,16 @@ internal sealed interface Transition {
 
     data object Ignore : Transition
 }
+
+/**
+ * The result of releasing the commands held during a predictive back gesture.
+ *
+ * @param state the state after every applied command; the same object when nothing changed.
+ * @param exit an applied command left nothing to go back to. Later commands were not looked at.
+ * @param applied how many commands were applied.
+ * @param dropped how many were dropped because their origin was no longer shown.
+ */
+internal data class HeldResult(val state: NavigationState, val exit: Boolean, val applied: Int, val dropped: Int)
 
 /** The navigation rules, as pure functions. */
 internal object NavigationReducer {
@@ -50,6 +61,34 @@ internal object NavigationReducer {
             NavigationCommand.Back -> back(state)
             is NavigationCommand.ReplaceAll -> replaceAll(command.route)
         }
+
+    /**
+     * Releases the commands [held] during a predictive back gesture, in order. A command is
+     * applied only when the screen that issued it is the one shown at that step. A command from
+     * the bottom bar (no origin) is never applied.
+     */
+    fun applyHeld(
+        state: NavigationState,
+        held: List<IssuedCommand>,
+    ): HeldResult {
+        var current = state
+        var applied = 0
+        var dropped = 0
+        for (issued in held) {
+            // A `null` origin never equals the current route, so the bottom bar is dropped here too.
+            if (issued.origin != current.currentRoute) {
+                dropped++
+            } else {
+                applied++
+                when (val transition = reduce(current, issued.command)) {
+                    is Transition.Update -> current = transition.state
+                    Transition.Exit -> return HeldResult(current, exit = true, applied = applied, dropped = dropped)
+                    Transition.Ignore -> Unit
+                }
+            }
+        }
+        return HeldResult(current, exit = false, applied = applied, dropped = dropped)
+    }
 
     private fun goTo(
         state: NavigationState,

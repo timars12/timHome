@@ -20,6 +20,7 @@ import com.timhome.core.common.navigation.Navigator
 import com.timhome.core.common.navigation.Route
 import com.timhome.core.common.navigation.Setting
 import com.timhome.core.common.navigation.SignIn
+import com.timhome.core.ui.scaleTransition
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.timhome.core.ui.viewmodel.ViewModelFactory
 import com.timhome.core.ui.viewmodel.routeExtras
@@ -69,15 +70,15 @@ class NavigationHostTest {
 
     private val labels =
         entryProvider<Route> {
-            entry<SignIn> { Text("SignIn") }
-            entry<Home> { Text("Home") }
-            entry<Devices> { Text("Devices") }
-            entry<Setting> { Text("Setting") }
-            entry<DeviceDetail> {
+            entry<SignIn>(metadata = scaleTransition()) { Text("SignIn") }
+            entry<Home>(metadata = scaleTransition()) { Text("Home") }
+            entry<Devices>(metadata = scaleTransition()) { Text("Devices") }
+            entry<Setting>(metadata = scaleTransition()) { Text("Setting") }
+            entry<DeviceDetail>(metadata = scaleTransition()) {
                 viewModel<ProbeViewModel>(factory = viewModelFactory, extras = routeExtras(it))
                 Text("DeviceDetail ${it.deviceId}")
             }
-            entry<BuyModule> { Text("BuyModule ${it.deviceId}") }
+            entry<BuyModule>(metadata = scaleTransition()) { Text("BuyModule ${it.deviceId}") }
         }
 
     private fun host(start: NavigationState) {

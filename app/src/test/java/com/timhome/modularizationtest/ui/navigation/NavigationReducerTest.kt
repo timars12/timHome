@@ -4,6 +4,7 @@ import com.timhome.core.common.navigation.BuyModule
 import com.timhome.core.common.navigation.DeviceDetail
 import com.timhome.core.common.navigation.Devices
 import com.timhome.core.common.navigation.Home
+import com.timhome.core.common.navigation.IssuedCommand
 import com.timhome.core.common.navigation.NavigationCommand.Back
 import com.timhome.core.common.navigation.NavigationCommand.GoTo
 import com.timhome.core.common.navigation.NavigationCommand.ReplaceAll
@@ -319,6 +320,78 @@ class NavigationReducerTest {
                 )
             }
         }
+    }
+
+    // endregion
+
+    // region held commands
+
+    @Test
+    fun `H1 a held back is applied after a canceled gesture`() {
+        val result = NavigationReducer.applyHeld(onBuyModule, listOf(IssuedCommand(Back, BuyModule(1))))
+
+        assertEquals(HeldResult(onDeviceDetail, exit = false, applied = 1, dropped = 0), result)
+    }
+
+    @Test
+    fun `H2 a held back from the screen the gesture left is dropped, so there is no double back`() {
+        val result = NavigationReducer.applyHeld(onDeviceDetail, listOf(IssuedCommand(Back, BuyModule(1))))
+
+        assertSame(onDeviceDetail, result.state)
+        assertEquals(HeldResult(onDeviceDetail, exit = false, applied = 0, dropped = 1), result)
+    }
+
+    @Test
+    fun `H3 a held command from the screen now shown is applied`() {
+        val result = NavigationReducer.applyHeld(onDeviceDetail, listOf(IssuedCommand(GoTo(BuyModule(1)), DeviceDetail(1))))
+
+        assertEquals(HeldResult(onBuyModule, exit = false, applied = 1, dropped = 0), result)
+    }
+
+    @Test
+    fun `H4 a held bottom-bar command is always dropped`() {
+        val onSetting = signedIn(visitOrder = listOf(Home, Setting))
+
+        val result = NavigationReducer.applyHeld(onSetting, listOf(IssuedCommand(GoTo(Devices), origin = null)))
+
+        assertSame(onSetting, result.state)
+        assertEquals(HeldResult(onSetting, exit = false, applied = 0, dropped = 1), result)
+    }
+
+    @Test
+    fun `H5 each origin is checked against the state at that step`() {
+        val held = listOf(IssuedCommand(GoTo(BuyModule(1)), DeviceDetail(1)), IssuedCommand(Back, DeviceDetail(1)))
+
+        val result = NavigationReducer.applyHeld(onDeviceDetail, held)
+
+        assertEquals(HeldResult(onBuyModule, exit = false, applied = 1, dropped = 1), result)
+    }
+
+    @Test
+    fun `H6 the walk stops at the first exit`() {
+        val held = listOf(IssuedCommand(Back, Home), IssuedCommand(GoTo(DeviceDetail(1)), Home))
+
+        val result = NavigationReducer.applyHeld(FreshTabs, held)
+
+        assertEquals(HeldResult(FreshTabs, exit = true, applied = 1, dropped = 0), result)
+    }
+
+    @Test
+    fun `H7 nothing held changes nothing`() {
+        listOf(signedOut, FreshTabs, onBuyModule).forEach { state ->
+            val result = NavigationReducer.applyHeld(state, emptyList())
+
+            assertSame(state, result.state)
+            assertEquals(HeldResult(state, exit = false, applied = 0, dropped = 0), result)
+        }
+    }
+
+    @Test
+    fun `a held command that the rules ignore keeps the state and counts as applied`() {
+        val result = NavigationReducer.applyHeld(onDeviceDetail, listOf(IssuedCommand(GoTo(DeviceDetail(2)), DeviceDetail(1))))
+
+        assertSame(onDeviceDetail, result.state)
+        assertEquals(HeldResult(onDeviceDetail, exit = false, applied = 1, dropped = 0), result)
     }
 
     // endregion
