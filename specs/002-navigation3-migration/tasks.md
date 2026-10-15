@@ -1239,3 +1239,12 @@ branch, but they are not a navigation experience you can release.
 - Analysis finding D1 is resolved with option A: the navigation state lives in the
   activity-scoped `NavigationViewModel`'s `SavedStateHandle` (constitution II, research R3). See
   T022, T061 and T070.
+
+---
+
+## Phase 9: Convergence
+
+- [X] T086 CRITICAL: In `feature/device/…/device/ui/device/DeviceDetailViewModel.kt` and `feature/device/…/device/ui/buyModule/BuyModuleViewModel.kt`, expose `uiState` as a `StateFlow` built with `stateIn(viewModelScope, SharingStarted.WhileSubscribed(…), initial)` instead of `MutableStateFlow.asStateFlow()`. Both files were touched by this feature (`isDeviceMissing`, T048/T050), and existing violations are fixed when touched. Keep `isDeviceMissing`, the loading rule and the existing tests green per Constitution II (contradicts)
+- [X] T087 CRITICAL: Add a one-line justification comment to the `@Suppress("UNCHECKED_CAST")` in `core/ui/src/main/java/com/timhome/core/ui/viewmodel/ViewModelFactory.kt` (changed by T013 and T083) per Constitution IV (partial)
+- [X] T088 Add a case to `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationHostTest.kt`: with the host composed, move the activity below RESUMED (for example `composeRule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)`), send `channelNavigator.issuedFrom(Devices).navigate(DeviceDetail(1))`, assert the state is unchanged, move back to RESUMED, and assert the command is applied exactly once. Then set gaps.md N2 to Closed per FR-015 (missing)
+- [X] T089 Fix the lint `UnusedAttribute` warning on `android:enableOnBackInvokedCallback` in `app/src/main/AndroidManifest.xml` by adding `tools:targetApi="33"` to the `<application>` element (not by suppressing it), and confirm `./gradlew lintDebug` no longer reports it per FR-022 (partial)
