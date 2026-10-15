@@ -179,6 +179,7 @@ specs/002-navigation3-migration/
 ├── research.md          # Phase 0: decisions R1–R20
 ├── data-model.md        # Phase 1: Route, NavigationCommand, IssuedCommand, NavigationState, Transition, HeldResult, session flag, UiState additions
 ├── quickstart.md        # Phase 1: validation guide
+├── gaps.md              # Known gaps after each phase, and the final check
 ├── contracts/
 │   ├── navigator.md         # Navigator / ChannelNavigator contract, N1–N9 (+ spec intent mapping)
 │   ├── navigation-rules.md  # Start policy D1–D4, start state R0a–R0f, rules R1–R22 (+R6a/R6b), held release H1–H7, router W1–W8, transition styles T1–T5
@@ -260,6 +261,7 @@ app/src/test/java/com/timhome/modularizationtest/ui/
 ├── navigation/NavigationViewModelTest.kt     # V1–V8, plain JVM with SavedStateHandle()
 ├── navigation/StartPolicyTest.kt
 ├── navigation/NavigationCommandRouterTest.kt # W1–W8, plain JVM
+├── navigation/NavigationHostTest.kt          # Robolectric Compose: host smoke test with stub screens
 ├── navigation/NavigationHostGestureTest.kt   # Robolectric Compose: release order after a gesture
 ├── navigation/TransitionSelectionTest.kt
 └── CO2WorkerTest.kt                          # + intent-flags assertion

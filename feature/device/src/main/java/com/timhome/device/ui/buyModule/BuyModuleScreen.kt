@@ -38,11 +38,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.timhome.core.designsystem.theme.AuthTabSectionBackgroundColor
 import com.timhome.core.designsystem.theme.HomeTheme
+import com.timhome.core.common.navigation.BuyModule
 import com.timhome.core.ui.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.routeExtras
 import com.timhome.device.R
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.ui.buyModule.composables.OrderInfo
 import com.timhome.device.ui.device.composables.DeviceDetailImage
+import com.timhome.device.ui.device.composables.DeviceNotFound
 import com.timhome.device.ui.device.composables.ModuleItemContent
 import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
@@ -54,13 +57,18 @@ internal const val BUY_SECTION_FRACTION = .3F
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 internal fun BuyModuleScreen(
     abstractFactory: dagger.Lazy<ViewModelFactory>,
-    viewModel: BuyModuleViewModel = viewModel(factory = abstractFactory.get()),
+    route: BuyModule,
+    viewModel: BuyModuleViewModel = viewModel(factory = abstractFactory.get(), extras = routeExtras(route)),
 ) {
     HomeTheme {
         val state by viewModel.uiState.collectAsStateWithLifecycle()
         val totalPrice = state.totalPrice
         val modules = state.modules
 
+        if (state.isDeviceMissing) {
+            DeviceNotFound(onBackClick = viewModel::goBack)
+            return@HomeTheme
+        }
         Scaffold(
             topBar = {
                 TopAppBar(

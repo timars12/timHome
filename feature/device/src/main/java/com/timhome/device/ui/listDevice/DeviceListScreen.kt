@@ -14,14 +14,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.timhome.core.designsystem.theme.HomeTheme
 import com.timhome.core.common.trace
+import com.timhome.core.common.navigation.Devices
 import com.timhome.core.ui.viewmodel.ViewModelFactory
+import com.timhome.core.ui.viewmodel.routeExtras
 import com.timhome.device.domain.models.DeviceModel
 import com.timhome.device.ui.listDevice.composables.DeviceListItem
 
 @Composable
 internal fun DeviceListScreen(
     abstractFactory: dagger.Lazy<ViewModelFactory>,
-    viewModel: DeviceListViewModel = viewModel(factory = abstractFactory.get()),
+    viewModel: DeviceListViewModel = viewModel(factory = abstractFactory.get(), extras = routeExtras(Devices)),
 ) {
     HomeTheme {
         val state by viewModel.uiState.collectAsStateWithLifecycle()

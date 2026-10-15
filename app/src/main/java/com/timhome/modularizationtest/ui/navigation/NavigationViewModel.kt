@@ -1,0 +1,79 @@
+package com.timhome.modularizationtest.ui.navigation
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.timhome.core.common.navigation.IssuedCommand
+import com.timhome.core.common.navigation.NavigationCommand
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+/**
+ * Holds the navigation state for the activity.
+ *
+ * It starts in two phases, so it can exist before its state does: the state is `null` until
+ * [start] is called, unless a signed-in state was restored.
+ *
+ * Every state is also written to the [SavedStateHandle], so it comes back after process death.
+ */
+internal class NavigationViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+    /** The state saved before process death, or `null` when nothing was saved. */
+    val restored: NavigationState? =
+        savedStateHandle.get<String>(KEY_STATE)?.let {
+            NavigationJson.decodeFromString(NavigationState.serializer(), it)
+        }
+
+    private val _state = MutableStateFlow(NavigationReducer.startState(restored, isSignedIn = null))
+    val state: StateFlow<NavigationState?> = _state.asStateFlow()
+
+    /** Sets the start state. Does nothing once a state exists. */
+    fun start(state: NavigationState) {
+        if (_state.compareAndSet(null, state)) save(state)
+    }
+
+    /**
+     * Applies [command] to the state. Returns `true` when the activity should finish. Does
+     * nothing while there is no state yet.
+     */
+    fun dispatch(command: NavigationCommand): Boolean {
+        val current = _state.value ?: return false
+        return when (val transition = NavigationReducer.reduce(current, command)) {
+            is Transition.Update -> {
+                _state.value = transition.state
+                save(transition.state)
+                false
+            }
+            Transition.Exit -> true
+            Transition.Ignore -> false
+        }
+    }
+
+    /**
+     * Releases the commands [held] during a predictive back gesture. Does nothing and returns
+     * `null` while there is no state yet or nothing is held.
+     */
+    fun applyHeld(held: List<IssuedCommand>): HeldResult? {
+        val current = _state.value
+        if (current == null || held.isEmpty()) return null
+        val result = NavigationReducer.applyHeld(current, held)
+        if (result.state != current) {
+            _state.value = result.state
+            save(result.state)
+        }
+        return result
+    }
+
+    private fun save(state: NavigationState) {
+        savedStateHandle[KEY_STATE] = NavigationJson.encodeToString(NavigationState.serializer(), state)
+    }
+
+    companion object {
+        const val KEY_STATE = "navigation_state"
+
+        // Not created through Dagger or the features' ViewModelFactory, which requires a route.
+        val Factory = viewModelFactory { initializer { NavigationViewModel(createSavedStateHandle()) } }
+    }
+}

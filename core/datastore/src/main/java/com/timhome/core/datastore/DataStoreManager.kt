@@ -7,7 +7,9 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
@@ -58,6 +60,13 @@ class DataStoreManager
                 } ?: true
             }
 
+        /** Whether the user has signed in on this device. A boolean only: no credentials are stored for it. */
+        fun isSignedIn(): Flow<Boolean> = dataStore.data.map { it[PreferencesKeys.IS_SIGNED_IN] ?: false }
+
+        suspend fun setSignedIn(value: Boolean) {
+            dataStore.edit { preferences -> preferences[PreferencesKeys.IS_SIGNED_IN] = value }
+        }
+
         suspend fun clearData() {
             dataStore.edit { preferences -> preferences.clear() }
         }
@@ -67,5 +76,6 @@ class DataStoreManager
             val REFRESH_TOKEN = stringPreferencesKey("refreshToken")
             val HOME_IP_ADDRESS = stringPreferencesKey("homeIpAddress")
             val IS_USE_MOCK = booleanPreferencesKey("isUseMockDate")
+            val IS_SIGNED_IN = booleanPreferencesKey("isSignedIn")
         }
     }

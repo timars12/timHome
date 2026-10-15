@@ -3,11 +3,11 @@ package com.timhome.device.ui.device
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
-import com.timhome.core.common.NavigationDispatcher
 import com.timhome.core.common.di.IoDispatcher
 import com.timhome.core.common.navigation.BuyModule
 import com.timhome.core.common.navigation.DeviceDetail
+import com.timhome.core.common.navigation.Navigator
+import com.timhome.core.common.navigation.Route
 import com.timhome.core.ui.viewmodel.ViewModelAssistedFactory
 import com.timhome.device.data.model.ModuleModel
 import com.timhome.device.domain.IDeviceRepository
@@ -19,43 +19,55 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val STOP_TIMEOUT_MILLIS = 5000L
 
 internal data class DeviceDetailUiState(
     val device: DeviceModel? = null,
     val modules: ImmutableList<ModuleModel> = persistentListOf(),
+    /** The routed device does not exist. While `false` with no [device], it is still loading. */
+    val isDeviceMissing: Boolean = false,
 )
 
 internal class DeviceDetailViewModel
     @AssistedInject
     constructor(
         @Assisted private val savedStateHandle: SavedStateHandle,
-        private val navigationDispatcher: NavigationDispatcher,
+        @Assisted private val route: DeviceDetail,
+        @Assisted private val navigator: Navigator,
         private val repository: IDeviceRepository,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
-        private val deviceId: Int = savedStateHandle.toRoute<DeviceDetail>().deviceId
+        private val deviceId: Int = route.deviceId
 
-        private val _uiState = MutableStateFlow(DeviceDetailUiState())
-        val uiState: StateFlow<DeviceDetailUiState> = _uiState.asStateFlow()
-
-        init {
-            viewModelScope.launch(ioDispatcher) {
-                getSelectedDeviceById(deviceId)
-            }
-        }
-
-        private suspend fun getSelectedDeviceById(deviceId: Int) {
-            _uiState.update { it.copy(device = repository.getDeviceById(deviceId)) }
-            repository.getModuleToBuyByDeviceId(deviceId).stateIn(viewModelScope).collect { modules ->
-                _uiState.update { it.copy(modules = modules.toImmutableList()) }
-            }
-        }
+        val uiState: StateFlow<DeviceDetailUiState> =
+            flow {
+                val device = repository.getDeviceById(deviceId)
+                if (device == null) {
+                    emit(DeviceDetailUiState(isDeviceMissing = true))
+                    return@flow
+                }
+                // Show the device while its modules load.
+                emit(DeviceDetailUiState(device = device))
+                emitAll(
+                    repository.getModuleToBuyByDeviceId(deviceId).map { modules ->
+                        DeviceDetailUiState(device = device, modules = modules.toImmutableList())
+                    },
+                )
+            }.flowOn(ioDispatcher)
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                    initialValue = DeviceDetailUiState(),
+                )
 
         fun selectModuleToBuy(item: ModuleModel) {
             viewModelScope.launch {
@@ -64,15 +76,25 @@ internal class DeviceDetailViewModel
         }
 
         fun buyModules() {
-            navigationDispatcher.emit {
-                it.navigate(BuyModule(deviceId))
-            }
+            navigator.navigate(BuyModule(deviceId))
         }
 
-        fun goBack() = navigationDispatcher.emit { it.popBackStack() }
+        fun goBack() = navigator.back()
 
         @AssistedFactory
         interface Factory : ViewModelAssistedFactory<DeviceDetailViewModel> {
-            override fun create(handle: SavedStateHandle): DeviceDetailViewModel
+            fun createFor(
+                handle: SavedStateHandle,
+                route: DeviceDetail,
+                navigator: Navigator,
+            ): DeviceDetailViewModel
+
+            override fun create(
+                handle: SavedStateHandle,
+                route: Route,
+                navigator: Navigator,
+            ): DeviceDetailViewModel = createFor(handle, route as DeviceDetail, navigator)
+
+            override fun create(handle: SavedStateHandle): DeviceDetailViewModel = error("needs a route and a navigator")
         }
     }

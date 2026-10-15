@@ -81,6 +81,7 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:network"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:ui"))
     implementation(project(":core:data"))
     implementation(project(":core:database"))
     implementation(project(":base"))
@@ -97,9 +98,9 @@ dependencies {
     implementation(libs.profileinstaller)
     ksp(libs.dagger.compiler)
 
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.core.splashscreen)
 
     // The android.library convention plugin wires these into every library module; :app uses
     // the android.application convention, so it needs them declared explicitly.
@@ -109,6 +110,9 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.work.testing)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     baselineProfile(project(":benchmark"))
 }

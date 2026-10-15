@@ -2,22 +2,28 @@ package com.timhome.device.ui.listDevice
 
 import androidx.lifecycle.SavedStateHandle
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.timhome.core.common.NavigationDispatcher
-import com.timhome.device.data.repository.DeviceRepository
+import com.timhome.core.common.navigation.ChannelNavigator
+import com.timhome.core.common.navigation.DeviceDetail
+import com.timhome.core.common.navigation.Devices
+import com.timhome.core.common.navigation.IssuedCommand
+import com.timhome.core.common.navigation.NavigationCommand.GoTo
+import com.timhome.device.domain.IDeviceRepository
 import com.timhome.device.domain.models.DeviceModel
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,8 +34,8 @@ import org.robolectric.annotation.Config
 @Config(sdk = [34])
 class DeviceListViewModelTest {
     private val dispatcher = StandardTestDispatcher()
-    private val repository: DeviceRepository = mockk(relaxed = true)
-    private val navigationDispatcher = NavigationDispatcher()
+    private val repository: IDeviceRepository = mockk(relaxed = true)
+    private val channelNavigator = ChannelNavigator()
     private val firebaseAnalytics: FirebaseAnalytics = mockk(relaxed = true)
 
     private val device =
@@ -45,8 +51,13 @@ class DeviceListViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel() =
-        DeviceListViewModel(SavedStateHandle(), navigationDispatcher, repository, dispatcher, firebaseAnalytics)
+    /** Creates the ViewModel and subscribes to its state, as the screen does. */
+    private fun TestScope.createViewModel(): DeviceListViewModel {
+        val viewModel =
+            DeviceListViewModel(SavedStateHandle(), channelNavigator.issuedFrom(Devices), repository, dispatcher, firebaseAnalytics)
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        return viewModel
+    }
 
     @Test
     fun `exposes loaded devices in ui state`() =
@@ -81,6 +92,9 @@ class DeviceListViewModelTest {
 
             viewModel.navigateToDetailScreen(device)
 
-            assertNotNull(navigationDispatcher.navigationEmitter.tryReceive().getOrNull())
+            assertEquals(
+                IssuedCommand(GoTo(DeviceDetail(device.id)), origin = Devices),
+                channelNavigator.commands.first(),
+            )
         }
 }

@@ -62,9 +62,10 @@ internal fun Project.configureJacoco(
 
     androidComponents {
         onVariants(selector().withBuildType("debug")) { variant ->
-            val testTaskName = "test${variant.name.replaceFirstChar { it.uppercaseChar() }}UnitTest"
+            val variantName = variant.name.replaceFirstChar { it.uppercaseChar() }
+            val testTaskName = "test${variantName}UnitTest"
 
-            tasks.register<JacocoReport>("jacoco${variant.name.replaceFirstChar { it.uppercaseChar() }}Report") {
+            tasks.register<JacocoReport>("jacoco${variantName}Report") {
                 dependsOn(testTaskName)
 
                 group = "Verification"
@@ -84,16 +85,29 @@ internal fun Project.configureJacoco(
                 )
 
                 val buildDir = buildDirectory.get().asFile
-                classDirectories.setFrom(
-                    files(
-                        fileTree("$buildDir/intermediates/javac/${variant.name}") {
+                // When an ASM transform runs (Firebase Performance in :app), the tests run the
+                // transformed classes, so the report must read those: the raw compiler output has
+                // different class IDs and would show every line as missed. This block runs when the
+                // task is realized, after AGP has registered all tasks, so the check is reliable.
+                val asmTaskName = "transform${variantName}ClassesWithAsm"
+                if (asmTaskName in tasks.names) {
+                    classDirectories.setFrom(
+                        fileTree("$buildDir/intermediates/classes/${variant.name}/$asmTaskName/dirs") {
                             exclude(coverageExclusions)
                         },
-                        fileTree("$buildDir/tmp/kotlin-classes/${variant.name}") {
-                            exclude(coverageExclusions)
-                        },
-                    ),
-                )
+                    )
+                } else {
+                    classDirectories.setFrom(
+                        files(
+                            fileTree("$buildDir/intermediates/javac/${variant.name}") {
+                                exclude(coverageExclusions)
+                            },
+                            fileTree("$buildDir/tmp/kotlin-classes/${variant.name}") {
+                                exclude(coverageExclusions)
+                            },
+                        ),
+                    )
+                }
 
                 executionData.setFrom(
                     fileTree(buildDir) {

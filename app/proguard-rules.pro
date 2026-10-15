@@ -35,3 +35,21 @@
 ## kept. Suspend functions are wrapped in continuations where the type argument
 ## is used.
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+## Navigation state saved across process death (NavigationViewModel).
+## The routes and the state are written as JSON by kotlinx.serialization, which finds their
+## serializers through the generated Companion and $serializer members.
+-keep class com.timhome.core.common.navigation.** { *; }
+-keep class com.timhome.modularizationtest.ui.navigation.NavigationState* { *; }
+-keepclassmembers class com.timhome.core.common.navigation.** {
+    *** Companion;
+    *** INSTANCE;
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keepclassmembers class com.timhome.modularizationtest.ui.navigation.NavigationState* {
+    *** Companion;
+    *** INSTANCE;
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keep class com.timhome.core.common.navigation.**$$serializer { *; }
+-keep class com.timhome.modularizationtest.ui.navigation.NavigationState*$$serializer { *; }

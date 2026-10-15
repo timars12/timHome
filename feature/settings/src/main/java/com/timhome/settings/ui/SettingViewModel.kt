@@ -29,6 +29,9 @@ internal class SettingViewModel
         private val repository: SettingRepository,
         @Assisted private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
+        // Read before getStateFlow, which fills in the missing keys. A handle that already holds
+        // the values was restored after process death, and what the user typed must win.
+        private val isRestored = savedStateHandle.contains(IP_HOME_ADDRESS_KEY)
         private val ipAddressFlow = savedStateHandle.getStateFlow(IP_HOME_ADDRESS_KEY, "")
         private val isUseMockFlow = savedStateHandle.getStateFlow(IS_USE_MOCK_KEY, true)
 
@@ -42,9 +45,11 @@ internal class SettingViewModel
             )
 
         init {
-            viewModelScope.launch {
-                savedStateHandle[IP_HOME_ADDRESS_KEY] = repository.getHomeIpAddress() ?: ""
-                savedStateHandle[IS_USE_MOCK_KEY] = repository.checkIsUseMock()
+            if (!isRestored) {
+                viewModelScope.launch {
+                    savedStateHandle[IP_HOME_ADDRESS_KEY] = repository.getHomeIpAddress() ?: ""
+                    savedStateHandle[IS_USE_MOCK_KEY] = repository.checkIsUseMock()
+                }
             }
         }
 

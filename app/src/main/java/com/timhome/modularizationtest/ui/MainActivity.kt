@@ -9,11 +9,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -37,7 +39,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -55,38 +56,41 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.timhome.auth.ui.signin.navigation.signInRoute
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.entryProvider
+import com.timhome.auth.ui.signin.navigation.signInEntries
 import com.timhome.base.DaggerBaseComponent
 import com.timhome.core.coreComponent
+import com.timhome.core.data.repository.SessionRepository
 import com.timhome.core.designsystem.theme.HomeTheme
-import com.timhome.core.common.NavigationDispatcher
-import com.timhome.core.common.navigation.Devices
-import com.timhome.core.common.navigation.Home
-import com.timhome.core.common.navigation.Setting
-import com.timhome.core.common.navigation.SignIn
-import com.timhome.device.ui.navigation.deviceRoute
-import com.timhome.home.ui.navigation.homeRoute
-import com.timhome.settings.ui.navigation.settingRoute
+import com.timhome.core.common.navigation.ChannelNavigator
+import com.timhome.core.common.navigation.Route
+import com.timhome.core.common.navigation.TopLevelRoute
+import com.timhome.device.ui.navigation.deviceEntries
+import com.timhome.home.ui.navigation.homeEntries
 import com.timhome.modularizationtest.R
-import com.timhome.modularizationtest.data.BottomNavigationMenuItem
 import com.timhome.modularizationtest.di.DaggerAppComponent
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
+import com.timhome.modularizationtest.ui.navigation.NavigationHost
+import com.timhome.modularizationtest.ui.navigation.NavigationReducer
+import com.timhome.modularizationtest.ui.navigation.NavigationState
+import com.timhome.modularizationtest.ui.navigation.NavigationViewModel
+import com.timhome.modularizationtest.ui.navigation.StartPolicy
+import com.timhome.modularizationtest.ui.navigation.topLevelTabs
+import com.timhome.settings.ui.navigation.settingEntries
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+
+private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
     @Inject
-    lateinit var navigationDispatcher: NavigationDispatcher
+    lateinit var channelNavigator: ChannelNavigator
+
+    @Inject
+    lateinit var sessionRepository: SessionRepository
+
+    private val navigationViewModel: NavigationViewModel by viewModels { NavigationViewModel.Factory }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
@@ -99,11 +103,24 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalComposeUiApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Must come before super.onCreate(). The ViewModel is only read later, by the condition.
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        splashScreen.setKeepOnScreenCondition { navigationViewModel.state.value == null }
+        discardPendingNavigationIfOpenedFromAlert(hasSavedState = savedInstanceState != null)
 
         setContent {
-            val navController: NavHostController = rememberNavController()
-            val isShowBottomMenu = remember { mutableStateOf(false) }
+            val state by navigationViewModel.state.collectAsStateWithLifecycle()
+            val isShowBottomMenu = state?.isBottomBarVisible == true
+            val navigationEntryProvider =
+                remember {
+                    entryProvider<Route> {
+                        signInEntries()
+                        homeEntries()
+                        deviceEntries()
+                        settingEntries()
+                    }
+                }
             val shouldShowDialog = remember { mutableStateOf(false) }
 
             val requestPermissionLauncher =
@@ -115,17 +132,11 @@ class MainActivity : ComponentActivity() {
                 }
 
             CheckNotificationPermission(requestPermissionLauncher)
-            LaunchedEffect(Unit) {
-                observeNavigationCommands(navController)
-            }
-            DisposableEffect(Unit) {
-                val destinationChangedListener =
-                    NavController.OnDestinationChangedListener { _, destination, _ ->
-                        isShowBottomMenu.value = !destination.hasRoute<SignIn>()
-                    }
-                navController.addOnDestinationChangedListener(destinationChangedListener)
-                onDispose {
-                    navController.removeOnDestinationChangedListener(destinationChangedListener)
+            LaunchedEffect(state == null) {
+                // Nothing signed-in was restored, so the stored flag chooses the start screen.
+                if (state == null) {
+                    val isSignedIn = sessionRepository.isSignedIn.first()
+                    navigationViewModel.start(NavigationReducer.startState(navigationViewModel.restored, isSignedIn)!!)
                 }
             }
 
@@ -141,7 +152,7 @@ class MainActivity : ComponentActivity() {
                     contentWindowInsets = WindowInsets(0, 0, 0, 0),
                     bottomBar = {
                         AnimatedVisibility(
-                            visible = isShowBottomMenu.value,
+                            visible = isShowBottomMenu,
                             enter =
                                 slideInVertically(
                                     initialOffsetY = { y -> y },
@@ -154,25 +165,47 @@ class MainActivity : ComponentActivity() {
                                 ) + expandVertically(expandFrom = Alignment.Bottom),
                             exit = slideOutVertically(animationSpec = tween(durationMillis = 300)),
                         ) {
-                            if (isShowBottomMenu.value) BottomNavigationBar(navController)
+                            if (isShowBottomMenu) {
+                                BottomNavigationBar(
+                                    currentTab = (state as? NavigationState.SignedIn)?.currentTab,
+                                    onSelect = { channelNavigator.navigate(it) },
+                                )
+                            }
                         }
                     },
                 ) { padding ->
-                    NavHost(
-                        modifier = Modifier.padding(padding),
-                        navController = navController,
-                        startDestination = SignIn,
-                    ) {
-                        signInRoute()
-                        homeRoute()
-                        deviceRoute()
-                        settingRoute()
+                    state?.let {
+                        NavigationHost(
+                            state = it,
+                            navigationViewModel = navigationViewModel,
+                            channelNavigator = channelNavigator,
+                            entryProvider = navigationEntryProvider,
+                            onExit = ::finish,
+                            modifier = Modifier.padding(padding),
+                        )
                     }
                 }
                 if (shouldShowDialog.value) {
                     ExplainWhyWeNeedToUseNotification(shouldShowDialog)
                 }
             }
+        }
+    }
+
+    /**
+     * The CO2 notification opens the app with fresh history, so requests buffered while the app
+     * was in the background must not land on top of it. Every other launch keeps them.
+     */
+    private fun discardPendingNavigationIfOpenedFromAlert(hasSavedState: Boolean) {
+        val shouldDiscard =
+            StartPolicy.shouldDiscardPendingNavigation(
+                hasSavedState = hasSavedState,
+                openedFromAlert = intent.getBooleanExtra(EXTRA_OPENED_FROM_CO2_ALERT, false),
+                launchedFromHistory = intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0,
+            )
+        if (shouldDiscard) {
+            val dropped = channelNavigator.discardPending()
+            Log.d(TAG, "onCreate() opened from the CO2 alert, dropped $dropped pending navigation request(s)")
         }
     }
 
@@ -222,43 +255,18 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private suspend fun observeNavigationCommands(navController: NavHostController) {
-        navigationDispatcher.navigationEmitter.receiveAsFlow()
-            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
-            .collect { command ->
-                command.invoke(navController)
-            }
+    companion object {
+        /** Set on the CO2 notification's intent, so that launch discards pending navigation requests. */
+        const val EXTRA_OPENED_FROM_CO2_ALERT = "com.timhome.modularizationtest.OPENED_FROM_CO2_ALERT"
     }
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(
+    currentTab: TopLevelRoute?,
+    onSelect: (TopLevelRoute) -> Unit,
+) {
     val shape = remember { RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp) }
-    val menuItems =
-        remember {
-            listOf(
-                BottomNavigationMenuItem(
-                    route = Home,
-                    label = R.string.home,
-                    icon = R.drawable.ic_home_bottom_menu,
-                    testTag = "bnv_home",
-                ),
-                BottomNavigationMenuItem(
-                    route = Devices,
-                    label = R.string.device,
-                    icon = R.drawable.ic_device_bottom_menu,
-                    testTag = "bnv_device",
-                ),
-                BottomNavigationMenuItem(
-                    route = Setting,
-                    label = R.string.setting,
-                    icon = R.drawable.ic_setting_bottom_menu,
-                    testTag = "bnv_setting",
-                ),
-            )
-        }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
     NavigationBar(
         modifier =
             Modifier
@@ -268,21 +276,11 @@ fun BottomNavigationBar(navController: NavHostController) {
                 .clip(shape = shape),
         containerColor = MaterialTheme.colorScheme.onSurface,
     ) {
-        menuItems.forEach { item ->
+        topLevelTabs.forEach { item ->
             NavigationBarItem(
                 modifier = Modifier.testTag(item.testTag),
-                selected = currentDestination?.hierarchy?.any { it.hasRoute(item.route::class) } == true,
-                onClick = {
-                    if (currentDestination?.hasRoute(item.route::class) == true) return@NavigationBarItem
-
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        restoreState = true
-                        launchSingleTop = true
-                    }
-                },
+                selected = item.route == currentTab,
+                onClick = { onSelect(item.route) },
                 icon = {
                     Icon(
                         painter = painterResource(item.icon),
