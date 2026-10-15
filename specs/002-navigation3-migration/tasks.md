@@ -1248,3 +1248,10 @@ branch, but they are not a navigation experience you can release.
 - [X] T087 CRITICAL: Add a one-line justification comment to the `@Suppress("UNCHECKED_CAST")` in `core/ui/src/main/java/com/timhome/core/ui/viewmodel/ViewModelFactory.kt` (changed by T013 and T083) per Constitution IV (partial)
 - [X] T088 Add a case to `app/src/test/java/com/timhome/modularizationtest/ui/navigation/NavigationHostTest.kt`: with the host composed, move the activity below RESUMED (for example `composeRule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)`), send `channelNavigator.issuedFrom(Devices).navigate(DeviceDetail(1))`, assert the state is unchanged, move back to RESUMED, and assert the command is applied exactly once. Then set gaps.md N2 to Closed per FR-015 (missing)
 - [X] T089 Fix the lint `UnusedAttribute` warning on `android:enableOnBackInvokedCallback` in `app/src/main/AndroidManifest.xml` by adding `tools:targetApi="33"` to the `<application>` element (not by suppressing it), and confirm `./gradlew lintDebug` no longer reports it per FR-022 (partial)
+
+---
+
+## Phase 10: Convergence
+
+- [X] T090 CRITICAL: In `feature/device/…/device/ui/listDevice/DeviceListViewModel.kt` (touched by T016), expose `uiState` as a `StateFlow` built with `stateIn(viewModelScope, SharingStarted.WhileSubscribed(…), DeviceListUiState())` instead of `MutableStateFlow.asStateFlow()`, keeping the `initAllDevices()` call for an empty list. In `DeviceListViewModelTest.kt`, subscribe to `uiState` from `backgroundScope`, as T086 did, per Constitution II (contradicts)
+- [X] T091 CRITICAL: In the same `DeviceListViewModel.kt`, inject the `IDeviceRepository` interface instead of the concrete `DeviceRepository`, add a binding for it to the device Dagger module if one is missing, and update `DeviceListViewModelTest.kt` to match, per Constitution I (contradicts)
