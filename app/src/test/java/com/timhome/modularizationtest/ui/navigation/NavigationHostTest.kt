@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -102,6 +103,8 @@ class NavigationHostTest {
         composeRule.onNodeWithText(label).assertIsDisplayed()
     }
 
+    private fun devicesStack(): List<Route>? = (navigationViewModel.state.value as NavigationState.SignedIn).tabStacks[Devices]
+
     @Test
     fun `shows the signed-out screen, then Home after replaceAll`() {
         host(NavigationReducer.initialState(isSignedIn = false))
@@ -120,6 +123,29 @@ class NavigationHostTest {
         host(FreshTabs)
 
         assertShown("Devices")
+    }
+
+    @Test
+    fun `a command issued in the background is applied once when the app returns`() {
+        host(FreshTabs)
+        channelNavigator.navigate(Devices)
+        channelNavigator.issuedFrom(Devices).navigate(DeviceDetail(1))
+        channelNavigator.issuedFrom(DeviceDetail(1)).navigate(BuyModule(1))
+        assertShown("BuyModule 1")
+
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)
+        channelNavigator.issuedFrom(BuyModule(1)).back()
+        composeRule.waitForIdle()
+
+        // Not applied while the app is in the background (FR-015).
+        assertEquals(listOf(Devices, DeviceDetail(1), BuyModule(1)), devicesStack())
+
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+
+        // Applied exactly once: a second Back would have popped Device Detail too.
+        assertShown("DeviceDetail 1")
+        assertEquals(listOf(Devices, DeviceDetail(1)), devicesStack())
+        assertFalse(exited)
     }
 
     @Test

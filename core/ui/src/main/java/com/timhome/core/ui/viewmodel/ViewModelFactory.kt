@@ -18,6 +18,7 @@ class ViewModelFactory
             >,
         private val channelNavigator: ChannelNavigator,
     ) : ViewModelProvider.Factory {
+        // The factory map is keyed by the class its value creates, so the result is always a T.
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(
             modelClass: Class<T>,

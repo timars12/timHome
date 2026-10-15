@@ -19,12 +19,16 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val STOP_TIMEOUT_MILLIS = 5000L
 
 internal data class DeviceDetailUiState(
     val device: DeviceModel? = null,
@@ -44,23 +48,26 @@ internal class DeviceDetailViewModel
     ) : ViewModel() {
         private val deviceId: Int = route.deviceId
 
-        private val _uiState = MutableStateFlow(DeviceDetailUiState())
-        val uiState: StateFlow<DeviceDetailUiState> = _uiState.asStateFlow()
-
-        init {
-            viewModelScope.launch(ioDispatcher) {
-                getSelectedDeviceById(deviceId)
-            }
-        }
-
-        private suspend fun getSelectedDeviceById(deviceId: Int) {
-            val device = repository.getDeviceById(deviceId)
-            _uiState.update { it.copy(device = device, isDeviceMissing = device == null) }
-            if (device == null) return
-            repository.getModuleToBuyByDeviceId(deviceId).stateIn(viewModelScope).collect { modules ->
-                _uiState.update { it.copy(modules = modules.toImmutableList()) }
-            }
-        }
+        val uiState: StateFlow<DeviceDetailUiState> =
+            flow {
+                val device = repository.getDeviceById(deviceId)
+                if (device == null) {
+                    emit(DeviceDetailUiState(isDeviceMissing = true))
+                    return@flow
+                }
+                // Show the device while its modules load.
+                emit(DeviceDetailUiState(device = device))
+                emitAll(
+                    repository.getModuleToBuyByDeviceId(deviceId).map { modules ->
+                        DeviceDetailUiState(device = device, modules = modules.toImmutableList())
+                    },
+                )
+            }.flowOn(ioDispatcher)
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                    initialValue = DeviceDetailUiState(),
+                )
 
         fun selectModuleToBuy(item: ModuleModel) {
             viewModelScope.launch {

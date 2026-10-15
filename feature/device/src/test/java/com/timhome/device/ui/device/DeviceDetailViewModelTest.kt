@@ -16,7 +16,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -53,9 +55,12 @@ class DeviceDetailViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(deviceId: Int = 1): DeviceDetailViewModel {
+    /** Creates the ViewModel and subscribes to its state, as the screen does. */
+    private fun TestScope.createViewModel(deviceId: Int = 1): DeviceDetailViewModel {
         val route = DeviceDetail(deviceId)
-        return DeviceDetailViewModel(SavedStateHandle(), route, channelNavigator.issuedFrom(route), repository, dispatcher)
+        val viewModel = DeviceDetailViewModel(SavedStateHandle(), route, channelNavigator.issuedFrom(route), repository, dispatcher)
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        return viewModel
     }
 
     @Test

@@ -15,13 +15,15 @@ import dagger.assisted.AssistedInject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+
+private const val STOP_TIMEOUT_MILLIS = 5000L
 
 internal data class BuyModuleUiState(
     val totalPrice: BigDecimal = BigDecimal.ZERO,
@@ -38,29 +40,21 @@ internal class BuyModuleViewModel
         @Assisted private val navigator: Navigator,
         private val repository: IDeviceRepository,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow(BuyModuleUiState())
-        val uiState: StateFlow<BuyModuleUiState> = _uiState.asStateFlow()
-
-        init {
-            val selectedModules = repository.getSelectedModuleToBuyByDeviceId(route.deviceId)
-
-            viewModelScope.launch {
-                if (repository.getDeviceById(route.deviceId) == null) {
-                    _uiState.update { it.copy(isDeviceMissing = true) }
-                }
-            }
-
-            viewModelScope.launch {
-                selectedModules.stateIn(viewModelScope).collect { list ->
-                    _uiState.update {
-                        it.copy(
-                            totalPrice = list.sumOf { module -> BigDecimal(module.price.replace("$", "")) },
-                            modules = list.toImmutableList(),
-                        )
-                    }
-                }
-            }
-        }
+        val uiState: StateFlow<BuyModuleUiState> =
+            combine(
+                flow { emit(repository.getDeviceById(route.deviceId) == null) },
+                repository.getSelectedModuleToBuyByDeviceId(route.deviceId),
+            ) { isDeviceMissing, modules ->
+                BuyModuleUiState(
+                    totalPrice = modules.sumOf { module -> BigDecimal(module.price.replace("$", "")) },
+                    modules = modules.toImmutableList(),
+                    isDeviceMissing = isDeviceMissing,
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+                initialValue = BuyModuleUiState(),
+            )
 
         fun removeModule(item: ModuleModel) {
             viewModelScope.launch {
